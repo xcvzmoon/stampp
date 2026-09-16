@@ -1,0 +1,17 @@
+{
+  "name": "api",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nitro build",
+    "dev": "nitro dev",
+    "preview": "nitro preview",
+    "start": "node .output/server/index.mjs",
+    "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "nitro": "catalog:api",
+    "typescript": "catalog:"
+  }
+}
