@@ -21,6 +21,12 @@ export function generateTextId(name = 'id') {
   return text(name).primaryKey();
 }
 
+export function generateEntityId(prefix: string, name = 'id') {
+  return text(name)
+    .primaryKey()
+    .$defaultFn(() => `${prefix}_${uuidv7()}`);
+}
+
 export function generateUuid(name?: string) {
   return uuid(name)
     .primaryKey()
