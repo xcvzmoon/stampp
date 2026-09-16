@@ -5,11 +5,13 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "ready": "vp check && vp run -r test && vp run -r build",
-    "dev": "vp run website#dev",
+    "fmt": "vp fmt",
+    "lint": "vp lint",
+    "check": "vp check",
     "prepare": "vp config"
   },
   "devDependencies": {
+    "@oxlint/plugins": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:"
   },

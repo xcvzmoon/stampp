@@ -6,16 +6,17 @@ packages:
 catalogMode: prefer
 
 catalog:
-  "@types/node": ^26.6.1
+  '@oxlint/plugins': 1.82.0
+  '@types/node': ^26.6.1
   typescript: ^7.0.2
   vite: npm:@voidzero-dev/vite-plus-core@0.3.2
   vite-plus: 0.3.2
 
 overrides:
-  vite@*: "catalog:"
+  vite@*: 'catalog:'
 
 peerDependencyRules:
   allowAny:
     - vite
   allowedVersions:
-    vite: "*"
+    vite: '*'
