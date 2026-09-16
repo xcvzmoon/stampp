@@ -20,7 +20,7 @@
 
   async function enterWorkspace(workspace: Workspace) {
     await client.organization.setActive({ organizationId: workspace.id });
-    await organizations.value.refetch();
+    await navigateTo(`/w/${workspace.id}/projects`);
   }
 
   async function signOut() {
@@ -106,7 +106,6 @@
               Active
             </UBadge>
             <UButton
-              v-else
               size="sm"
               color="neutral"
               variant="soft"

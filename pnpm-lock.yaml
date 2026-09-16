@@ -319,6 +319,9 @@ importers:
       better-auth:
         specifier: catalog:auth
         version: 1.7.5(drizzle-kit@1.0.0-rc.5-5935859)(drizzle-orm@1.0.0-rc.5-5935859(postgres@3.4.9)(valibot@1.5.0(typescript@6.0.3))(zod@4.6.5))(vitest@4.1.11)(vue@3.5.42(typescript@6.0.3))
+      drizzle-orm:
+        specifier: catalog:db
+        version: 1.0.0-rc.5-5935859(postgres@3.4.9)(valibot@1.5.0(typescript@6.0.3))(zod@4.6.5)
       ioredis:
         specifier: catalog:platform
         version: 5.10.0(supports-color@10.2.2)
@@ -328,6 +331,9 @@ importers:
       uuid:
         specifier: catalog:platform
         version: 14.0.2
+      valibot:
+        specifier: catalog:platform
+        version: 1.5.0(typescript@6.0.3)
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -350,6 +356,9 @@ importers:
       '@pinia/nuxt':
         specifier: catalog:ui
         version: 1.0.2(magic-string@1.4.1)(magicast@0.5.5)(pinia@4.0.3(@vue/devtools-api@8.2.1)(typescript@6.0.3)(vue@3.5.42(typescript@6.0.3)))(rolldown@1.2.8)(unplugin@3.3.0(@voidzero-dev/vite-plus-core@0.3.2(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(typescript@6.0.3))(esbuild@0.28.2)(rolldown@1.2.8)(rollup@4.63.3))
+      '@stampp/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@vueuse/core':
         specifier: catalog:ui
         version: 14.4.0(vue@3.5.42(typescript@6.0.3))
@@ -371,6 +380,9 @@ importers:
       tailwindcss:
         specifier: catalog:ui
         version: 4.3.3
+      valibot:
+        specifier: catalog:platform
+        version: 1.5.0(typescript@6.0.3)
       vue:
         specifier: catalog:ui
         version: 3.5.42(typescript@6.0.3)

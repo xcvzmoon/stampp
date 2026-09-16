@@ -15,6 +15,7 @@
   "dependencies": {
     "@nuxt/ui": "catalog:ui",
     "@pinia/nuxt": "catalog:ui",
+    "@stampp/shared": "workspace:*",
     "@vueuse/core": "catalog:ui",
     "@vueuse/nuxt": "catalog:ui",
     "better-auth": "catalog:auth",
@@ -22,6 +23,7 @@
     "pinia": "catalog:ui",
     "pinia-plugin-persistedstate": "catalog:ui",
     "tailwindcss": "catalog:ui",
+    "valibot": "catalog:platform",
     "vue": "catalog:ui",
     "vue-router": "catalog:ui"
   },
