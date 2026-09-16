@@ -1,0 +1,20 @@
+{
+  "name": "@stampp/access",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@stampp/database": "workspace:*",
+    "@stampp/domain": "workspace:*",
+    "@stampp/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}
