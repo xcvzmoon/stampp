@@ -11,7 +11,9 @@ const allPermissions: Permission[] = [
   'time:write:own',
   'time:write:other',
   'time:approve',
+  'project:read',
   'project:manage',
+  'client:read',
   'client:manage',
   'reports:view',
   'reports:view:cost',
@@ -48,11 +50,23 @@ describe('hasPermission', () => {
     expect(hasPermission('manager', 'reports:view:cost')).toBe(false);
   });
 
-  it('gives guests only own time read', () => {
-    expect(hasPermission('guest', 'time:read:own')).toBe(true);
+  it('lets members read catalog entities but not manage them', () => {
+    expect(hasPermission('member', 'client:read')).toBe(true);
+    expect(hasPermission('member', 'project:read')).toBe(true);
+    expect(hasPermission('member', 'client:manage')).toBe(false);
+    expect(hasPermission('member', 'project:manage')).toBe(false);
+  });
+
+  it('lets managers manage projects and read clients but not manage clients', () => {
+    expect(hasPermission('manager', 'project:manage')).toBe(true);
+    expect(hasPermission('manager', 'client:read')).toBe(true);
+    expect(hasPermission('manager', 'client:manage')).toBe(false);
+  });
+
+  it('gives guests catalog read without manage or write', () => {
+    const guestAllowed = new Set<Permission>(['time:read:own', 'client:read', 'project:read']);
     for (const permission of allPermissions) {
-      if (permission === 'time:read:own') continue;
-      expect(hasPermission('guest', permission)).toBe(false);
+      expect(hasPermission('guest', permission)).toBe(guestAllowed.has(permission));
     }
   });
 
