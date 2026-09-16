@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@oxlint/plugins": "catalog:",
+    "genbumppush": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:"
   },
