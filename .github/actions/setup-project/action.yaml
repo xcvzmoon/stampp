@@ -1,0 +1,15 @@
+name: Setup project
+description: Set up Vite+ (vp), Node.js, and locked dependencies. Assumes the repository has already been checked out.
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Vite+
+      # Pin to an exact release (or commit SHA). Do not use the frozen moving `v1` tag.
+      # Renovate keeps this pin current via the trailing version comment.
+      uses: voidzero-dev/setup-vp@9fd26ff49f9b5e6276c2b493da4454ad4527f7f4 # v1.20.0
+      with:
+        # Resolve Node from package.json#devEngines.runtime (^26).
+        cache: true
+        run-install: |
+          - args: ['--frozen-lockfile']
