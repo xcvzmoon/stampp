@@ -187,6 +187,9 @@ export default defineConfig({
     },
     ignorePatterns: ['.agents/**', 'tools/oxlint/anti-slop/**'],
   },
+  test: {
+    passWithNoTests: true,
+  },
   run: {
     cache: {
       tasks: true,

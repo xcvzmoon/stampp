@@ -1,19 +1,25 @@
 {
   "name": "stampp",
-  "version": "0.0.0",
-  "private": true,
   "description": "",
+  "version": "0.0.0",
   "type": "module",
+  "private": true,
   "scripts": {
     "fmt": "vp fmt",
     "lint": "vp lint",
     "check": "vp check",
-    "prepare": "vp config"
+    "prepare": "vp config",
+    "test": "vp test",
+    "test:watch": "vp test --watch",
+    "test:verbose": "vp test --reporter=verbose"
   },
   "devDependencies": {
     "@oxlint/plugins": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:"
+  },
+  "engines": {
+    "node": ">=24"
   },
   "devEngines": {
     "packageManager": {
@@ -26,8 +32,5 @@
       "version": "^26",
       "onFail": "download"
     }
-  },
-  "engines": {
-    "node": ">=24"
   }
 }
