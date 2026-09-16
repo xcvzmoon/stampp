@@ -18,6 +18,7 @@ export default defineConfig({
       newlinesBetween: false,
     },
     sortTailwindcss: {
+      stylesheet: 'apps/web/app/assets/css/main.css',
       attributes: ['class'],
       functions: ['clsx', 'cn'],
       preserveWhitespace: true,
@@ -185,7 +186,7 @@ export default defineConfig({
       typeAware: true,
       typeCheck: true,
     },
-    ignorePatterns: ['.agents/**', 'tools/oxlint/anti-slop/**'],
+    ignorePatterns: ['**/*.d.ts', '.agents/**', 'tools/oxlint/anti-slop/**'],
   },
   test: {
     passWithNoTests: true,

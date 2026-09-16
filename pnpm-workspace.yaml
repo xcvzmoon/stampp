@@ -13,6 +13,25 @@ catalog:
   vite: npm:@voidzero-dev/vite-plus-core@0.3.2
   vite-plus: 0.3.2
 
+catalogs:
+  ui:
+    '@golar/vue': ^0.1.10
+    '@iconify-json/lucide': ^1.2.131
+    '@iconify-json/lucide-lab': ^1.2.3
+    '@nuxt/ui': ^4.11.1
+    '@oxlint/plugins': ^1.82.0
+    '@pinia/nuxt': 1.0.2
+    '@vueuse/core': ^14.4.0
+    '@vueuse/nuxt': ^14.4.0
+    golar: ^0.1.10
+    nuxt: ^4.5.2
+    pinia: ^4.0.3
+    pinia-plugin-persistedstate: ^4.7.1
+    tailwindcss: ^4.3.3
+    vue: ^3.5.42
+    vue-router: ^5.3.1
+    vue-tsc: ^3.3.11
+
 overrides:
   vite@*: 'catalog:'
 
@@ -21,3 +40,10 @@ peerDependencyRules:
     - vite
   allowedVersions:
     vite: '*'
+
+allowBuilds:
+  esbuild: true
+  vue-demi: true
+
+minimumReleaseAgeExclude:
+  - '@types/node@26.6.1'

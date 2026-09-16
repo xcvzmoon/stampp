@@ -1,0 +1,35 @@
+{
+  "name": "web",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "typecheck": "nuxt typecheck"
+  },
+  "dependencies": {
+    "@nuxt/ui": "catalog:ui",
+    "@pinia/nuxt": "catalog:ui",
+    "@vueuse/core": "catalog:ui",
+    "@vueuse/nuxt": "catalog:ui",
+    "nuxt": "catalog:ui",
+    "pinia": "catalog:ui",
+    "pinia-plugin-persistedstate": "catalog:ui",
+    "tailwindcss": "catalog:ui",
+    "vue": "catalog:ui",
+    "vue-router": "catalog:ui"
+  },
+  "devDependencies": {
+    "@golar/vue": "catalog:ui",
+    "@iconify-json/lucide": "catalog:ui",
+    "@iconify-json/lucide-lab": "catalog:ui",
+    "@oxlint/plugins": "catalog:ui",
+    "@types/node": "catalog:",
+    "golar": "catalog:ui",
+    "typescript": "catalog:",
+    "vue-tsc": "catalog:ui"
+  }
+}
