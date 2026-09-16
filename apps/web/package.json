@@ -3,13 +3,14 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
+    "build": "varlock run -- nuxt build",
+    "dev": "varlock run -- nuxt dev",
+    "generate": "varlock run -- nuxt generate",
+    "preview": "varlock run -- nuxt preview",
     "postinstall": "nuxt prepare",
     "typecheck": "nuxt typecheck",
-    "start": "node ./output/server/index.mjs"
+    "start": "varlock run -- node ./output/server/index.mjs",
+    "env:load": "varlock load"
   },
   "dependencies": {
     "@nuxt/ui": "catalog:ui",
@@ -31,6 +32,7 @@
     "@types/node": "catalog:",
     "golar": "catalog:ui",
     "typescript": "catalog:",
+    "varlock": "catalog:platform",
     "vue-tsc": "catalog:ui"
   }
 }

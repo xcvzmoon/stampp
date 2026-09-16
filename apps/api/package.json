@@ -3,15 +3,27 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "nitro build",
-    "dev": "nitro dev",
-    "preview": "nitro preview",
-    "start": "node .output/server/index.mjs",
-    "typecheck": "tsc"
+    "build": "varlock run -- nitro build",
+    "dev": "varlock run -- nitro dev",
+    "preview": "varlock run -- nitro preview",
+    "start": "varlock run -- node .output/server/index.mjs",
+    "typecheck": "tsc",
+    "env:load": "varlock load"
+  },
+  "dependencies": {
+    "@stampp/access": "workspace:*",
+    "@stampp/database": "workspace:*",
+    "@stampp/domain": "workspace:*",
+    "@stampp/mailer": "workspace:*",
+    "@stampp/shared": "workspace:*",
+    "ioredis": "catalog:platform",
+    "postgres": "catalog:db",
+    "uuid": "catalog:platform"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "nitro": "catalog:api",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "varlock": "catalog:platform"
   }
 }
