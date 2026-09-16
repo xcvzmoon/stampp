@@ -11,11 +11,13 @@
     "env:load": "varlock load"
   },
   "dependencies": {
+    "@better-auth/drizzle-adapter": "catalog:auth",
     "@stampp/access": "workspace:*",
     "@stampp/database": "workspace:*",
     "@stampp/domain": "workspace:*",
     "@stampp/mailer": "workspace:*",
     "@stampp/shared": "workspace:*",
+    "better-auth": "catalog:auth",
     "ioredis": "catalog:platform",
     "postgres": "catalog:db",
     "uuid": "catalog:platform"
