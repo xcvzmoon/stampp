@@ -52,4 +52,10 @@ export default defineNuxtConfig({
   },
   css: ['~/assets/css/main.css'],
   modules: ['@nuxt/ui', '@pinia/nuxt', '@vueuse/nuxt', 'pinia-plugin-persistedstate/nuxt'],
+  runtimeConfig: {
+    public: {
+      /** Better Auth base URL including basePath. Empty path prefix yields same-origin `/api/auth`. */
+      authBaseURL: 'http://localhost:3001/api/auth',
+    },
+  },
 });
