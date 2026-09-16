@@ -18,9 +18,11 @@
     "@stampp/mailer": "workspace:*",
     "@stampp/shared": "workspace:*",
     "better-auth": "catalog:auth",
+    "drizzle-orm": "catalog:db",
     "ioredis": "catalog:platform",
     "postgres": "catalog:db",
-    "uuid": "catalog:platform"
+    "uuid": "catalog:platform",
+    "valibot": "catalog:platform"
   },
   "devDependencies": {
     "@types/node": "catalog:",

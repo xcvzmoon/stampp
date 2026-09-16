@@ -1,10 +1,16 @@
 import type { ApiError } from '@stampp/shared';
-import { defineHandler, HTTPError } from 'nitro';
+import { defineHandler, HTTPError, type H3Event } from 'nitro';
 import { v7 as uuidv7 } from 'uuid';
 import { buildApiError, mapErrorCodeToStatus } from '../utils/errors.ts';
 
+const requestIds = new WeakMap<object, string>();
+
 export function resolveRequestId(headers: Headers): string {
   return headers.get('x-request-id') ?? uuidv7();
+}
+
+export function readEventRequestId(event: H3Event): string {
+  return requestIds.get(event) ?? 'unknown';
 }
 
 export function toApiError(
@@ -22,6 +28,6 @@ export function toApiError(
 
 export default defineHandler((event) => {
   const requestId = resolveRequestId(event.req.headers);
-  event.context.requestId = requestId;
+  requestIds.set(event, requestId);
   event.res.headers.set('x-request-id', requestId);
 });
