@@ -2,6 +2,8 @@ import { getTableConfig, pgTable, uuid } from 'drizzle-orm/pg-core';
 import { describe, expect, it } from 'vite-plus/test';
 import {
   TIMESTAMP_CONFIG,
+  generateAuthTimestamps,
+  generateTextId,
   generateTimestamps,
   generateTimestampsWithAudit,
   generateUuid,
@@ -31,6 +33,40 @@ describe('TIMESTAMP_CONFIG', () => {
       precision: 3,
       withTimezone: true,
     });
+  });
+});
+
+describe('generateTextId', () => {
+  it('builds a text primary key', () => {
+    const table = pgTable('text_pk_table', {
+      id: generateTextId(),
+    });
+    const column = requireColumn(getTableConfig(table).columns, 'id');
+    expect(column.columnType).toBe('PgText');
+    expect(column.primary).toBe(true);
+    expect(column.notNull).toBe(true);
+  });
+});
+
+describe('generateAuthTimestamps', () => {
+  it('exposes created_at and updated_at without deleted_at', () => {
+    const table = pgTable('auth_timestamps_table', {
+      id: generateTextId(),
+      ...generateAuthTimestamps(),
+    });
+    const names = columnNames(getTableConfig(table).columns);
+    expect(names).toEqual(expect.arrayContaining(['created_at', 'updated_at']));
+    expect(names).not.toContain('deleted_at');
+  });
+
+  it('marks both timestamps required', () => {
+    const table = pgTable('auth_timestamps_nullability', {
+      id: generateTextId(),
+      ...generateAuthTimestamps(),
+    });
+    const columns = getTableConfig(table).columns;
+    expect(requireColumn(columns, 'created_at').notNull).toBe(true);
+    expect(requireColumn(columns, 'updated_at').notNull).toBe(true);
   });
 });
 
