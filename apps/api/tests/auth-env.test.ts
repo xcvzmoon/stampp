@@ -76,6 +76,12 @@ describe('resolveMailerEnv', () => {
     });
   });
 
+  it('accepts numeric SMTP_PORT from typed ENV', () => {
+    expect(
+      resolveMailerEnv({ MAIL_MODE: 'smtp', SMTP_HOST: 'mailpit', SMTP_PORT: 1025 }).smtpPort,
+    ).toBe(1025);
+  });
+
   it('treats unknown MAIL_MODE as mock', () => {
     expect(resolveMailerEnv({ MAIL_MODE: 'sendgrid' }).mode).toBe('mock');
   });
