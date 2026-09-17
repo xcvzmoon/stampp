@@ -13,9 +13,9 @@ import { projects, tasks, timeEntries } from '@stampp/database';
 import { ERROR_CODES } from '@stampp/shared';
 import { and, asc, eq, gt, gte, isNull, lte, or } from 'drizzle-orm';
 import * as v from 'valibot';
-import { toApiError } from '../middleware/request-id.ts';
-import { recordAudit } from './audit.ts';
-import { addCalendarDays, calendarDateInTimezone } from './week.ts';
+import { toApiError } from '~/server/middleware/request-id.ts';
+import { recordAudit } from '~/server/utils/audit.ts';
+import { addCalendarDays, calendarDateInTimezone } from '~/server/utils/week.ts';
 
 type ListTimeEntriesOptions = TimeEntryListQuery & { limit: number };
 
@@ -219,7 +219,7 @@ export async function startTimer(
     if (!entry) {
       throw toApiError(ERROR_CODES.INTERNAL, 'Failed to start timer', requestId);
     }
-    await recordAudit(ctx, {
+    await recordAudit(ctx, requestId, {
       action: 'time_entry.started',
       entityType: 'time_entry',
       entityId: entry.id,
@@ -258,7 +258,7 @@ export async function stopTimer(
       .returning();
     const entry = rows[0];
     if (!entry) throw notFound(requestId);
-    await recordAudit(ctx, {
+    await recordAudit(ctx, requestId, {
       action: 'time_entry.stopped',
       entityType: 'time_entry',
       entityId: entry.id,
@@ -309,7 +309,7 @@ export async function addManualTime(
     if (!entry) {
       throw toApiError(ERROR_CODES.INTERNAL, 'Failed to add time entry', requestId);
     }
-    await recordAudit(ctx, {
+    await recordAudit(ctx, requestId, {
       action: 'time_entry.created',
       entityType: 'time_entry',
       entityId: entry.id,
@@ -424,7 +424,7 @@ export async function updateTimeEntry(
       .returning();
     const entry = rows[0];
     if (!entry) throw notFound(requestId);
-    await recordAudit(ctx, {
+    await recordAudit(ctx, requestId, {
       action: 'time_entry.updated',
       entityType: 'time_entry',
       entityId: entry.id,
@@ -594,7 +594,7 @@ export async function copyPreviousWeek(
     .returning();
   await Promise.all(
     inserted.map((entry) =>
-      recordAudit(ctx, {
+      recordAudit(ctx, requestId, {
         action: 'time_entry.created',
         entityType: 'time_entry',
         entityId: entry.id,
@@ -625,7 +625,7 @@ export async function removeTimeEntry(
     )
     .returning({ id: timeEntries.id });
   if (!rows[0]) throw notFound(requestId);
-  await recordAudit(ctx, {
+  await recordAudit(ctx, requestId, {
     action: 'time_entry.deleted',
     entityType: 'time_entry',
     entityId: entryId,

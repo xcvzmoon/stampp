@@ -11,8 +11,8 @@ import {
   toClientDto,
   toProjectDto,
   toTaskDto,
-} from '../server/utils/catalog.ts';
-import { mapErrorCodeToStatus } from '../server/utils/errors.ts';
+} from '~/server/utils/catalog.ts';
+import { mapErrorCodeToStatus } from '~/server/utils/errors.ts';
 
 const requestId = 'req_1';
 

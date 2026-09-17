@@ -1,12 +1,7 @@
 import { defineHandler } from 'nitro';
-import {
-  catalogSchemas,
-  getRequestId,
-  parseBody,
-  readJsonBody,
-} from '../../../../../utils/catalog.ts';
-import { updateClient } from '../../../../../utils/catalogService.ts';
-import { requireParam, requireWorkspace } from '../../../../../utils/workspaceAccess.ts';
+import { catalogSchemas, getRequestId, parseBody, readJsonBody } from '~/server/utils/catalog.ts';
+import { updateClient } from '~/server/utils/catalogService.ts';
+import { requireParam, requireWorkspace } from '~/server/utils/workspaceAccess.ts';
 
 export default defineHandler(async (event) => {
   const requestId = getRequestId(event);

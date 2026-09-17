@@ -1,7 +1,7 @@
 import { defineHandler } from 'nitro';
-import { getRequestId, parseListQuery } from '../../../../../../utils/catalog.ts';
-import { listProjectTasks } from '../../../../../../utils/catalogService.ts';
-import { requireParam, requireWorkspace } from '../../../../../../utils/workspaceAccess.ts';
+import { getRequestId, parseListQuery } from '~/server/utils/catalog.ts';
+import { listProjectTasks } from '~/server/utils/catalogService.ts';
+import { requireParam, requireWorkspace } from '~/server/utils/workspaceAccess.ts';
 
 export default defineHandler(async (event) => {
   const requestId = getRequestId(event);

@@ -1,64 +1,85 @@
 # Stampp
 
-Open-source work-time platform. No seat pricing, no feature gates, fully self-hostable.
+Stampp is a self-hosted time-tracking app for teams. It covers workspaces, clients, projects, tasks, timers, weekly timesheets, reports, CSV downloads, and workspace exports.
 
-Track billable project time, manage clients and projects, and keep everything on infrastructure you control.
+The project is under active development. The repository has not published a stable release yet.
 
-## Stack
+## Run the full stack with Docker
 
-| Layer         | Choice                                        |
-| ------------- | --------------------------------------------- |
-| Web           | Nuxt 4 + Nuxt UI                              |
-| API           | Nitro v3                                      |
-| Auth          | Better Auth (workspace = organization)        |
-| Database      | PostgreSQL + Drizzle ORM 1.0 RC + postgres.js |
-| Cache / queue | Valkey + BullMQ                               |
-| Mail          | UnEmail transport (mock / SMTP)               |
-| Env           | Varlock `.env.schema`                         |
-| IDs           | UUID v7 with entity prefixes                  |
+You need Docker with Compose v2.
 
-## Monorepo layout
-
-```text
-apps/web          Nuxt product UI
-apps/api          Nitro HTTP API + health endpoints
-packages/domain   Pure money/duration/permissions
-packages/shared   Valibot schemas + API error codes
-packages/database Drizzle schemas, scoped db, migrations
-packages/access   WorkspaceAccess seam
-packages/mailer   MailDispatch + UnEmail
-deploy/docker     Compose stack (Postgres, Valkey, optional Mailpit)
+```bash
+cp deploy/docker/.env.example deploy/docker/.env
 ```
 
-## Quickstart
+Replace both placeholder secrets in `deploy/docker/.env`. You can generate them with:
 
-Requirements: Node 24+, pnpm (via Vite+), Docker.
+```bash
+openssl rand -base64 32
+```
+
+Start Stampp:
+
+```bash
+docker compose --env-file deploy/docker/.env -f deploy/docker/compose.yaml up --build -d
+docker compose --env-file deploy/docker/.env -f deploy/docker/compose.yaml ps
+```
+
+Open `http://localhost:3000`. The API listens on `http://localhost:3001`.
+
+Compose waits for PostgreSQL and Valkey, applies pending migrations once, starts the API after `/readyz` succeeds, and then starts the web app. Migration checksums stop startup if an applied migration was edited.
+
+To inspect startup failures:
+
+```bash
+docker compose --env-file deploy/docker/.env -f deploy/docker/compose.yaml logs migrate api web
+```
+
+To stop the stack while keeping its data:
+
+```bash
+docker compose --env-file deploy/docker/.env -f deploy/docker/compose.yaml down
+```
+
+Add Mailpit when testing SMTP delivery:
+
+```bash
+docker compose --env-file deploy/docker/.env -f deploy/docker/compose.yaml --profile mail up --build -d
+```
+
+Set `MAIL_MODE=smtp` in `deploy/docker/.env`, then open `http://localhost:8025`.
+
+For an internet-facing deployment, terminate TLS at a reverse proxy, set `APP_ENV=production`, and set `PUBLIC_APP_URL` and `PUBLIC_API_URL` to their public HTTPS origins. Keep PostgreSQL and Valkey bound to loopback or remove their host ports when the proxy and app share a private container network.
+
+## Develop locally
+
+You need Docker, Vite+, and the runtime selected by `package.json`. Vite+ manages the pinned Node and package-manager versions.
 
 ```bash
 vp install
-cp apps/api/.env.example apps/api/.env   # after you create local values
-vp run services:up
-vp run env:load
-vp run api
-vp run web
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
+cp deploy/docker/.env.example deploy/docker/.env
 ```
 
-Service stack:
+Replace the placeholder secrets and use the same database password in `apps/api/.env`'s `DATABASE_URL`. Then start PostgreSQL, Valkey, and the migrations:
 
 ```bash
-# Postgres + Valkey
-pnpm services:up
-
-# Add Mailpit on :8025 when you need a mail catcher
-pnpm services:mail
+docker compose --env-file deploy/docker/.env -f deploy/docker/compose.yaml up -d db valkey migrate
 ```
 
-Health endpoints:
+Run the API and web app in separate terminals:
 
-- `GET /healthz` — process liveness
-- `GET /readyz` — Postgres + Valkey readiness (503 when degraded)
+```bash
+vp run api dev
+vp run web dev
+```
 
-## Development
+The API exposes `GET /healthz` for process liveness and `GET /readyz` for PostgreSQL and Valkey readiness.
+
+## Verify changes
+
+Run the same checks used by CI, in this order:
 
 ```bash
 vp run check
@@ -67,10 +88,25 @@ vp run test
 vp run build
 ```
 
-Env is declared in committed `.env.schema` files (Varlock). Secrets live in gitignored `.env` / `.env.local` only.
+## Repository layout
 
-## Product docs
+| Path                | Purpose                                      |
+| ------------------- | -------------------------------------------- |
+| `apps/web`          | Nuxt user interface                          |
+| `apps/api`          | Nitro API and health endpoints               |
+| `packages/access`   | Workspace authorization boundary             |
+| `packages/database` | Drizzle schemas and migrations               |
+| `packages/domain`   | Duration, money, and permission rules        |
+| `packages/mailer`   | Transactional mail dispatch                  |
+| `packages/shared`   | Shared validation schemas and API contracts  |
+| `deploy/docker`     | Production images and Docker Compose service |
 
-- `PLAN.md` — architecture, milestones, locked decisions
-- `CONTEXT.md` — domain glossary
-- `TARGET.md` — full feature target (long-term)
+`PLAN.md` records delivery milestones and architecture decisions. `CONTEXT.md` defines the domain language, and `TARGET.md` describes the long-term product scope.
+
+## Security
+
+Report vulnerabilities through [GitHub Security Advisories](https://github.com/xcvzmoon/stampp/security/advisories/new). Do not include secrets or customer data in a public issue.
+
+## License
+
+No license has been granted yet. The source is visible, but redistribution and reuse remain reserved until a license file is added.

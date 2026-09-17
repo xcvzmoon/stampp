@@ -9,7 +9,7 @@
     "preview": "varlock run -- nuxt preview",
     "postinstall": "nuxt prepare",
     "typecheck": "nuxt typecheck",
-    "start": "varlock run -- node ./output/server/index.mjs",
+    "start": "varlock run -- node ./.output/server/index.mjs",
     "env:load": "varlock load"
   },
   "dependencies": {

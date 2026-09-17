@@ -1,12 +1,12 @@
 import { defineHandler } from 'nitro';
-import { getRequestId } from '../../../../../utils/catalog.ts';
+import { getRequestId } from '~/server/utils/catalog.ts';
 import {
   buildWeeklyReport,
   loadReportRows,
   parseReportQuery,
   weeklyReportCsv,
-} from '../../../../../utils/reports.ts';
-import { requireWorkspace } from '../../../../../utils/workspaceAccess.ts';
+} from '~/server/utils/reports.ts';
+import { requireWorkspace } from '~/server/utils/workspaceAccess.ts';
 
 export default defineHandler(async (event) => {
   const requestId = getRequestId(event);

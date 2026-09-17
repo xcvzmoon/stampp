@@ -1,6 +1,12 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite-plus';
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '~': fileURLToPath(new URL('./apps/api', import.meta.url)),
+    },
+  },
   staged: {
     '*.{ts,vue,css,json,md,yaml}': 'vp fmt',
     '*.{ts,vue}': 'vp lint',

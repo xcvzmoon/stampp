@@ -1,0 +1,11 @@
+.git
+.github
+.nuxt
+.output
+.vite-hooks
+node_modules
+**/.env
+**/.env.*
+!**/.env.schema
+!**/.env.example
+*.log

@@ -14,7 +14,7 @@ import {
   startOfCalendarDate,
   summaryReportCsv,
   weeklyReportCsv,
-} from '../server/utils/reports.ts';
+} from '~/server/utils/reports.ts';
 
 const baseQuery: ReportQuery = {
   from: '2026-10-25',

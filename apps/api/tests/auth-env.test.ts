@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test';
-import { resolveAuthEnv } from '../server/utils/auth.ts';
-import { resolveMailerEnv } from '../server/utils/mailer.ts';
+import { resolveAuthEnv } from '~/server/utils/auth.ts';
+import { resolveMailerEnv } from '~/server/utils/mailer.ts';
 
 const longSecret = 'a'.repeat(32);
 

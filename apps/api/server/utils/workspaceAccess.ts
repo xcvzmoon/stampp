@@ -5,9 +5,9 @@ import { enterWorkspace, WorkspaceAccessError } from '@stampp/access';
 import { members } from '@stampp/database';
 import { ERROR_CODES } from '@stampp/shared';
 import { and, eq } from 'drizzle-orm';
-import { readEventRequestId, toApiError } from '../middleware/request-id.ts';
-import { getAuth } from './auth.ts';
-import { getDb } from './db.ts';
+import { readEventRequestId, toApiError } from '~/server/middleware/request-id.ts';
+import { getAuth } from '~/server/utils/auth.ts';
+import { getDb } from '~/server/utils/db.ts';
 
 function toStamppRole(role: string): StamppRole | null {
   switch (role) {

@@ -20,9 +20,9 @@
     "api": "vp run --filter api",
     "web": "vp run --filter web",
     "env:load": "varlock load --path apps/api && varlock load --path apps/web",
-    "services:up": "docker compose -f deploy/docker/compose.yaml up -d",
-    "services:down": "docker compose -f deploy/docker/compose.yaml down",
-    "services:mail": "docker compose -f deploy/docker/compose.yaml --profile mail up -d"
+    "services:up": "docker compose --env-file deploy/docker/.env -f deploy/docker/compose.yaml up -d",
+    "services:down": "docker compose --env-file deploy/docker/.env -f deploy/docker/compose.yaml down",
+    "services:mail": "docker compose --env-file deploy/docker/.env -f deploy/docker/compose.yaml --profile mail up -d"
   },
   "devDependencies": {
     "@oxlint/plugins": "catalog:",
