@@ -56,10 +56,10 @@ Use the actual `changelog` value (default `CHANGELOG.md`, or a custom path). Do 
 ### Minimal npm package
 
 ```ts
-import { defineConfig } from "genbumppush";
+import { defineConfig } from 'genbumppush';
 
 export default defineConfig({
-  files: ["package.json"],
+  files: ['package.json'],
 });
 ```
 
@@ -67,7 +67,7 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  files: ["package.json", "package-lock.json"],
+  files: ['package.json', 'package-lock.json'],
 });
 ```
 
@@ -78,7 +78,7 @@ export default defineConfig({
 ```ts
 export default defineConfig({
   recursive: true,
-  files: ["package.json", "package-lock.json"],
+  files: ['package.json', 'package-lock.json'],
 });
 ```
 
@@ -89,10 +89,10 @@ Recursive discovery walks nested directories and finds every `package.json`, ign
 ```ts
 export default defineConfig({
   files: [
-    "package.json",
-    "src-tauri/tauri.conf.json",
-    "src-tauri/Cargo.toml",
-    "src-tauri/Cargo.lock",
+    'package.json',
+    'src-tauri/tauri.conf.json',
+    'src-tauri/Cargo.toml',
+    'src-tauri/Cargo.lock',
   ],
 });
 ```
@@ -103,7 +103,7 @@ Only the application Cargo package and its matching `Cargo.lock` entry are rewri
 
 ```ts
 export default defineConfig({
-  files: ["package.json", "VERSION"],
+  files: ['package.json', 'VERSION'],
 });
 ```
 
@@ -121,7 +121,7 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  release: "patch",
+  release: 'patch',
   git: { sign: true },
 });
 ```
@@ -183,7 +183,7 @@ export default defineConfig({
     // host: 'github.com',           // or GHES host → https://HOST/api/v3
     // repo: 'owner/name',
     // tokenEnv: 'MY_GITHUB_TOKEN',  // disables fallback chain
-    releaseName: "v{{version}}",
+    releaseName: 'v{{version}}',
   },
 });
 ```
@@ -197,9 +197,9 @@ export default defineConfig({
   git: { push: true },
   gitlab: {
     enabled: true,
-    host: "https://gitlab.com",
-    project: "group/project",
-    releaseName: "v{{version}}",
+    host: 'https://gitlab.com',
+    project: 'group/project',
+    releaseName: 'v{{version}}',
   },
 });
 ```
@@ -212,12 +212,12 @@ GitLab Releases require the tag to already exist on the GitLab project. When `gi
 
 ```ts
 export default defineConfig({
-  git: { push: true, remote: "origin" },
+  git: { push: true, remote: 'origin' },
   github: { enabled: true },
   gitlab: {
     enabled: true,
-    project: "group/project",
-    remote: "gitlab",
+    project: 'group/project',
+    remote: 'gitlab',
   },
 });
 ```
@@ -229,8 +229,8 @@ export default defineConfig({
 ```ts
 export default defineConfig({
   hooks: {
-    before: ["vp check", "vp test"], // string or string[]
-    after: "echo Release complete",
+    before: ['vp check', 'vp test'], // string or string[]
+    after: 'echo Release complete',
   },
 });
 ```

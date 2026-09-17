@@ -41,7 +41,7 @@ npm install --save-dev genbumppush
 2. Create `genbumppush.config.ts` (or put the same object under `"genbumppush"` in `package.json`):
 
 ```ts
-import { defineConfig } from "genbumppush";
+import { defineConfig } from 'genbumppush';
 
 export default defineConfig({
   // release: 'patch',          // omit for Conventional Commits detection
@@ -51,7 +51,7 @@ export default defineConfig({
   // recursive: false,
   // files: ['package.json'],
   git: {
-    remote: "origin",
+    remote: 'origin',
     push: true,
     // sign: false,
     // requireClean: true,
@@ -63,6 +63,7 @@ export default defineConfig({
   // hooks: { before: ['npm run check'], after: 'echo done' },
   // github: { enabled: true },
   // gitlab: { enabled: true, project: 'group/name' },
+  // docker: { enabled: true, source: 'acme/app:build', image: 'acme/app' },
 });
 ```
 
@@ -106,12 +107,12 @@ npx genbumppush preminor --preid beta --yes
 npx genbumppush prerelease --preid beta --yes
 ```
 
-Other useful flags: `--cwd <path>`, `--config <path>`, `--retry-github <tag>`, `--retry-gitlab <tag>`, `-y`. Retry flags cannot combine with a release type or each other.
+Other useful flags: `--cwd <path>`, `--config <path>`, `--retry-github <tag>`, `--retry-gitlab <tag>`, `--retry-docker <tag>`, `--no-docker`, `-y`. Retry flags cannot combine with a release type or each other.
 
 Programmatic API (same package):
 
 ```ts
-import { runRelease, loadReleaseConfig, defineConfig } from "genbumppush";
+import { runRelease, loadReleaseConfig, defineConfig } from 'genbumppush';
 
 const result = await runRelease({
   cwd: process.cwd(),
@@ -135,6 +136,7 @@ Map `ReleaseError.code` printed as `[CODE] message`:
 | `HOOK_FAILED`                                     | before/after hook non-zero                 | Fix the failing command                                              |
 | `RELEASE_PUBLISHED_GITHUB_FAILED`                 | Git push OK, GitHub release failed         | Fix token/repo, then `genbumppush --retry-github <tag>`              |
 | `RELEASE_PUBLISHED_GITLAB_FAILED`                 | Git push OK, GitLab release failed         | Fix token/project, then `genbumppush --retry-gitlab <tag>`           |
+| `RELEASE_PUBLISHED_DOCKER_FAILED`                 | Git push OK, Docker publication failed     | Fix Docker/registry, then `genbumppush --retry-docker <tag>`         |
 | `GITHUB_RELEASE_FAILED` / `GITLAB_RELEASE_FAILED` | Provider not ready                         | Enable provider, set token/project, or disable and use tag-only flow |
 | `GIT_COMMAND_FAILED`                              | Underlying git failed                      | Inspect `git status`, `git log`, `git show`                          |
 | `CANCELLED`                                       | User declined confirm                      | Rerun when ready                                                     |

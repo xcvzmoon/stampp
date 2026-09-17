@@ -69,7 +69,7 @@ Notes:
 name: release
 on:
   push:
-    tags: ["v*"]
+    tags: ['v*']
 
 jobs:
   github-release:
@@ -95,7 +95,7 @@ jobs:
 name: publish
 on:
   push:
-    tags: ["v*"]
+    tags: ['v*']
 
 jobs:
   npm:
@@ -134,14 +134,14 @@ Tag-driven release job example (from README):
 release:
   image: node:20
   rules:
-    - if: "$CI_COMMIT_TAG =~ /^v/"
+    - if: '$CI_COMMIT_TAG =~ /^v/'
   script:
     - npm ci
     - npx genbumppush --dry-run --yes
     - npm run build
   release:
-    tag_name: "$CI_COMMIT_TAG"
-    name: "Release $CI_COMMIT_TAG"
+    tag_name: '$CI_COMMIT_TAG'
+    name: 'Release $CI_COMMIT_TAG'
 ```
 
 For genbumppush-created GitLab releases (API) instead of the `release:` keyword:
