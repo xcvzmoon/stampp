@@ -21,6 +21,11 @@
       to: `/w/${workspaceId.value}/clients`,
       active: route.path.startsWith(`/w/${workspaceId.value}/clients`),
     },
+    {
+      label: 'Reports',
+      to: `/w/${workspaceId.value}/reports`,
+      active: route.path.startsWith(`/w/${workspaceId.value}/reports`),
+    },
   ]);
 
   async function signOut() {
