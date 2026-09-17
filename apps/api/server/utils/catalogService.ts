@@ -14,15 +14,15 @@ import type {
 import { clients, projects, tasks } from '@stampp/database';
 import { ERROR_CODES } from '@stampp/shared';
 import { and, asc, eq, gt, ilike, isNull } from 'drizzle-orm';
-import { toApiError } from '../middleware/request-id.ts';
-import { recordAudit } from './audit.ts';
+import { toApiError } from '~/server/middleware/request-id.ts';
+import { recordAudit } from '~/server/utils/audit.ts';
 import {
   hasAtLeastOneField,
   isUniqueViolation,
   toClientDto,
   toProjectDto,
   toTaskDto,
-} from './catalog.ts';
+} from '~/server/utils/catalog.ts';
 
 type ListOptions = {
   limit: number;
@@ -131,7 +131,7 @@ export async function createClient(
     if (!row) {
       throw toApiError(ERROR_CODES.INTERNAL, 'Failed to create client', requestId);
     }
-    await recordAudit(ctx, {
+    await recordAudit(ctx, requestId, {
       action: 'client.created',
       entityType: 'client',
       entityId: row.id,
@@ -180,7 +180,7 @@ export async function updateClient(
     throw notFound(requestId, 'Client');
   }
 
-  await recordAudit(ctx, {
+  await recordAudit(ctx, requestId, {
     action: 'client.updated',
     entityType: 'client',
     entityId: row.id,
@@ -210,7 +210,7 @@ export async function archiveClient(
   if (!updated[0]) {
     throw notFound(requestId, 'Client');
   }
-  await recordAudit(ctx, {
+  await recordAudit(ctx, requestId, {
     action: 'client.archived',
     entityType: 'client',
     entityId: clientId,
@@ -321,7 +321,7 @@ export async function createProject(
     if (!row) {
       throw toApiError(ERROR_CODES.INTERNAL, 'Failed to create project', requestId);
     }
-    await recordAudit(ctx, {
+    await recordAudit(ctx, requestId, {
       action: 'project.created',
       entityType: 'project',
       entityId: row.id,
@@ -376,7 +376,7 @@ export async function updateProject(
     if (!row) {
       throw notFound(requestId, 'Project');
     }
-    await recordAudit(ctx, {
+    await recordAudit(ctx, requestId, {
       action: 'project.updated',
       entityType: 'project',
       entityId: row.id,
@@ -412,7 +412,7 @@ export async function archiveProject(
   if (!updated[0]) {
     throw notFound(requestId, 'Project');
   }
-  await recordAudit(ctx, {
+  await recordAudit(ctx, requestId, {
     action: 'project.archived',
     entityType: 'project',
     entityId: projectId,
@@ -493,7 +493,7 @@ export async function createTask(
     if (!row) {
       throw toApiError(ERROR_CODES.INTERNAL, 'Failed to create task', requestId);
     }
-    await recordAudit(ctx, {
+    await recordAudit(ctx, requestId, {
       action: 'task.created',
       entityType: 'task',
       entityId: row.id,
@@ -559,7 +559,7 @@ export async function updateTask(
     if (!row) {
       throw notFound(requestId, 'Task');
     }
-    await recordAudit(ctx, {
+    await recordAudit(ctx, requestId, {
       action: 'task.updated',
       entityType: 'task',
       entityId: row.id,
@@ -591,7 +591,7 @@ export async function archiveTask(
   if (!updated[0]) {
     throw notFound(requestId, 'Task');
   }
-  await recordAudit(ctx, {
+  await recordAudit(ctx, requestId, {
     action: 'task.archived',
     entityType: 'task',
     entityId: taskId,
