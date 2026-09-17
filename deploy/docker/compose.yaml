@@ -1,12 +1,15 @@
+name: stampp
+
 services:
   db:
     image: postgres:16-alpine
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: stampp
-      POSTGRES_PASSWORD: stampp
       POSTGRES_DB: stampp
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in deploy/docker/.env}
+      POSTGRES_USER: stampp
     ports:
-      - '5432:5432'
+      - '127.0.0.1:5432:5432'
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -14,12 +17,31 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+      start_period: 5s
+
+  migrate:
+    image: postgres:16-alpine
+    restart: 'no'
+    environment:
+      PGDATABASE: stampp
+      PGHOST: db
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in deploy/docker/.env}
+      PGPORT: 5432
+      PGUSER: stampp
+    volumes:
+      - ../../packages/database/migrations:/migrations:ro
+      - ./migrate.sh:/migrate.sh:ro
+    command: ['/bin/sh', '/migrate.sh']
+    depends_on:
+      db:
+        condition: service_healthy
 
   valkey:
     image: valkey/valkey:8
+    restart: unless-stopped
     command: ['valkey-server', '--appendonly', 'yes']
     ports:
-      - '6379:6379'
+      - '127.0.0.1:6379:6379'
     volumes:
       - valkey-data:/data
     healthcheck:
@@ -27,13 +49,91 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+      start_period: 5s
+
+  api:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/api.Dockerfile
+    restart: unless-stopped
+    init: true
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET in deploy/docker/.env}
+      BETTER_AUTH_URL: ${PUBLIC_API_URL:-http://localhost:3001}
+      DATABASE_URL: postgres://stampp:${POSTGRES_PASSWORD}@db:5432/stampp
+      MAIL_FROM: ${MAIL_FROM:-Stampp <hello@localhost>}
+      MAIL_MODE: ${MAIL_MODE:-mock}
+      PUBLIC_APP_URL: ${PUBLIC_APP_URL:-http://localhost:3000}
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      VALKEY_URL: redis://valkey:6379
+    ports:
+      - '3001:3001'
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3001/readyz').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      valkey:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/web.Dockerfile
+    restart: unless-stopped
+    init: true
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    environment:
+      NUXT_PUBLIC_API_BASE_URL: ${PUBLIC_API_URL:-http://localhost:3001}/api/v1
+      NUXT_PUBLIC_AUTH_BASE_URL: ${PUBLIC_API_URL:-http://localhost:3001}/api/auth
+      PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:3001}
+      PUBLIC_APP_URL: ${PUBLIC_APP_URL:-http://localhost:3000}
+    ports:
+      - '3000:3000'
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    depends_on:
+      api:
+        condition: service_healthy
 
   mailpit:
     profiles: ['mail']
-    image: axllent/mailpit:latest
+    image: axllent/mailpit:v1.27
+    restart: unless-stopped
     ports:
-      - '1025:1025'
-      - '8025:8025'
+      - '127.0.0.1:1025:1025'
+      - '127.0.0.1:8025:8025'
 
 volumes:
   postgres-data:
