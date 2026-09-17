@@ -6,7 +6,7 @@
     if (workspaceId.value) {
       await client.organization.setActive({ organizationId: workspaceId.value });
     }
-    await navigateTo(`/w/${workspaceId.value}/projects`);
+    await navigateTo(`/w/${workspaceId.value}/time`);
   });
 </script>
 

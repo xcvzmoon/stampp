@@ -7,6 +7,11 @@
 
   const navItems = computed(() => [
     {
+      label: 'Time',
+      to: `/w/${workspaceId.value}/time`,
+      active: route.path.startsWith(`/w/${workspaceId.value}/time`),
+    },
+    {
       label: 'Projects',
       to: `/w/${workspaceId.value}/projects`,
       active: route.path.startsWith(`/w/${workspaceId.value}/projects`),
@@ -61,6 +66,8 @@
         </div>
       </div>
     </header>
+
+    <GlobalTimer :workspace-id="workspaceId" />
 
     <main class="mx-auto w-full max-w-6xl px-4 py-8">
       <NuxtPage />
