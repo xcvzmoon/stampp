@@ -8,6 +8,7 @@ export default defineConfig({
     },
   },
   staged: {
+    '*': 'pnpm exec varlock scan --staged',
     '*.{ts,vue,css,json,md,yaml}': 'vp fmt',
     '*.{ts,vue}': 'vp lint',
   },
