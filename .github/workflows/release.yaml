@@ -37,10 +37,24 @@ jobs:
       - name: Setup project
         uses: ./.github/actions/setup-project
 
-      - name: Load env schemas
+      - name: Validate API env schema
+        uses: dmno-dev/varlock-action@v1.0.1
+        with:
+          working-directory: apps/api
+          show-summary: 'true'
+          fail-on-error: 'true'
+
+      - name: Validate web env schema
+        uses: dmno-dev/varlock-action@v1.0.1
+        with:
+          working-directory: apps/web
+          show-summary: 'true'
+          fail-on-error: 'true'
+
+      - name: Audit schema and code drift
         run: |
-          pnpm exec varlock load --path apps/api
-          pnpm exec varlock load --path apps/web
+          pnpm exec varlock audit --path apps/api
+          pnpm exec varlock audit --path apps/web
 
       - name: Verify release version
         env:

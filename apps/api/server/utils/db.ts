@@ -1,5 +1,6 @@
 import type { Db } from '@stampp/database';
 import { createDb } from '@stampp/database';
+import { ENV } from '~/server/utils/env.ts';
 
 let db: Db | undefined;
 
@@ -8,7 +9,7 @@ export function getDb(): Db {
     return db;
   }
 
-  const connectionString = process.env.DATABASE_URL;
+  const connectionString = ENV.DATABASE_URL;
   if (!connectionString) {
     throw new Error('DATABASE_URL is required');
   }

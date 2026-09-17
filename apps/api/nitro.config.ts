@@ -1,6 +1,9 @@
+// oxlint-disable-next-line import/no-unassigned-import
+import 'varlock/auto-load';
 import { defineConfig } from 'nitro';
+import { ENV } from './env.ts';
 
-const appOrigin = process.env.PUBLIC_APP_URL ?? 'http://localhost:3000';
+const appOrigin = ENV.PUBLIC_APP_URL ?? 'http://localhost:3000';
 
 export default defineConfig({
   alias: {
