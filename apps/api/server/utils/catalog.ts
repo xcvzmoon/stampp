@@ -21,7 +21,7 @@ import {
   updateTaskInputSchema,
 } from '@stampp/shared';
 import * as v from 'valibot';
-import { readEventRequestId, toApiError } from '../middleware/request-id.ts';
+import { readEventRequestId, toApiError } from '~/server/middleware/request-id.ts';
 
 export type JsonValue =
   | string

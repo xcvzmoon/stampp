@@ -1,8 +1,8 @@
 import { defineHandler } from 'nitro';
-import { getRequestId, parseBody, readJsonBody } from '../../../../../utils/catalog.ts';
-import { timeSchemas } from '../../../../../utils/time.ts';
-import { startTimer } from '../../../../../utils/timeTracking.ts';
-import { requireWorkspace } from '../../../../../utils/workspaceAccess.ts';
+import { getRequestId, parseBody, readJsonBody } from '~/server/utils/catalog.ts';
+import { timeSchemas } from '~/server/utils/time.ts';
+import { startTimer } from '~/server/utils/timeTracking.ts';
+import { requireWorkspace } from '~/server/utils/workspaceAccess.ts';
 
 export default defineHandler(async (event) => {
   const requestId = getRequestId(event);

@@ -11,8 +11,8 @@ import {
 } from '@stampp/database';
 import { betterAuth } from 'better-auth';
 import { organization } from 'better-auth/plugins';
-import { getDb } from './db.ts';
-import { getMailDispatch } from './mailer.ts';
+import { getDb } from '~/server/utils/db.ts';
+import { getMailDispatch } from '~/server/utils/mailer.ts';
 
 const schema = {
   users,

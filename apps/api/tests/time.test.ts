@@ -3,10 +3,10 @@ import { createTestDb, timeEntries } from '@stampp/database';
 import { ERROR_CODES } from '@stampp/shared';
 import { HTTPError } from 'nitro';
 import { describe, expect, it } from 'vite-plus/test';
-import { mapErrorCodeToStatus } from '../server/utils/errors.ts';
-import { parseTimeEntryListQuery, parseWeeklyTimeQuery } from '../server/utils/time.ts';
-import { buildWeeklyTimeSummary, weeklyTimeScope } from '../server/utils/timeTracking.ts';
-import { calendarDateInTimezone } from '../server/utils/week.ts';
+import { mapErrorCodeToStatus } from '~/server/utils/errors.ts';
+import { parseTimeEntryListQuery, parseWeeklyTimeQuery } from '~/server/utils/time.ts';
+import { buildWeeklyTimeSummary, weeklyTimeScope } from '~/server/utils/timeTracking.ts';
+import { calendarDateInTimezone } from '~/server/utils/week.ts';
 
 const requestId = 'req_time';
 

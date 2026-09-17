@@ -1,5 +1,5 @@
 import { ERROR_CODES } from '@stampp/shared';
-import { toApiError } from '../middleware/request-id.ts';
+import { toApiError } from '~/server/middleware/request-id.ts';
 
 const calendarDateFormatterByTimezone = new Map<string, Intl.DateTimeFormat>();
 

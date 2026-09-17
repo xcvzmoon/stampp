@@ -1,6 +1,6 @@
 import { defineHandler } from 'nitro';
-import { requireWorkspace } from '../../../../utils/workspaceAccess.ts';
-import { exportWorkspace } from '../../../../utils/workspaceExport.ts';
+import { requireWorkspace } from '~/server/utils/workspaceAccess.ts';
+import { exportWorkspace } from '~/server/utils/workspaceExport.ts';
 
 export default defineHandler(async (event) => {
   const ctx = await requireWorkspace(event, 'export:workspace');

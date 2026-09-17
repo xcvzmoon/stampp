@@ -1,7 +1,7 @@
 import type { ApiError } from '@stampp/shared';
 import { defineHandler, HTTPError, type H3Event } from 'nitro';
 import { v7 as uuidv7 } from 'uuid';
-import { buildApiError, mapErrorCodeToStatus } from '../utils/errors.ts';
+import { buildApiError, mapErrorCodeToStatus } from '~/server/utils/errors.ts';
 
 const requestIds = new WeakMap<object, string>();
 
