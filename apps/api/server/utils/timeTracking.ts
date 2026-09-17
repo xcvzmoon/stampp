@@ -6,6 +6,8 @@ import type {
   TimeEntryDto,
   TimeEntryListQuery,
   UpdateTimeEntryInput,
+  WeeklyTimeQuery,
+  WeeklyTimeSummary,
 } from '@stampp/shared';
 import { projects, tasks, timeEntries } from '@stampp/database';
 import { ERROR_CODES } from '@stampp/shared';
@@ -13,8 +15,23 @@ import { and, asc, eq, gt, gte, isNull, lte, or } from 'drizzle-orm';
 import * as v from 'valibot';
 import { toApiError } from '../middleware/request-id.ts';
 import { recordAudit } from './audit.ts';
+import { addCalendarDays, calendarDateInTimezone } from './week.ts';
 
 type ListTimeEntriesOptions = TimeEntryListQuery & { limit: number };
+
+export function weeklyTimeScope(
+  workspaceId: string,
+  userId: string,
+  weekStart: string,
+  weekEnd: string,
+) {
+  return and(
+    eq(timeEntries.workspaceId, workspaceId),
+    eq(timeEntries.userId, userId),
+    gte(timeEntries.workDate, weekStart),
+    lte(timeEntries.workDate, weekEnd),
+  );
+}
 
 const databaseErrorSchema = v.object({
   code: v.optional(v.string()),
@@ -33,6 +50,7 @@ function toTimeEntryDto(row: TimeEntry): TimeEntryDto {
     startAt: row.startAt?.toISOString() ?? null,
     endAt: row.endAt?.toISOString() ?? null,
     durationMinutes: row.durationMinutes,
+    workDate: row.workDate,
     timezone: row.timezone,
     lockedAt: row.lockedAt?.toISOString() ?? null,
     createdAt: row.createdAt.toISOString(),
@@ -181,6 +199,7 @@ export async function startTimer(
   requestId: string,
 ): Promise<TimeEntryDto> {
   const assignment = await resolveAssignment(ctx, input.projectId, input.taskId, requestId);
+  const now = new Date();
   try {
     const rows = await ctx.db.client
       .insert(timeEntries)
@@ -191,7 +210,8 @@ export async function startTimer(
         taskId: assignment.taskId,
         description: input.description ?? '',
         billable: input.billable ?? assignment.defaultBillable,
-        startAt: new Date(),
+        startAt: now,
+        workDate: calendarDateInTimezone(now, input.timezone),
         timezone: input.timezone,
       })
       .returning();
@@ -264,6 +284,9 @@ export async function addManualTime(
   if (startAt && endAt && endAt <= startAt) {
     throw toApiError(ERROR_CODES.BAD_REQUEST, 'End time must be after start time', requestId);
   }
+  const workDate = interval
+    ? calendarDateInTimezone(startAt ?? new Date(), input.timezone)
+    : (input.workDate ?? calendarDateInTimezone(new Date(), input.timezone));
 
   try {
     const rows = await ctx.db.client
@@ -278,6 +301,7 @@ export async function addManualTime(
         startAt,
         endAt,
         durationMinutes: interval ? null : input.durationMinutes,
+        workDate,
         timezone: input.timezone,
       })
       .returning();
@@ -357,6 +381,7 @@ export async function updateTimeEntry(
     input.endAt === undefined ? before.endAt : input.endAt === null ? null : new Date(input.endAt);
   const nextDuration =
     input.durationMinutes === undefined ? before.durationMinutes : input.durationMinutes;
+  const nextTimezone = input.timezone ?? before.timezone;
   const isInterval = nextStartAt !== null && nextDuration === null;
   const isDuration = nextStartAt === null && nextEndAt === null && nextDuration !== null;
   if (!isInterval && !isDuration) {
@@ -381,7 +406,12 @@ export async function updateTimeEntry(
         startAt: nextStartAt,
         endAt: nextEndAt,
         durationMinutes: nextDuration,
-        timezone: input.timezone ?? before.timezone,
+        workDate:
+          input.workDate ??
+          (nextStartAt && (input.startAt !== undefined || input.timezone !== undefined)
+            ? calendarDateInTimezone(nextStartAt, nextTimezone)
+            : before.workDate),
+        timezone: nextTimezone,
       })
       .where(
         and(
@@ -405,6 +435,174 @@ export async function updateTimeEntry(
   } catch (error) {
     return mapConstraintError(error, requestId);
   }
+}
+
+function entryMinutes(entry: TimeEntry, now: Date): number {
+  if (entry.durationMinutes !== null) return entry.durationMinutes;
+  if (!entry.startAt) return 0;
+  const endAt = entry.endAt ?? now;
+  return Math.max(0, Math.round((endAt.getTime() - entry.startAt.getTime()) / 60_000));
+}
+
+/** Returns the current user's entries grouped into one Monday-through-Sunday summary. */
+export async function getWeeklyTimeSummary(
+  ctx: AuthorizedContext,
+  query: WeeklyTimeQuery,
+): Promise<WeeklyTimeSummary> {
+  const weekEnd = addCalendarDays(query.weekStart, 6);
+  const rows = await ctx.db.client
+    .select()
+    .from(timeEntries)
+    .where(weeklyTimeScope(ctx.workspaceId, ctx.userId, query.weekStart, weekEnd))
+    .orderBy(asc(timeEntries.workDate), asc(timeEntries.id));
+
+  return buildWeeklyTimeSummary(rows, query, new Date());
+}
+
+export function buildWeeklyTimeSummary(
+  rows: TimeEntry[],
+  query: WeeklyTimeQuery,
+  now: Date,
+): WeeklyTimeSummary {
+  const weekEnd = addCalendarDays(query.weekStart, 6);
+  const dates = Array.from({ length: 7 }, (_value, index) =>
+    addCalendarDays(query.weekStart, index),
+  );
+  const dayIndex = new Map<string, number>();
+  for (const [index, date] of dates.entries()) dayIndex.set(date, index);
+  const dailyMinutes = Array.from({ length: 7 }, () => 0);
+  const grouped = new Map<
+    string,
+    { projectId: string | null; entries: TimeEntryDto[]; dailyMinutes: number[] }
+  >();
+  for (const row of rows) {
+    const index = dayIndex.get(row.workDate);
+    if (index === undefined) continue;
+    const minutes = entryMinutes(row, now);
+    dailyMinutes[index] = (dailyMinutes[index] ?? 0) + minutes;
+    const key = row.projectId ?? '';
+    let project = grouped.get(key);
+    if (!project) {
+      project = {
+        projectId: row.projectId,
+        entries: [],
+        dailyMinutes: Array.from({ length: 7 }, () => 0),
+      };
+      grouped.set(key, project);
+    }
+    project.entries.push(toTimeEntryDto(row));
+    project.dailyMinutes[index] = (project.dailyMinutes[index] ?? 0) + minutes;
+  }
+
+  const days = dates.map((date, index) => {
+    const totalMinutes = dailyMinutes[index] ?? 0;
+    const expectedMinutes = index < 5 ? 480 : 0;
+    return {
+      date,
+      totalMinutes,
+      expectedMinutes,
+      missingMinutes: Math.max(0, expectedMinutes - totalMinutes),
+    };
+  });
+  const projectSummaries: WeeklyTimeSummary['projects'] = [];
+  for (const project of grouped.values()) {
+    let projectTotal = 0;
+    for (const minutes of project.dailyMinutes) projectTotal += minutes;
+    projectSummaries.push({
+      projectId: project.projectId,
+      entries: project.entries,
+      dailyMinutes: project.dailyMinutes,
+      totalMinutes: projectTotal,
+    });
+  }
+  const totalMinutes = dailyMinutes.reduce((total, minutes) => total + minutes, 0);
+  const expectedMinutes = days.reduce((total, day) => total + day.expectedMinutes, 0);
+  return {
+    weekStart: query.weekStart,
+    weekEnd,
+    timezone: query.timezone,
+    days,
+    projects: projectSummaries,
+    totalMinutes,
+    expectedMinutes,
+    missingMinutes: Math.max(0, expectedMinutes - totalMinutes),
+  };
+}
+
+/** Copies the preceding week's completed entries into an empty selected week. */
+export async function copyPreviousWeek(
+  ctx: AuthorizedContext,
+  query: WeeklyTimeQuery,
+  requestId: string,
+): Promise<{ copiedEntries: number }> {
+  const targetEnd = addCalendarDays(query.weekStart, 6);
+  const existing = await ctx.db.client
+    .select({ id: timeEntries.id })
+    .from(timeEntries)
+    .where(
+      and(
+        eq(timeEntries.workspaceId, ctx.workspaceId),
+        eq(timeEntries.userId, ctx.userId),
+        gte(timeEntries.workDate, query.weekStart),
+        lte(timeEntries.workDate, targetEnd),
+      ),
+    )
+    .limit(1);
+  if (existing[0]) {
+    throw toApiError(
+      ERROR_CODES.CONFLICT,
+      'The selected week already contains time entries',
+      requestId,
+    );
+  }
+
+  const sourceStart = addCalendarDays(query.weekStart, -7);
+  const sourceEnd = addCalendarDays(query.weekStart, -1);
+  const rows = await ctx.db.client
+    .select()
+    .from(timeEntries)
+    .where(
+      and(
+        eq(timeEntries.workspaceId, ctx.workspaceId),
+        eq(timeEntries.userId, ctx.userId),
+        gte(timeEntries.workDate, sourceStart),
+        lte(timeEntries.workDate, sourceEnd),
+      ),
+    )
+    .orderBy(asc(timeEntries.workDate), asc(timeEntries.id));
+  const now = new Date();
+  const completed = rows.filter(
+    (entry) =>
+      (entry.durationMinutes !== null || entry.endAt !== null) && entryMinutes(entry, now) > 0,
+  );
+  if (completed.length === 0) return { copiedEntries: 0 };
+  const inserted = await ctx.db.client
+    .insert(timeEntries)
+    .values(
+      completed.map((entry) => ({
+        workspaceId: ctx.workspaceId,
+        userId: ctx.userId,
+        projectId: entry.projectId,
+        taskId: entry.taskId,
+        description: entry.description,
+        billable: entry.billable,
+        durationMinutes: entryMinutes(entry, now),
+        workDate: addCalendarDays(entry.workDate, 7),
+        timezone: query.timezone,
+      })),
+    )
+    .returning();
+  await Promise.all(
+    inserted.map((entry) =>
+      recordAudit(ctx, {
+        action: 'time_entry.created',
+        entityType: 'time_entry',
+        entityId: entry.id,
+        after: entry,
+      }),
+    ),
+  );
+  return { copiedEntries: inserted.length };
 }
 
 /** Permanently removes an unlocked entry owned by the current user. */
