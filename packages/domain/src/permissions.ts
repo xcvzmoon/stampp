@@ -13,7 +13,9 @@ export type Permission =
   | 'time:write:own'
   | 'time:write:other'
   | 'time:approve'
+  | 'project:read'
   | 'project:manage'
+  | 'client:read'
   | 'client:manage'
   | 'reports:view'
   | 'reports:view:cost'
@@ -29,7 +31,9 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'time:write:own',
     'time:write:other',
     'time:approve',
+    'project:read',
     'project:manage',
+    'client:read',
     'client:manage',
     'reports:view',
     'reports:view:cost',
@@ -44,7 +48,9 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'time:write:own',
     'time:write:other',
     'time:approve',
+    'project:read',
     'project:manage',
+    'client:read',
     'client:manage',
     'reports:view',
     'reports:view:cost',
@@ -58,11 +64,19 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'time:write:own',
     'time:write:other',
     'time:approve',
+    'project:read',
     'project:manage',
+    'client:read',
     'reports:view',
   ]),
-  member: new Set<Permission>(['time:read:own', 'time:write:own', 'reports:view']),
-  guest: new Set<Permission>(['time:read:own']),
+  member: new Set<Permission>([
+    'time:read:own',
+    'time:write:own',
+    'project:read',
+    'client:read',
+    'reports:view',
+  ]),
+  guest: new Set<Permission>(['time:read:own', 'project:read', 'client:read']),
 };
 
 /**

@@ -56,6 +56,7 @@ export default defineNuxtConfig({
     public: {
       /** Better Auth base URL including basePath. Empty path prefix yields same-origin `/api/auth`. */
       authBaseURL: 'http://localhost:3001/api/auth',
+      apiBaseURL: 'http://localhost:3001/api/v1',
     },
   },
 });

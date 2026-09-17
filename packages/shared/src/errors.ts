@@ -20,6 +20,8 @@ export const ERROR_CODES = {
   TIME_ENTRY_OVERLAP: 'time_entry.overlap',
   TIME_ENTRY_LOCKED: 'time_entry.locked',
   TIMER_ALREADY_RUNNING: 'timer.already_running',
+  PROJECT_ARCHIVED: 'project.archived',
+  PROJECT_NOT_ACTIVE: 'project.not_active',
 } as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];

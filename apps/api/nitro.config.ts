@@ -12,5 +12,11 @@ export default defineConfig({
         credentials: true,
       },
     },
+    '/api/v1/**': {
+      cors: {
+        origin: [appOrigin],
+        credentials: true,
+      },
+    },
   },
 });
