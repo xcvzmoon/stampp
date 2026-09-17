@@ -17,6 +17,16 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      APP_ENV: test
+      PUBLIC_APP_URL: http://localhost:3000
+      PUBLIC_API_URL: http://localhost:3001
+      DATABASE_URL: postgres://stampp:stampp@localhost:5432/stampp
+      VALKEY_URL: redis://localhost:6379
+      BETTER_AUTH_SECRET: ci-only-secret-not-for-production-use
+      BETTER_AUTH_URL: http://localhost:3000
+      MAIL_FROM: Stampp CI <ci@localhost>
+      MAIL_MODE: mock
 
     steps:
       - name: Checkout
@@ -26,6 +36,11 @@ jobs:
 
       - name: Setup project
         uses: ./.github/actions/setup-project
+
+      - name: Load env schemas
+        run: |
+          pnpm exec varlock load --path apps/api
+          pnpm exec varlock load --path apps/web
 
       - name: Verify release version
         env:
