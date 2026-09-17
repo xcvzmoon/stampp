@@ -1,18 +1,18 @@
-# Nitro starter
+# Stampp API
 
-Create your API and deploy it anywhere with this Nitro starter.
+The API is a Nitro v3 service. It owns authentication, workspace authorization, time tracking, reports, exports, health checks, and audit writes.
 
-## Getting started
-
-```bash
-npm install
-npm run dev
-```
-
-## Deploying
+Run it from the repository root after creating `apps/api/.env`:
 
 ```bash
-npm run build
+vp run api dev
 ```
 
-Then checkout the [Nitro documentation](https://nitro.build/deploy) to learn more about the different deployment presets.
+Useful endpoints:
+
+- `GET /healthz` checks process liveness.
+- `GET /readyz` checks PostgreSQL and Valkey.
+- `/api/auth/*` is handled by Better Auth.
+- `/api/v1/workspaces/:workspaceId/*` contains workspace-scoped product routes.
+
+All environment values are declared in `.env.schema`. Keep secrets in the ignored `.env` file.

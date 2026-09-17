@@ -37,7 +37,7 @@ export default defineNuxtConfig({
       meta: [
         {
           name: 'description',
-          content: 'Build full-stack Nuxt app',
+          content: 'Track project time with a self-hosted workspace for teams.',
         },
         {
           name: 'format-detection',
