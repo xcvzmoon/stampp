@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm';
 import {
   boolean,
   check,
+  date,
   index,
   integer,
   pgTable,
@@ -32,6 +33,7 @@ export const timeEntries = pgTable(
     startAt: timestamp('start_at', TIMESTAMP_CONFIG),
     endAt: timestamp('end_at', TIMESTAMP_CONFIG),
     durationMinutes: integer('duration_minutes'),
+    workDate: date('work_date', { mode: 'string' }).notNull(),
     timezone: varchar('timezone', { length: 100 }).notNull(),
     /** Set when an approval or manager lock makes the entry immutable. */
     lockedAt: timestamp('locked_at', TIMESTAMP_CONFIG),
@@ -47,6 +49,11 @@ export const timeEntries = pgTable(
       table.workspaceId,
       table.projectId,
       table.startAt,
+    ),
+    index('time_entries_workspace_id_user_id_work_date_idx').on(
+      table.workspaceId,
+      table.userId,
+      table.workDate,
     ),
     uniqueIndex('time_entries_one_running_per_user_unique')
       .on(table.workspaceId, table.userId)

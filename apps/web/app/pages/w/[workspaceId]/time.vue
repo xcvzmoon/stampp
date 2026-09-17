@@ -1,111 +1,182 @@
 <script setup lang="ts">
-  import type { ProjectDto, TimeEntryDto } from '@stampp/shared';
+  import type { ProjectDto, TimeEntryDto, WeeklyTimeSummary } from '@stampp/shared';
   import {
+    copyPreviousWeekResultSchema,
     listResultSchema,
     projectDtoSchema,
     timeEntryDtoSchema,
-    timeEntryListResultSchema,
+    weeklyTimeSummarySchema,
   } from '@stampp/shared';
+  import {
+    addCalendarDays,
+    calendarDateInTimezone,
+    formatMinutes,
+    mondayForDate,
+    parseDuration,
+  } from '~/utils/week';
 
   definePageMeta({ layout: 'workspace' });
 
   const projectsListSchema = listResultSchema(projectDtoSchema);
   const { apiFetch, apiSend } = useApi();
   const workspaceId = useRouteParam('workspaceId');
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const weekStart = shallowRef(mondayForDate(calendarDateInTimezone(new Date(), timezone)));
+  const summary = shallowRef<WeeklyTimeSummary | null>(null);
+  const projects = shallowRef<ProjectDto[]>([]);
+  const loading = shallowRef(true);
+  const copying = shallowRef(false);
+  const savingCell = shallowRef<string | null>(null);
+  const errorMessage = shallowRef<string | null>(null);
+  const successMessage = shallowRef<string | null>(null);
 
-  const entries = ref<TimeEntryDto[]>([]);
-  const projects = ref<ProjectDto[]>([]);
-  const loading = ref<boolean>(true);
-  const saving = ref<boolean>(false);
-  const errorMessage = ref<string | null>(null);
-  const description = ref<string>('');
-  const projectId = ref<string | undefined>();
-  const durationMinutes = ref<number>(60);
-  const billable = ref<boolean>(true);
-
-  const projectNameById = computed<Map<string, string>>(() => {
-    const names = new Map<string, string>();
-    for (const project of projects.value) names.set(project.id, project.name);
-    return names;
+  const weekLabel = computed(() => {
+    if (!summary.value) return '';
+    const formatter = new Intl.DateTimeFormat(undefined, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+    return `${formatter.format(new Date(`${summary.value.weekStart}T12:00:00.000Z`))} – ${formatter.format(new Date(`${summary.value.weekEnd}T12:00:00.000Z`))}`;
   });
 
-  function entryDuration(entry: TimeEntryDto): string {
-    let minutes = entry.durationMinutes ?? 0;
-    if (entry.startAt && entry.endAt) {
-      minutes = Math.max(
-        0,
-        Math.round((Date.parse(entry.endAt) - Date.parse(entry.startAt)) / 60_000),
-      );
-    }
-    if (entry.startAt && !entry.endAt) return 'Running';
-    const hours = Math.floor(minutes / 60);
-    const remainder = minutes % 60;
-    return hours > 0 ? `${hours}h ${remainder}m` : `${remainder}m`;
+  function weeklyPath(): string {
+    const params = new URLSearchParams({ weekStart: weekStart.value, timezone });
+    return `/workspaces/${workspaceId.value}/time-entries/weekly?${params.toString()}`;
   }
 
-  function entryDate(entry: TimeEntryDto): string {
-    return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(
-      new Date(entry.startAt ?? entry.createdAt),
-    );
-  }
-
-  async function loadPage() {
+  async function loadPage(): Promise<void> {
     loading.value = true;
     errorMessage.value = null;
     try {
-      const [entryResult, projectResult] = await Promise.all([
-        apiFetch(
-          timeEntryListResultSchema,
-          `/workspaces/${workspaceId.value}/time-entries?limit=100`,
-        ),
+      const [weeklySummary, projectResult] = await Promise.all([
+        apiFetch(weeklyTimeSummarySchema, weeklyPath()),
         apiFetch(
           projectsListSchema,
-          `/workspaces/${workspaceId.value}/projects?limit=100&status=active`,
+          `/workspaces/${workspaceId.value}/projects?limit=200&status=active`,
         ),
       ]);
-      entries.value = entryResult.items.toReversed();
+      summary.value = weeklySummary;
       projects.value = projectResult.items;
     } catch (error) {
-      errorMessage.value = error instanceof Error ? error.message : 'Could not load time entries';
+      errorMessage.value = error instanceof Error ? error.message : 'Could not load the timesheet';
     } finally {
       loading.value = false;
     }
   }
 
-  async function addEntry() {
-    saving.value = true;
+  async function changeWeek(days: number): Promise<void> {
+    weekStart.value = addCalendarDays(weekStart.value, days);
+    successMessage.value = null;
+    await loadPage();
+  }
+
+  function entryMinutes(entry: TimeEntryDto): number {
+    if (entry.durationMinutes !== null) return entry.durationMinutes;
+    if (!entry.startAt) return 0;
+    return Math.max(
+      0,
+      Math.round(
+        (Date.parse(entry.endAt ?? new Date().toISOString()) - Date.parse(entry.startAt)) / 60_000,
+      ),
+    );
+  }
+
+  async function saveCell(projectId: string | null, date: string, value: string): Promise<void> {
+    const desiredMinutes = parseDuration(value);
+    if (desiredMinutes === null) {
+      errorMessage.value = 'Enter time as hours (7.5) or hours and minutes (7:30).';
+      return;
+    }
+    const currentSummary = summary.value;
+    if (!currentSummary) return;
+    const group = currentSummary.projects.find((item) => item.projectId === projectId);
+    const entries = group?.entries.filter((entry) => entry.workDate === date) ?? [];
+    const editableDurations = entries.filter(
+      (entry) => entry.durationMinutes !== null && entry.lockedAt === null,
+    );
+    let fixedMinutes = 0;
+    for (const entry of entries) {
+      if (!editableDurations.includes(entry)) fixedMinutes += entryMinutes(entry);
+    }
+    if (desiredMinutes < fixedMinutes) {
+      errorMessage.value = `This cell includes ${formatMinutes(fixedMinutes)} of timer or locked time.`;
+      return;
+    }
+
+    const editableMinutes = desiredMinutes - fixedMinutes;
+    const key = `${projectId ?? 'unassigned'}:${date}`;
+    savingCell.value = key;
     errorMessage.value = null;
+    successMessage.value = null;
     try {
-      await apiFetch(timeEntryDtoSchema, `/workspaces/${workspaceId.value}/time-entries`, {
-        method: 'POST',
-        body: JSON.stringify({
-          kind: 'duration',
-          projectId: projectId.value ?? null,
-          description: description.value,
-          durationMinutes: durationMinutes.value,
-          billable: billable.value,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        }),
-      });
-      description.value = '';
-      durationMinutes.value = 60;
+      const first = editableDurations[0];
+      if (first && editableMinutes > 0) {
+        await apiFetch(
+          timeEntryDtoSchema,
+          `/workspaces/${workspaceId.value}/time-entries/${first.id}`,
+          {
+            method: 'PATCH',
+            body: JSON.stringify({ durationMinutes: editableMinutes, workDate: date }),
+          },
+        );
+      } else if (!first && editableMinutes > 0) {
+        const project = projectId
+          ? projects.value.find((item) => item.id === projectId)
+          : undefined;
+        await apiFetch(timeEntryDtoSchema, `/workspaces/${workspaceId.value}/time-entries`, {
+          method: 'POST',
+          body: JSON.stringify({
+            kind: 'duration',
+            projectId,
+            durationMinutes: editableMinutes,
+            workDate: date,
+            timezone,
+            billable: project?.billable ?? true,
+          }),
+        });
+      }
+      const entriesToDelete =
+        first && editableMinutes > 0 ? editableDurations.slice(1) : editableDurations;
+      await Promise.all(
+        entriesToDelete.map((entry) =>
+          apiSend(`/workspaces/${workspaceId.value}/time-entries/${entry.id}`, {
+            method: 'DELETE',
+          }),
+        ),
+      );
       await loadPage();
     } catch (error) {
-      errorMessage.value = error instanceof Error ? error.message : 'Could not add time entry';
+      errorMessage.value = error instanceof Error ? error.message : 'Could not save time';
+      await loadPage();
     } finally {
-      saving.value = false;
+      savingCell.value = null;
     }
   }
 
-  async function removeEntry(entry: TimeEntryDto) {
+  async function copyPreviousWeek(): Promise<void> {
+    copying.value = true;
     errorMessage.value = null;
+    successMessage.value = null;
     try {
-      await apiSend(`/workspaces/${workspaceId.value}/time-entries/${entry.id}`, {
-        method: 'DELETE',
-      });
+      const result = await apiFetch(
+        copyPreviousWeekResultSchema,
+        `/workspaces/${workspaceId.value}/time-entries/copy-previous-week`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ weekStart: weekStart.value, timezone }),
+        },
+      );
+      successMessage.value =
+        result.copiedEntries === 0
+          ? 'The previous week has no completed entries to copy.'
+          : `Copied ${result.copiedEntries} ${result.copiedEntries === 1 ? 'entry' : 'entries'}.`;
       await loadPage();
     } catch (error) {
-      errorMessage.value = error instanceof Error ? error.message : 'Could not remove time entry';
+      errorMessage.value =
+        error instanceof Error ? error.message : 'Could not copy the previous week';
+    } finally {
+      copying.value = false;
     }
   }
 
@@ -114,10 +185,44 @@
 
 <template>
   <div class="space-y-6">
-    <header class="space-y-1">
-      <h1 class="text-2xl font-semibold text-highlighted">Time</h1>
-      <p class="text-sm text-muted">Track work with the timer or add a duration manually.</p>
+    <header class="flex flex-wrap items-start justify-between gap-4">
+      <div class="space-y-1">
+        <h1 class="text-2xl font-semibold text-highlighted">Timesheet</h1>
+        <p class="text-sm text-muted">
+          Enter time in each project and day, then press Enter or leave the cell.
+        </p>
+      </div>
+      <UButton
+        color="neutral"
+        variant="soft"
+        icon="i-lucide-copy"
+        :loading="copying"
+        :disabled="loading || (summary?.totalMinutes ?? 0) > 0"
+        @click="copyPreviousWeek"
+      >
+        Copy previous week
+      </UButton>
     </header>
+
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <UButton
+          aria-label="Previous week"
+          icon="i-lucide-chevron-left"
+          color="neutral"
+          variant="soft"
+          @click="changeWeek(-7)"
+        />
+        <UButton
+          color="neutral"
+          variant="soft"
+          @click="changeWeek(7)"
+        >
+          Next week
+        </UButton>
+      </div>
+      <p class="font-medium text-highlighted">{{ weekLabel }}</p>
+    </div>
 
     <UAlert
       v-if="errorMessage"
@@ -125,110 +230,51 @@
       variant="subtle"
       :title="errorMessage"
     />
-
-    <UCard>
-      <form
-        class="grid items-end gap-4 md:grid-cols-[1fr_14rem_8rem_auto_auto]"
-        @submit.prevent="addEntry"
-      >
-        <UFormField label="Description">
-          <UInput
-            v-model="description"
-            class="w-full"
-            maxlength="1000"
-            placeholder="Work completed"
-          />
-        </UFormField>
-        <UFormField label="Project">
-          <USelect
-            v-model="projectId"
-            class="w-full"
-            :items="[
-              { label: 'No project', value: undefined },
-              ...projects.map((project) => ({ label: project.name, value: project.id })),
-            ]"
-            value-key="value"
-          />
-        </UFormField>
-        <UFormField
-          label="Minutes"
-          required
-        >
-          <UInputNumber
-            v-model="durationMinutes"
-            class="w-full"
-            :min="1"
-            :step="15"
-            required
-          />
-        </UFormField>
-        <UCheckbox
-          v-model="billable"
-          label="Billable"
-        />
-        <UButton
-          type="submit"
-          :loading="saving"
-        >
-          Add time
-        </UButton>
-      </form>
-    </UCard>
+    <UAlert
+      v-if="successMessage"
+      color="success"
+      variant="subtle"
+      :title="successMessage"
+    />
 
     <p
       v-if="loading"
       class="text-sm text-muted"
     >
-      Loading time entries…
+      Loading timesheet…
     </p>
 
-    <p
-      v-else-if="entries.length === 0"
-      class="text-sm text-muted"
-    >
-      No time entries yet.
-    </p>
+    <template v-else-if="summary">
+      <div class="grid gap-3 sm:grid-cols-3">
+        <UCard>
+          <p class="text-xs font-medium tracking-wide text-muted uppercase">Logged</p>
+          <p class="mt-1 font-mono text-2xl font-semibold text-highlighted">
+            {{ formatMinutes(summary.totalMinutes) }}
+          </p>
+        </UCard>
+        <UCard>
+          <p class="text-xs font-medium tracking-wide text-muted uppercase">Expected</p>
+          <p class="mt-1 font-mono text-2xl font-semibold text-highlighted">
+            {{ formatMinutes(summary.expectedMinutes) }}
+          </p>
+        </UCard>
+        <UCard>
+          <p class="text-xs font-medium tracking-wide text-muted uppercase">Missing</p>
+          <p
+            class="mt-1 font-mono text-2xl font-semibold"
+            :class="summary.missingMinutes > 0 ? 'text-warning' : 'text-success'"
+          >
+            {{ formatMinutes(summary.missingMinutes) }}
+          </p>
+        </UCard>
+      </div>
 
-    <ul
-      v-else
-      class="divide-y divide-default rounded-lg border border-default"
-    >
-      <li
-        v-for="entry in entries"
-        :key="entry.id"
-        class="flex flex-wrap items-center justify-between gap-4 px-4 py-3"
-      >
-        <div class="min-w-0">
-          <p class="truncate font-medium text-highlighted">
-            {{ entry.description || 'Untitled entry' }}
-          </p>
-          <p class="text-sm text-muted">
-            {{ projectNameById.get(entry.projectId ?? '') ?? 'No project' }}
-            · {{ entryDate(entry) }}
-          </p>
-        </div>
-        <div class="flex items-center gap-3">
-          <UBadge
-            v-if="entry.billable"
-            color="success"
-            variant="subtle"
-          >
-            Billable
-          </UBadge>
-          <span class="min-w-20 text-right font-mono text-sm font-semibold">
-            {{ entryDuration(entry) }}
-          </span>
-          <UButton
-            v-if="!entry.lockedAt && entry.endAt !== null"
-            size="sm"
-            color="neutral"
-            variant="ghost"
-            @click="removeEntry(entry)"
-          >
-            Delete
-          </UButton>
-        </div>
-      </li>
-    </ul>
+      <WeeklyTimesheetGrid
+        :summary="summary"
+        :projects="projects"
+        :saving-cell="savingCell"
+        @save="saveCell"
+      />
+    </template>
   </div>
 </template>

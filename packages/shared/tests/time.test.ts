@@ -5,12 +5,14 @@ import {
   startTimerInputSchema,
   timeEntryListQuerySchema,
   updateTimeEntryInputSchema,
+  weeklyTimeQuerySchema,
 } from '../src/time.ts';
 
 describe('time input schemas', () => {
   it('requires a timezone when starting a timer', () => {
     expect(v.safeParse(startTimerInputSchema, { timezone: 'Asia/Manila' }).success).toBe(true);
     expect(v.safeParse(startTimerInputSchema, {}).success).toBe(false);
+    expect(v.safeParse(startTimerInputSchema, { timezone: 'Mars/Olympus' }).success).toBe(false);
   });
 
   it('accepts manual intervals and fixed durations', () => {
@@ -26,6 +28,7 @@ describe('time input schemas', () => {
       v.safeParse(addManualTimeInputSchema, {
         kind: 'duration',
         durationMinutes: 60,
+        workDate: '2026-09-17',
         timezone: 'UTC',
       }).success,
     ).toBe(true);
@@ -57,6 +60,26 @@ describe('time input schemas', () => {
     expect(v.safeParse(updateTimeEntryInputSchema, { projectId: null, taskId: null }).success).toBe(
       true,
     );
+  });
+});
+
+describe('weekly time schemas', () => {
+  it('accepts calendar dates and rejects impossible dates and timestamps', () => {
+    expect(
+      v.safeParse(weeklyTimeQuerySchema, {
+        weekStart: '2026-09-14',
+        timezone: 'Asia/Manila',
+      }).success,
+    ).toBe(true);
+    expect(
+      v.safeParse(weeklyTimeQuerySchema, { weekStart: '2026-02-30', timezone: 'UTC' }).success,
+    ).toBe(false);
+    expect(
+      v.safeParse(weeklyTimeQuerySchema, {
+        weekStart: '2026-09-14T00:00:00.000Z',
+        timezone: 'UTC',
+      }).success,
+    ).toBe(false);
   });
 });
 

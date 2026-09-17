@@ -32,6 +32,7 @@ describe('time entries schema', () => {
 
   it('requires a timezone snapshot', () => {
     expect(requireColumn('timezone').notNull).toBe(true);
+    expect(requireColumn('work_date').notNull).toBe(true);
   });
 
   it('declares representation and assignment checks', () => {
@@ -49,6 +50,9 @@ describe('time entries schema', () => {
       true,
     );
     expect(hasIndex(timeEntries, 'time_entries_workspace_id_project_id_start_at_idx', false)).toBe(
+      true,
+    );
+    expect(hasIndex(timeEntries, 'time_entries_workspace_id_user_id_work_date_idx', false)).toBe(
       true,
     );
   });

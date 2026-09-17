@@ -1,8 +1,21 @@
 import * as v from 'valibot';
-import { idSchema, isoDateSchema, minutesSchema } from './schemas.ts';
+import { calendarDateSchema, idSchema, isoDateSchema, minutesSchema } from './schemas.ts';
 
 const descriptionSchema = v.pipe(v.string(), v.trim(), v.maxLength(1000));
-const timezoneSchema = v.pipe(v.string(), v.trim(), v.minLength(1), v.maxLength(100));
+const timezoneSchema = v.pipe(
+  v.string(),
+  v.trim(),
+  v.minLength(1),
+  v.maxLength(100),
+  v.check((input) => {
+    try {
+      new Intl.DateTimeFormat('en-US', { timeZone: input }).format();
+      return true;
+    } catch {
+      return false;
+    }
+  }, 'Must be a valid IANA timezone'),
+);
 const optionalAssignmentSchema = {
   projectId: v.optional(v.nullable(idSchema)),
   taskId: v.optional(v.nullable(idSchema)),
@@ -33,6 +46,7 @@ export const addManualTimeInputSchema = v.variant('kind', [
     description: v.optional(descriptionSchema),
     billable: v.optional(v.boolean()),
     durationMinutes: v.pipe(minutesSchema, v.minValue(1)),
+    workDate: v.optional(calendarDateSchema),
     timezone: timezoneSchema,
   }),
 ]);
@@ -46,6 +60,7 @@ export const updateTimeEntryInputSchema = v.object({
   startAt: v.optional(isoDateSchema),
   endAt: v.optional(v.nullable(isoDateSchema)),
   durationMinutes: v.optional(v.nullable(v.pipe(minutesSchema, v.minValue(1)))),
+  workDate: v.optional(calendarDateSchema),
   timezone: v.optional(timezoneSchema),
 });
 
@@ -78,6 +93,7 @@ export const timeEntryDtoSchema = v.object({
   startAt: v.nullable(v.string()),
   endAt: v.nullable(v.string()),
   durationMinutes: v.nullable(v.number()),
+  workDate: calendarDateSchema,
   timezone: v.string(),
   lockedAt: v.nullable(v.string()),
   createdAt: v.string(),
@@ -88,6 +104,51 @@ export const timeEntryDtoSchema = v.object({
 export const timeEntryListResultSchema = v.object({
   items: v.array(timeEntryDtoSchema),
   nextCursor: v.nullable(v.string()),
+});
+
+/** Validates the Monday and IANA timezone that identify a user's weekly timesheet. */
+export const weeklyTimeQuerySchema = v.object({
+  weekStart: calendarDateSchema,
+  timezone: timezoneSchema,
+});
+
+/** Runtime contract for one day of logged, expected, and missing time. */
+export const weeklyTimeDaySchema = v.object({
+  date: calendarDateSchema,
+  totalMinutes: minutesSchema,
+  expectedMinutes: minutesSchema,
+  missingMinutes: minutesSchema,
+});
+
+/** Runtime contract for a project's entries and seven daily totals. */
+export const weeklyTimeProjectSchema = v.object({
+  projectId: v.nullable(v.string()),
+  entries: v.array(timeEntryDtoSchema),
+  dailyMinutes: v.array(minutesSchema),
+  totalMinutes: minutesSchema,
+});
+
+/** Runtime contract for a Monday-through-Sunday timesheet summary. */
+export const weeklyTimeSummarySchema = v.object({
+  weekStart: calendarDateSchema,
+  weekEnd: calendarDateSchema,
+  timezone: v.string(),
+  days: v.array(weeklyTimeDaySchema),
+  projects: v.array(weeklyTimeProjectSchema),
+  totalMinutes: minutesSchema,
+  expectedMinutes: minutesSchema,
+  missingMinutes: minutesSchema,
+});
+
+/** Validates the destination week and timezone for a weekly copy operation. */
+export const copyPreviousWeekInputSchema = v.object({
+  weekStart: calendarDateSchema,
+  timezone: timezoneSchema,
+});
+
+/** Runtime contract for the number of entries created by a weekly copy. */
+export const copyPreviousWeekResultSchema = v.object({
+  copiedEntries: v.pipe(v.number(), v.integer(), v.minValue(0)),
 });
 
 /** Input for starting the current user's workspace timer. */
@@ -104,3 +165,9 @@ export type TimeEntryListQuery = v.InferOutput<typeof timeEntryListQuerySchema>;
 
 /** API representation of a time entry. Dates use ISO-8601 strings. */
 export type TimeEntryDto = v.InferOutput<typeof timeEntryDtoSchema>;
+/** Query for one Monday-through-Sunday timesheet. */
+export type WeeklyTimeQuery = v.InferOutput<typeof weeklyTimeQuerySchema>;
+/** Weekly entries and daily expectation totals for the current user. */
+export type WeeklyTimeSummary = v.InferOutput<typeof weeklyTimeSummarySchema>;
+/** Input used to copy the preceding week into the selected week. */
+export type CopyPreviousWeekInput = v.InferOutput<typeof copyPreviousWeekInputSchema>;
