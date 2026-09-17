@@ -15,6 +15,7 @@ export function mapErrorCodeToStatus(code: string): number {
   if (code === ERROR_CODES.PROJECT_NOT_ACTIVE || code === ERROR_CODES.PROJECT_ARCHIVED) {
     return 422;
   }
+  if (code === ERROR_CODES.TIME_ENTRY_LOCKED) return 423;
   if (code === ERROR_CODES.VALIDATION_FAILED) return 400;
   if (code === ERROR_CODES.BAD_REQUEST) return 400;
   if (code === ERROR_CODES.RATE_LIMITED) return 429;
