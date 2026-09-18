@@ -7,7 +7,7 @@ import postgres from 'postgres';
  *
  * @example
  * ```ts
- * const db = createDb({ connectionString: process.env.DATABASE_URL! });
+ * const db = createDb({ connectionString: ENV.DATABASE_URL });
  * const rows = await db.execute('select 1');
  * ```
  */
@@ -49,7 +49,7 @@ export type CreateDbOptions = {
  * @example
  * ```ts
  * const db = createDb({
- *   connectionString: process.env.DATABASE_URL!,
+ *   connectionString: ENV.DATABASE_URL,
  *   max: 10,
  * });
  * ```

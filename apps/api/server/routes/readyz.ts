@@ -1,5 +1,6 @@
 import { createDb, pingDb } from '@stampp/database';
 import { defineHandler } from 'nitro';
+import { ENV } from '~/server/utils/env.ts';
 
 type DependencyStatus = {
   name: string;
@@ -27,7 +28,7 @@ async function checkValkey(url: string): Promise<boolean> {
 export default defineHandler(async (event) => {
   const dependencies: DependencyStatus[] = [];
 
-  const databaseUrl = process.env.DATABASE_URL;
+  const databaseUrl = ENV.DATABASE_URL;
   if (databaseUrl) {
     const db = createDb({
       connectionString: databaseUrl,
@@ -41,7 +42,7 @@ export default defineHandler(async (event) => {
     dependencies.push({ name: 'postgres', ok: false });
   }
 
-  const valkeyUrl = process.env.VALKEY_URL;
+  const valkeyUrl = ENV.VALKEY_URL;
   if (valkeyUrl) {
     dependencies.push({
       name: 'valkey',

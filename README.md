@@ -57,12 +57,18 @@ You need Docker, Vite+, and the runtime selected by `package.json`. Vite+ manage
 
 ```bash
 vp install
-cp apps/api/.env.example apps/api/.env
-cp apps/web/.env.example apps/web/.env
 cp deploy/docker/.env.example deploy/docker/.env
 ```
 
-Replace the placeholder secrets and use the same database password in `apps/api/.env`'s `DATABASE_URL`. Then start PostgreSQL, Valkey, and the migrations:
+Create gitignored local env files from each app's `.env.schema` (single source of truth for keys, types, and defaults):
+
+```bash
+# API — required: DATABASE_URL, VALKEY_URL, BETTER_AUTH_SECRET (openssl rand -base64 32)
+# Web — defaults are enough for localhost; override only if your ports differ
+vp run env:load
+```
+
+Use the same database password in `apps/api/.env`'s `DATABASE_URL` as in `deploy/docker/.env`. Then start PostgreSQL, Valkey, and the migrations:
 
 ```bash
 docker compose --env-file deploy/docker/.env -f deploy/docker/compose.yaml up -d db valkey migrate

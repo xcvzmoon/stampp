@@ -8,8 +8,8 @@
   },
   "scripts": {
     "typecheck": "tsc",
-    "generate": "drizzle-kit generate",
-    "migrate": "drizzle-kit migrate"
+    "generate": "varlock run --path ../../apps/api -- drizzle-kit generate",
+    "migrate": "varlock run --path ../../apps/api -- drizzle-kit migrate"
   },
   "dependencies": {
     "drizzle-orm": "catalog:db",
@@ -19,6 +19,7 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "drizzle-kit": "catalog:db",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "varlock": "catalog:platform"
   }
 }

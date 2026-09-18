@@ -12,6 +12,7 @@ import {
 import { betterAuth } from 'better-auth';
 import { organization } from 'better-auth/plugins';
 import { getDb } from '~/server/utils/db.ts';
+import { ENV } from '~/server/utils/env.ts';
 import { getMailDispatch } from '~/server/utils/mailer.ts';
 
 const schema = {
@@ -34,7 +35,11 @@ export function resolveAuthEnv(
     BETTER_AUTH_SECRET?: string | undefined;
     BETTER_AUTH_URL?: string | undefined;
     PUBLIC_APP_URL?: string | undefined;
-  } = process.env,
+  } = {
+    BETTER_AUTH_SECRET: ENV.BETTER_AUTH_SECRET,
+    BETTER_AUTH_URL: ENV.BETTER_AUTH_URL,
+    PUBLIC_APP_URL: ENV.PUBLIC_APP_URL,
+  },
 ): AuthEnv {
   const secret = env.BETTER_AUTH_SECRET;
   if (!secret || secret.length < 32) {
@@ -53,8 +58,8 @@ export function resolveAuthEnv(
 export function createAuth() {
   const env = resolveAuthEnv();
   const mail = getMailDispatch();
-  const appUrl = process.env.PUBLIC_APP_URL ?? env.baseURL;
-  const isProd = process.env.APP_ENV === 'production';
+  const appUrl = ENV.PUBLIC_APP_URL ?? env.baseURL;
+  const isProd = ENV.APP_ENV === 'production';
 
   return betterAuth({
     appName: 'Stampp',

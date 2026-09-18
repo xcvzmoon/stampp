@@ -105,6 +105,7 @@ services:
     tmpfs:
       - /tmp
     environment:
+      APP_ENV: ${APP_ENV:-development}
       NUXT_PUBLIC_API_BASE_URL: ${PUBLIC_API_URL:-http://localhost:3001}/api/v1
       NUXT_PUBLIC_AUTH_BASE_URL: ${PUBLIC_API_URL:-http://localhost:3001}/api/auth
       PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:3001}
