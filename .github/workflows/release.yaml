@@ -56,6 +56,11 @@ jobs:
           pnpm exec varlock audit --path apps/api
           pnpm exec varlock audit --path apps/web
 
+      - name: Check codegen drift
+        run: |
+          pnpm exec varlock codegen --path apps/api
+          git diff --exit-code -- apps/api/env.ts
+
       - name: Verify release version
         env:
           RELEASE_TAG: ${{ github.ref_name }}

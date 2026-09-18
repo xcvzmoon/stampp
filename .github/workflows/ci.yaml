@@ -78,6 +78,11 @@ jobs:
           pnpm exec varlock audit --path apps/api
           pnpm exec varlock audit --path apps/web
 
+      - name: Check codegen drift
+        run: |
+          pnpm exec varlock codegen --path apps/api
+          git diff --exit-code -- apps/api/env.ts
+
       - name: Check formatting and lint
         run: vp run check
 
