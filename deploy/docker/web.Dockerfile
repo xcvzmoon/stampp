@@ -15,7 +15,7 @@ RUN vp install --frozen-lockfile --ignore-scripts
 
 COPY --chown=vp:vp . .
 
-RUN cd apps/web && pnpm exec varlock flatten \
+RUN cd apps/web && vp exec varlock flatten \
     && sed -i '/@generateTsTypes/d' .env-flat/.env.schema
 
 RUN export APP_ENV=production \
@@ -23,7 +23,7 @@ RUN export APP_ENV=production \
     PUBLIC_API_URL=http://localhost:3001 \
     NUXT_PUBLIC_AUTH_BASE_URL=http://localhost:3001/api/auth \
     NUXT_PUBLIC_API_BASE_URL=http://localhost:3001/api/v1 \
-    && pnpm exec varlock load --path apps/web \
+    && vp exec varlock load --path apps/web \
     && vp run --filter web build
 
 FROM node:26-bookworm-slim AS runtime

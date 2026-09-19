@@ -17,7 +17,7 @@ COPY --chown=vp:vp . .
 
 # Collapse monorepo @import graph so the runtime image can validate without repo root files.
 # Drop generated-types codegen: runtime containers are read-only.
-RUN cd apps/api && pnpm exec varlock flatten \
+RUN cd apps/api && vp exec varlock flatten \
     && sed -i '/@generateTsTypes/d' .env-flat/.env.schema
 
 RUN export APP_ENV=production \
@@ -28,7 +28,7 @@ RUN export APP_ENV=production \
     BETTER_AUTH_URL=http://localhost:3001 \
     MAIL_FROM='Stampp <hello@localhost>' \
     MAIL_MODE=mock \
-    && pnpm exec varlock load --path apps/api \
+    && vp exec varlock load --path apps/api \
     && vp run --filter api build
 
 FROM node:26-bookworm-slim AS runtime
