@@ -54,7 +54,6 @@ export function resolveAuthEnv(
   return { secret, baseURL };
 }
 
-/** Better Auth singleton. Organization plugin maps product Workspace → organization. */
 export function createAuth() {
   const env = resolveAuthEnv();
   const mail = getMailDispatch();
@@ -137,7 +136,6 @@ export function createAuth() {
 
 let authInstance: ReturnType<typeof createAuth> | undefined;
 
-/** Shared auth instance for Nitro handlers. */
 export function getAuth() {
   return (authInstance ??= createAuth());
 }

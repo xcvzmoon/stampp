@@ -57,7 +57,6 @@ function dateTimeParts(date: Date, timezone: string): number[] {
   ];
 }
 
-/** Converts local midnight on a calendar date to its UTC instant, including DST offsets. */
 export function startOfCalendarDate(date: string, timezone: string): Date {
   const [year = 0, month = 0, day = 0] = date.split('-').map(Number);
   const target = Date.UTC(year, month - 1, day);
@@ -75,7 +74,6 @@ export function startOfCalendarDate(date: string, timezone: string): Date {
   return new Date(candidate);
 }
 
-/** Parses and validates report query parameters. */
 export function parseReportQuery(query: URLSearchParams, requestId: string): ReportQuery {
   const raw: Record<string, string> = {};
   for (const key of [
@@ -127,7 +125,6 @@ function entryDate(row: ReportRow, timezone: string): string {
   return row.startAt ? calendarDateInTimezone(row.startAt, timezone) : row.workDate;
 }
 
-/** Builds the complete tenant, role, date, and explicit report filter predicate. */
 export function reportScope(ctx: AuthorizedContext, query: ReportQuery) {
   const intervalStart = startOfCalendarDate(query.from, query.timezone);
   const intervalEnd = startOfCalendarDate(addCalendarDays(query.to, 1), query.timezone);
@@ -155,7 +152,6 @@ export function reportScope(ctx: AuthorizedContext, query: ReportQuery) {
   return and(...conditions);
 }
 
-/** Loads completed report rows under workspace, role, date, and explicit filter constraints. */
 export async function loadReportRows(
   ctx: AuthorizedContext,
   query: ReportQuery,
@@ -190,7 +186,6 @@ export async function loadReportRows(
     .orderBy(asc(timeEntries.workDate), asc(timeEntries.startAt), asc(timeEntries.id));
 }
 
-/** Aggregates report rows into a requested project, client, or user summary. */
 export function buildSummaryReport(rows: ReportRow[], query: ReportQuery): SummaryReport {
   const groupBy = query.groupBy ?? 'project';
   const totals = emptyTotals();
@@ -231,7 +226,6 @@ export function buildSummaryReport(rows: ReportRow[], query: ReportQuery): Summa
   return { from: query.from, to: query.to, timezone: query.timezone, groupBy, totals, groups };
 }
 
-/** Produces a detailed chronological report from completed rows. */
 export function buildDetailedReport(rows: ReportRow[], query: ReportQuery): DetailedReport {
   const totals = emptyTotals();
   const entries: DetailedReportEntry[] = [];
@@ -272,7 +266,6 @@ function mondayForCalendarDate(date: string): string {
   return addCalendarDays(date, -offset);
 }
 
-/** Aggregates completed rows into calendar weeks in the requested timezone. */
 export function buildWeeklyReport(rows: ReportRow[], query: ReportQuery): WeeklyReport {
   const totals = emptyTotals();
   const grouped = new Map<string, MutableTotals>();
@@ -304,6 +297,7 @@ export function buildWeeklyReport(rows: ReportRow[], query: ReportQuery): Weekly
 
 function csvCell(value: string | number | boolean | null): string {
   let text = value === null ? '' : String(value);
+  // Prefix formula-leading values so spreadsheets do not execute cell content.
   if (/^[=+\-@\t\r]/.test(text)) text = `'${text}`;
   return `"${text.replaceAll('"', '""')}"`;
 }
@@ -314,7 +308,6 @@ function csv(rows: CsvValue[][]): string {
   return `${rows.map((row) => row.map(csvCell).join(',')).join('\r\n')}\r\n`;
 }
 
-/** Serializes a summary report with stable columns and spreadsheet-injection protection. */
 export function summaryReportCsv(report: SummaryReport): string {
   const rows: CsvValue[][] = [
     [
@@ -339,7 +332,6 @@ export function summaryReportCsv(report: SummaryReport): string {
   return csv(rows);
 }
 
-/** Serializes a detailed report with stable columns and spreadsheet-injection protection. */
 export function detailedReportCsv(report: DetailedReport): string {
   const rows: CsvValue[][] = [
     [
@@ -378,7 +370,6 @@ export function detailedReportCsv(report: DetailedReport): string {
   return csv(rows);
 }
 
-/** Serializes a weekly report with stable columns and spreadsheet-safe cells. */
 export function weeklyReportCsv(report: WeeklyReport): string {
   const rows: CsvValue[][] = [
     ['week_start', 'week_end', 'total_minutes', 'billable_minutes', 'non_billable_minutes'],

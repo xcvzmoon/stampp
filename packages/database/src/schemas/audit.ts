@@ -2,17 +2,6 @@ import type { InferSelectModel } from 'drizzle-orm';
 import { jsonb, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 import { TIMESTAMP_CONFIG, generateUuid } from './_helpers.ts';
 
-/**
- * Extra context on an audit row. Prefer named keys over free-form blobs.
- *
- * @example
- * ```ts
- * const meta: AuditMetadata = {
- *   ip: '203.0.113.10',
- *   requestId: '01900000-0000-7000-8000-0000000000aa',
- * };
- * ```
- */
 export type AuditMetadata = {
   ip?: string | null;
   userAgent?: string | null;
@@ -20,24 +9,7 @@ export type AuditMetadata = {
   [key: string]: string | number | boolean | null | undefined;
 };
 
-/**
- * Append-only audit trail. Write through AuditTrail inside deep modules.
- * Never update or delete these rows from application code.
- *
- * @example
- * ```ts
- * await db.insert(auditEvents).values({
- *   workspaceId,
- *   actorUserId,
- *   action: 'time_entry.updated',
- *   entityType: 'time_entry',
- *   entityId: entryId,
- *   before: { durationMinutes: 30 },
- *   after: { durationMinutes: 45 },
- *   metadata: { requestId },
- * });
- * ```
- */
+/** Append-only. Never update or delete these rows from application code. */
 export const auditEvents = pgTable('audit_events', {
   id: generateUuid('id'),
   workspaceId: text('workspace_id').notNull(),

@@ -1,7 +1,5 @@
 # syntax=docker/dockerfile:1
 
-FROM ghcr.io/dmno-dev/varlock:1.19.0 AS varlock
-
 FROM ghcr.io/voidzero-dev/vite-plus:0.3.2 AS build
 WORKDIR /app
 
@@ -18,9 +16,11 @@ RUN vp install --frozen-lockfile --ignore-scripts
 COPY --chown=vp:vp . .
 
 # Collapse monorepo @import graph so the runtime image can validate without repo root files.
-RUN cd apps/api && pnpm exec varlock flatten
+# Drop generated-types codegen: runtime containers are read-only.
+RUN cd apps/api && vp exec varlock flatten \
+    && sed -i '/@generateTsTypes/d' .env-flat/.env.schema
 
-RUN APP_ENV=production \
+RUN export APP_ENV=production \
     PUBLIC_APP_URL=http://localhost:3000 \
     DATABASE_URL=postgres://build:build@localhost:5432/build \
     VALKEY_URL=redis://localhost:6379 \
@@ -28,7 +28,7 @@ RUN APP_ENV=production \
     BETTER_AUTH_URL=http://localhost:3001 \
     MAIL_FROM='Stampp <hello@localhost>' \
     MAIL_MODE=mock \
-    pnpm exec varlock load --path apps/api \
+    && vp exec varlock load --path apps/api \
     && vp run --filter api build
 
 FROM node:26-bookworm-slim AS runtime
@@ -37,7 +37,8 @@ ENV NODE_ENV=production
 ENV PORT=3001
 WORKDIR /app
 
-COPY --from=varlock --chown=node:node /usr/local/bin/varlock /usr/local/bin/varlock
+# GHCR varlock image is musl-linked; Debian runtime needs the npm build.
+RUN npm install -g varlock@1.19.0
 COPY --from=build --chown=node:node /app/apps/api/.output ./
 # Overlay flattened schema (no local secrets) so `varlock run` can validate compose-injected env.
 COPY --from=build --chown=node:node /app/apps/api/.env-flat/ ./

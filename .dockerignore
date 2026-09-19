@@ -1,11 +1,13 @@
 .git
 .github
-.nuxt
-.output
 .vite-hooks
-node_modules
+**/.nuxt
+**/.output
 **/.env
 **/.env.*
 !**/.env.schema
 !**/.env.example
-*.log
+**/.env-flat
+**/node_modules
+**/*.log
+PLAN.md

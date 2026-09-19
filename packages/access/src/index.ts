@@ -4,21 +4,8 @@ import { createScopedDb } from '@stampp/database';
 import { hasPermission } from '@stampp/domain';
 
 /**
- * Everything a product handler needs after authz: actor, workspace, role, scoped db.
- *
- * Use `db.workspaceId` in every query. Do not trust client-supplied membership.
- *
- * @example
- * ```ts
- * const ctx = await enterWorkspace(deps, {
- *   workspaceId,
- *   permission: 'time:write:own',
- * });
- *
- * await ctx.db.client
- *   .insert(timeEntries)
- *   .values({ workspaceId: ctx.db.workspaceId, userId: ctx.userId });
- * ```
+ * Actor, workspace, role, and scoped db after authz.
+ * Filter every query by `db.workspaceId`. Do not trust client-supplied membership.
  */
 export type AuthorizedContext = {
   userId: string;
@@ -27,18 +14,6 @@ export type AuthorizedContext = {
   db: ScopedDb;
 };
 
-/**
- * Injection points for session and membership. Wire these to Better Auth in apps/api.
- *
- * @example
- * ```ts
- * const deps: WorkspaceAccessDeps = {
- *   getSessionUserId: async () => (await auth.api.getSession({ headers }))?.user.id ?? null,
- *   getMemberRole: async (userId, workspaceId) => loadRole(userId, workspaceId),
- *   db,
- * };
- * ```
- */
 export type WorkspaceAccessDeps = {
   getSessionUserId: () => Promise<string | null>;
   getMemberRole: (userId: string, workspaceId: string) => Promise<StamppRole | null>;
@@ -48,30 +23,12 @@ export type WorkspaceAccessDeps = {
 export type EnterWorkspaceInput = {
   /** Path param `workspaces/:workspaceId` or explicit body field. */
   workspaceId: string;
-  /** Permission required for the handler. */
   permission: Permission;
 };
 
 /**
- * Single authz seam for product routes.
- *
- * Order: session, membership, permission, scoped db. Throws {@link WorkspaceAccessError}.
- *
- * @example
- * ```ts
- * try {
- *   const ctx = await enterWorkspace(deps, {
- *     workspaceId: event.context.params.workspaceId,
- *     permission: 'time:approve',
- *   });
- *   return approveTimesheet(ctx, input);
- * } catch (error) {
- *   if (error instanceof WorkspaceAccessError && error.kind === 'unauthenticated') {
- *     throw new HTTPError({ status: 401, message: error.message });
- *   }
- *   throw error;
- * }
- * ```
+ * Session → membership → permission → scoped db.
+ * Throws {@link WorkspaceAccessError}.
  */
 export async function enterWorkspace(
   deps: WorkspaceAccessDeps,
@@ -99,22 +56,7 @@ export async function enterWorkspace(
   };
 }
 
-/**
- * Authz failure from {@link enterWorkspace}.
- *
- * `kind` is `'unauthenticated'` (no session) or `'forbidden'` (no membership or permission).
- *
- * @example
- * ```ts
- * try {
- *   await enterWorkspace(deps, input);
- * } catch (error) {
- *   if (error instanceof WorkspaceAccessError) {
- *     console.info(error.kind, error.message);
- *   }
- * }
- * ```
- */
+/** `kind` is `'unauthenticated'` or `'forbidden'`. */
 export class WorkspaceAccessError extends Error {
   readonly kind: 'unauthenticated' | 'forbidden';
 
