@@ -60,6 +60,7 @@ peerDependencyRules:
 
 allowBuilds:
   esbuild: true
+  msgpackr-extract: false
   vue-demi: true
 
 minimumReleaseAgeExclude:

@@ -9,7 +9,10 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "unemail": "catalog:mail"
+    "bullmq": "catalog:platform",
+    "ioredis": "catalog:platform",
+    "unemail": "catalog:mail",
+    "valibot": "catalog:platform"
   },
   "devDependencies": {
     "@types/node": "catalog:",
