@@ -1,6 +1,60 @@
 import { createDb, pingDb } from '@stampp/database';
-import { defineHandler } from 'nitro';
+import { defineHandler, defineRouteMeta } from 'nitro';
 import { ENV } from '~/server/utils/env.ts';
+
+defineRouteMeta({
+  openAPI: {
+    tags: ['health'],
+    summary: 'Readiness probe',
+    description: 'Reports PostgreSQL and Valkey reachability.',
+    responses: {
+      200: {
+        description: 'All required dependencies are ready',
+        content: {
+          'application/json': {
+            schema: {
+              $ref: '#/components/schemas/Readiness',
+            },
+          },
+        },
+      },
+      503: {
+        description: 'One or more dependencies are unavailable',
+        content: {
+          'application/json': {
+            schema: {
+              $ref: '#/components/schemas/Readiness',
+            },
+          },
+        },
+      },
+    },
+    $global: {
+      components: {
+        schemas: {
+          Readiness: {
+            type: 'object',
+            required: ['status', 'dependencies'],
+            properties: {
+              status: { type: 'string', enum: ['ok', 'degraded'] },
+              dependencies: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  required: ['name', 'ok'],
+                  properties: {
+                    name: { type: 'string' },
+                    ok: { type: 'boolean' },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+});
 
 type DependencyStatus = {
   name: string;

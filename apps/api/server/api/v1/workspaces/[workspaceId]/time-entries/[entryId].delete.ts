@@ -1,7 +1,27 @@
-import { defineHandler } from 'nitro';
+import { defineHandler, defineRouteMeta } from 'nitro';
 import { getRequestId } from '~/server/utils/catalog.ts';
 import { removeTimeEntry } from '~/server/utils/timeTracking.ts';
 import { requireParam, requireWorkspace } from '~/server/utils/workspaceAccess.ts';
+
+defineRouteMeta({
+  openAPI: {
+    tags: ['time-entries'],
+    summary: 'Delete time entry',
+    security: [{ sessionCookie: [] }],
+    responses: {
+      204: { description: 'Time entry deleted' },
+      401: { $ref: '#/components/responses/Unauthenticated' },
+      403: { $ref: '#/components/responses/Forbidden' },
+      404: { $ref: '#/components/responses/NotFound' },
+      423: {
+        description: 'Time entry is locked',
+        content: {
+          'application/json': { schema: { $ref: '#/components/schemas/ApiError' } },
+        },
+      },
+    },
+  },
+});
 
 export default defineHandler(async (event) => {
   const requestId = getRequestId(event);

@@ -11,6 +11,25 @@ export default defineConfig({
   },
   compatibilityDate: '2026-09-16',
   serverDir: './server',
+  experimental: {
+    openAPI: true,
+  },
+  openAPI: {
+    meta: {
+      title: 'Stampp API',
+      description:
+        'Workspace-scoped work-time API. Session auth is Better Auth at /api/auth/*; product routes live under /api/v1.',
+      version: '0.1.0',
+    },
+    route: '/api/v1/openapi.json',
+    production: 'prerender',
+    ui: {
+      scalar: {
+        route: '/api/v1/docs',
+      },
+      swagger: false,
+    },
+  },
   routeRules: {
     '/api/auth/**': {
       cors: {
