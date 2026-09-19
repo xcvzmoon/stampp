@@ -3,14 +3,18 @@ import { describe, expect, it } from 'vite-plus/test';
 import {
   createClientInputSchema,
   createProjectInputSchema,
+  createTagInputSchema,
   createTaskInputSchema,
   DEFAULT_LIST_LIMIT,
   entityNameSchema,
   hexColorSchema,
   listQuerySchema,
   projectCodeSchema,
+  tagNameSchema,
+  tagIdsSchema,
   updateClientInputSchema,
   updateProjectInputSchema,
+  updateTagInputSchema,
   updateTaskInputSchema,
 } from '../src/catalog.ts';
 
@@ -195,5 +199,34 @@ describe('listQuerySchema', () => {
 
   it('rejects unknown status values', () => {
     expectFail(listQuerySchema, { status: 'paused' });
+  });
+});
+
+describe('tag schemas', () => {
+  it('trims tag names and enforces length bounds', () => {
+    const result = v.safeParse(tagNameSchema, '  billable  ');
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.output).toBe('billable');
+    }
+    expectPass(tagNameSchema, 'x'.repeat(50));
+    expectFail(tagNameSchema, 'x'.repeat(51));
+    expectFail(tagNameSchema, '');
+  });
+
+  it('requires a single name on create and update', () => {
+    expectPass(createTagInputSchema, { name: 'design' });
+    expectFail(createTagInputSchema, {});
+    expectPass(updateTagInputSchema, { name: 'ops' });
+    expectFail(updateTagInputSchema, { name: '' });
+  });
+
+  it('rejects duplicate and oversized tag id lists', () => {
+    expectPass(tagIdsSchema, ['tag_1', 'tag_2']);
+    expectFail(tagIdsSchema, ['tag_1', 'tag_1']);
+    expectFail(
+      tagIdsSchema,
+      Array.from({ length: 21 }, (_value, index) => `tag_${index}`),
+    );
   });
 });

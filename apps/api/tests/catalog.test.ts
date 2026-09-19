@@ -10,6 +10,7 @@ import {
   parseListQuery,
   toClientDto,
   toProjectDto,
+  toTagDto,
   toTaskDto,
 } from '~/server/utils/catalog.ts';
 import { mapErrorCodeToStatus } from '~/server/utils/errors.ts';
@@ -143,6 +144,20 @@ describe('dto mappers', () => {
       deletedAt: null,
     });
     expect(dto.estimateMinutes).toBeNull();
+  });
+
+  it('maps tags to DTO strings', () => {
+    const dto = toTagDto({
+      id: 'tag_1',
+      workspaceId: 'ws_1',
+      name: 'billable',
+      createdAt: now,
+      updatedAt: now,
+      deletedAt: null,
+    });
+    expect(dto.id).toBe('tag_1');
+    expect(dto.name).toBe('billable');
+    expect(dto.createdAt).toBe('2026-01-01T00:00:00.000Z');
   });
 });
 

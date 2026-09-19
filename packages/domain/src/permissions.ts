@@ -15,6 +15,8 @@ export type Permission =
   | 'project:manage'
   | 'client:read'
   | 'client:manage'
+  | 'tag:read'
+  | 'tag:manage'
   | 'reports:view'
   | 'reports:view:cost'
   | 'settings:manage'
@@ -33,6 +35,8 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'project:manage',
     'client:read',
     'client:manage',
+    'tag:read',
+    'tag:manage',
     'reports:view',
     'reports:view:cost',
     'settings:manage',
@@ -50,6 +54,8 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'project:manage',
     'client:read',
     'client:manage',
+    'tag:read',
+    'tag:manage',
     'reports:view',
     'reports:view:cost',
     'settings:manage',
@@ -65,6 +71,8 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'project:read',
     'project:manage',
     'client:read',
+    'tag:read',
+    'tag:manage',
     'reports:view',
   ]),
   member: new Set<Permission>([
@@ -72,9 +80,10 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'time:write:own',
     'project:read',
     'client:read',
+    'tag:read',
     'reports:view',
   ]),
-  guest: new Set<Permission>(['time:read:own', 'project:read', 'client:read']),
+  guest: new Set<Permission>(['time:read:own', 'project:read', 'client:read', 'tag:read']),
 };
 
 export function hasPermission(role: StamppRole, permission: Permission): boolean {

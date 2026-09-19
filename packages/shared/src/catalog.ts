@@ -76,6 +76,29 @@ export const updateTaskInputSchema = v.object({
   estimateMinutes: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(0)))),
 });
 
+export const tagNameSchema = v.pipe(
+  v.string(),
+  v.trim(),
+  v.minLength(1, 'Name is required'),
+  v.maxLength(50),
+);
+
+export const createTagInputSchema = v.object({
+  name: tagNameSchema,
+});
+
+export const updateTagInputSchema = v.object({
+  name: tagNameSchema,
+});
+
+export const MAX_TIME_ENTRY_TAGS = 20;
+
+export const tagIdsSchema = v.pipe(
+  v.array(v.pipe(v.string(), v.minLength(1), v.maxLength(128))),
+  v.maxLength(MAX_TIME_ENTRY_TAGS),
+  v.check((ids) => new Set(ids).size === ids.length, 'Tag ids must be unique'),
+);
+
 export const DEFAULT_LIST_LIMIT = 50;
 export const MAX_LIST_LIMIT = 200;
 
@@ -120,6 +143,8 @@ export type CreateProjectInput = v.InferOutput<typeof createProjectInputSchema>;
 export type UpdateProjectInput = v.InferOutput<typeof updateProjectInputSchema>;
 export type CreateTaskInput = v.InferOutput<typeof createTaskInputSchema>;
 export type UpdateTaskInput = v.InferOutput<typeof updateTaskInputSchema>;
+export type CreateTagInput = v.InferOutput<typeof createTagInputSchema>;
+export type UpdateTagInput = v.InferOutput<typeof updateTagInputSchema>;
 export type ListQuery = v.InferOutput<typeof listQuerySchema>;
 
 export const clientDtoSchema = v.object({
@@ -158,6 +183,14 @@ export const taskDtoSchema = v.object({
   updatedAt: v.string(),
 });
 
+export const tagDtoSchema = v.object({
+  id: v.string(),
+  workspaceId: v.string(),
+  name: v.string(),
+  createdAt: v.string(),
+  updatedAt: v.string(),
+});
+
 export function listResultSchema<TSchema extends v.GenericSchema>(itemSchema: TSchema) {
   return v.object({
     items: v.array(itemSchema),
@@ -168,6 +201,7 @@ export function listResultSchema<TSchema extends v.GenericSchema>(itemSchema: TS
 export type ClientDto = v.InferOutput<typeof clientDtoSchema>;
 export type ProjectDto = v.InferOutput<typeof projectDtoSchema>;
 export type TaskDto = v.InferOutput<typeof taskDtoSchema>;
+export type TagDto = v.InferOutput<typeof tagDtoSchema>;
 export type ListResult<T> = {
   items: T[];
   nextCursor: string | null;

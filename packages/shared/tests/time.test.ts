@@ -61,6 +61,15 @@ describe('time input schemas', () => {
       true,
     );
   });
+
+  it('accepts unique tag id arrays and rejects duplicates', () => {
+    expect(
+      v.safeParse(startTimerInputSchema, { timezone: 'UTC', tagIds: ['tag_1', 'tag_2'] }).success,
+    ).toBe(true);
+    expect(
+      v.safeParse(startTimerInputSchema, { timezone: 'UTC', tagIds: ['tag_1', 'tag_1'] }).success,
+    ).toBe(false);
+  });
 });
 
 describe('weekly time schemas', () => {

@@ -1,23 +1,27 @@
-import type { Client, Project, Task } from '@stampp/database';
+import type { Client, Project, Tag, Task } from '@stampp/database';
 import type {
   ClientDto,
   ListQuery,
   ProjectDto,
+  TagDto,
   TaskDto,
   UpdateClientInput,
   UpdateProjectInput,
+  UpdateTagInput,
   UpdateTaskInput,
 } from '@stampp/shared';
 import type { H3Event } from 'nitro';
 import {
   createClientInputSchema,
   createProjectInputSchema,
+  createTagInputSchema,
   createTaskInputSchema,
   DEFAULT_LIST_LIMIT,
   ERROR_CODES,
   listQuerySchema,
   updateClientInputSchema,
   updateProjectInputSchema,
+  updateTagInputSchema,
   updateTaskInputSchema,
 } from '@stampp/shared';
 import * as v from 'valibot';
@@ -158,8 +162,18 @@ export function toTaskDto(row: Task): TaskDto {
   };
 }
 
+export function toTagDto(row: Tag): TagDto {
+  return {
+    id: row.id,
+    workspaceId: row.workspaceId,
+    name: row.name,
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
+  };
+}
+
 export function hasAtLeastOneField(
-  input: UpdateClientInput | UpdateProjectInput | UpdateTaskInput,
+  input: UpdateClientInput | UpdateProjectInput | UpdateTaskInput | UpdateTagInput,
 ): boolean {
   return Object.keys(input).length > 0;
 }
@@ -171,4 +185,6 @@ export const catalogSchemas = {
   updateProject: updateProjectInputSchema,
   createTask: createTaskInputSchema,
   updateTask: updateTaskInputSchema,
+  createTag: createTagInputSchema,
+  updateTag: updateTagInputSchema,
 } as const;

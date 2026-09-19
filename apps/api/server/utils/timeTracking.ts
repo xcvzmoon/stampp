@@ -5,19 +5,21 @@ import type {
   StartTimerInput,
   TimeEntryDto,
   TimeEntryListQuery,
+  TimeEntryTagRef,
   UpdateTimeEntryInput,
   WeeklyTimeQuery,
   WeeklyTimeSummary,
 } from '@stampp/shared';
-import { projects, tasks, timeEntries } from '@stampp/database';
+import { projects, tags, tasks, timeEntries, timeEntryTags } from '@stampp/database';
 import { ERROR_CODES } from '@stampp/shared';
-import { and, asc, eq, gt, gte, isNull, lte, or } from 'drizzle-orm';
+import { and, asc, eq, gt, gte, inArray, isNull, lte, or } from 'drizzle-orm';
 import * as v from 'valibot';
 import { toApiError } from '~/server/middleware/request-id.ts';
 import { recordAudit } from '~/server/utils/audit.ts';
 import { addCalendarDays, calendarDateInTimezone } from '~/server/utils/week.ts';
 
 type ListTimeEntriesOptions = TimeEntryListQuery & { limit: number };
+type TagsByEntryId = Map<string, TimeEntryTagRef[]>;
 
 export function weeklyTimeScope(
   workspaceId: string,
@@ -38,7 +40,7 @@ const databaseErrorSchema = v.object({
   constraint_name: v.optional(v.string()),
 });
 
-function toTimeEntryDto(row: TimeEntry): TimeEntryDto {
+function toTimeEntryDto(row: TimeEntry, entryTags: TimeEntryTagRef[] = []): TimeEntryDto {
   return {
     id: row.id,
     workspaceId: row.workspaceId,
@@ -52,10 +54,97 @@ function toTimeEntryDto(row: TimeEntry): TimeEntryDto {
     durationMinutes: row.durationMinutes,
     workDate: row.workDate,
     timezone: row.timezone,
+    tags: entryTags,
     lockedAt: row.lockedAt?.toISOString() ?? null,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
   };
+}
+
+async function hydrateTagsForEntries(
+  ctx: AuthorizedContext,
+  entryIds: string[],
+): Promise<TagsByEntryId> {
+  if (entryIds.length === 0) {
+    return new Map();
+  }
+
+  const rows = await ctx.db.client
+    .select({
+      timeEntryId: timeEntryTags.timeEntryId,
+      id: tags.id,
+      name: tags.name,
+    })
+    .from(timeEntryTags)
+    .innerJoin(tags, eq(tags.id, timeEntryTags.tagId))
+    .where(
+      and(
+        eq(timeEntryTags.workspaceId, ctx.workspaceId),
+        inArray(timeEntryTags.timeEntryId, entryIds),
+      ),
+    )
+    .orderBy(asc(tags.name), asc(tags.id));
+
+  const byEntry: TagsByEntryId = new Map();
+  for (const row of rows) {
+    const list = byEntry.get(row.timeEntryId);
+    const ref = { id: row.id, name: row.name };
+    if (list) {
+      list.push(ref);
+    } else {
+      byEntry.set(row.timeEntryId, [ref]);
+    }
+  }
+  return byEntry;
+}
+
+async function resolveActiveTags(
+  ctx: AuthorizedContext,
+  tagIds: string[],
+  requestId: string,
+): Promise<TimeEntryTagRef[]> {
+  if (tagIds.length === 0) {
+    return [];
+  }
+
+  const rows = await ctx.db.client
+    .select({ id: tags.id, name: tags.name })
+    .from(tags)
+    .where(
+      and(eq(tags.workspaceId, ctx.workspaceId), isNull(tags.deletedAt), inArray(tags.id, tagIds)),
+    )
+    .orderBy(asc(tags.name), asc(tags.id));
+
+  if (rows.length !== tagIds.length) {
+    throw toApiError(
+      ERROR_CODES.BAD_REQUEST,
+      'One or more tags are missing or archived',
+      requestId,
+    );
+  }
+  return rows;
+}
+
+async function replaceEntryTags(
+  ctx: AuthorizedContext,
+  entryId: string,
+  entryTags: TimeEntryTagRef[],
+): Promise<void> {
+  await ctx.db.client
+    .delete(timeEntryTags)
+    .where(
+      and(eq(timeEntryTags.workspaceId, ctx.workspaceId), eq(timeEntryTags.timeEntryId, entryId)),
+    );
+  if (entryTags.length === 0) {
+    return;
+  }
+  await ctx.db.client.insert(timeEntryTags).values(
+    entryTags.map((tag) => ({
+      workspaceId: ctx.workspaceId,
+      timeEntryId: entryId,
+      tagId: tag.id,
+    })),
+  );
 }
 
 function notFound(requestId: string) {
@@ -188,7 +277,12 @@ export async function getRunningTimer(ctx: AuthorizedContext): Promise<TimeEntry
       ),
     )
     .limit(1);
-  return rows[0] ? toTimeEntryDto(rows[0]) : null;
+  const entry = rows[0];
+  if (!entry) {
+    return null;
+  }
+  const byEntry = await hydrateTagsForEntries(ctx, [entry.id]);
+  return toTimeEntryDto(entry, byEntry.get(entry.id) ?? []);
 }
 
 export async function startTimer(
@@ -197,6 +291,7 @@ export async function startTimer(
   requestId: string,
 ): Promise<TimeEntryDto> {
   const assignment = await resolveAssignment(ctx, input.projectId, input.taskId, requestId);
+  const entryTags = await resolveActiveTags(ctx, input.tagIds ?? [], requestId);
   const now = new Date();
   try {
     const rows = await ctx.db.client
@@ -217,13 +312,16 @@ export async function startTimer(
     if (!entry) {
       throw toApiError(ERROR_CODES.INTERNAL, 'Failed to start timer', requestId);
     }
+    if (input.tagIds !== undefined) {
+      await replaceEntryTags(ctx, entry.id, entryTags);
+    }
     await recordAudit(ctx, requestId, {
       action: 'time_entry.started',
       entityType: 'time_entry',
       entityId: entry.id,
       after: entry,
     });
-    return toTimeEntryDto(entry);
+    return toTimeEntryDto(entry, input.tagIds !== undefined ? entryTags : []);
   } catch (error) {
     return mapConstraintError(error, requestId);
   }
@@ -262,7 +360,8 @@ export async function stopTimer(
       before,
       after: entry,
     });
-    return toTimeEntryDto(entry);
+    const byEntry = await hydrateTagsForEntries(ctx, [entry.id]);
+    return toTimeEntryDto(entry, byEntry.get(entry.id) ?? []);
   } catch (error) {
     return mapConstraintError(error, requestId);
   }
@@ -274,6 +373,7 @@ export async function addManualTime(
   requestId: string,
 ): Promise<TimeEntryDto> {
   const assignment = await resolveAssignment(ctx, input.projectId, input.taskId, requestId);
+  const entryTags = await resolveActiveTags(ctx, input.tagIds ?? [], requestId);
   const interval = input.kind === 'interval';
   const startAt = interval ? new Date(input.startAt) : null;
   const endAt = interval ? new Date(input.endAt) : null;
@@ -305,13 +405,16 @@ export async function addManualTime(
     if (!entry) {
       throw toApiError(ERROR_CODES.INTERNAL, 'Failed to add time entry', requestId);
     }
+    if (input.tagIds !== undefined) {
+      await replaceEntryTags(ctx, entry.id, entryTags);
+    }
     await recordAudit(ctx, requestId, {
       action: 'time_entry.created',
       entityType: 'time_entry',
       entityId: entry.id,
       after: entry,
     });
-    return toTimeEntryDto(entry);
+    return toTimeEntryDto(entry, input.tagIds !== undefined ? entryTags : []);
   } catch (error) {
     return mapConstraintError(error, requestId);
   }
@@ -346,8 +449,12 @@ export async function listTimeEntries(
     .limit(options.limit + 1);
   const page = rows.slice(0, options.limit);
   const last = page[page.length - 1];
+  const byEntry = await hydrateTagsForEntries(
+    ctx,
+    page.map((row) => row.id),
+  );
   return {
-    items: page.map(toTimeEntryDto),
+    items: page.map((row) => toTimeEntryDto(row, byEntry.get(row.id) ?? [])),
     nextCursor: rows.length > options.limit && last ? last.id : null,
   };
 }
@@ -370,6 +477,8 @@ export async function updateTimeEntry(
     input.taskId === undefined ? before.taskId : input.taskId,
     requestId,
   );
+  const entryTags =
+    input.tagIds === undefined ? null : await resolveActiveTags(ctx, input.tagIds, requestId);
   const nextStartAt = input.startAt === undefined ? before.startAt : new Date(input.startAt);
   const nextEndAt =
     input.endAt === undefined ? before.endAt : input.endAt === null ? null : new Date(input.endAt);
@@ -418,6 +527,9 @@ export async function updateTimeEntry(
       .returning();
     const entry = rows[0];
     if (!entry) throw notFound(requestId);
+    if (entryTags) {
+      await replaceEntryTags(ctx, entry.id, entryTags);
+    }
     await recordAudit(ctx, requestId, {
       action: 'time_entry.updated',
       entityType: 'time_entry',
@@ -425,7 +537,11 @@ export async function updateTimeEntry(
       before,
       after: entry,
     });
-    return toTimeEntryDto(entry);
+    if (entryTags) {
+      return toTimeEntryDto(entry, entryTags);
+    }
+    const byEntry = await hydrateTagsForEntries(ctx, [entry.id]);
+    return toTimeEntryDto(entry, byEntry.get(entry.id) ?? []);
   } catch (error) {
     return mapConstraintError(error, requestId);
   }
@@ -449,13 +565,18 @@ export async function getWeeklyTimeSummary(
     .where(weeklyTimeScope(ctx.workspaceId, ctx.userId, query.weekStart, weekEnd))
     .orderBy(asc(timeEntries.workDate), asc(timeEntries.id));
 
-  return buildWeeklyTimeSummary(rows, query, new Date());
+  const byEntry = await hydrateTagsForEntries(
+    ctx,
+    rows.map((row) => row.id),
+  );
+  return buildWeeklyTimeSummary(rows, query, new Date(), byEntry);
 }
 
 export function buildWeeklyTimeSummary(
   rows: TimeEntry[],
   query: WeeklyTimeQuery,
   now: Date,
+  tagsByEntryId: TagsByEntryId = new Map(),
 ): WeeklyTimeSummary {
   const weekEnd = addCalendarDays(query.weekStart, 6);
   const dates = Array.from({ length: 7 }, (_value, index) =>
@@ -483,7 +604,7 @@ export function buildWeeklyTimeSummary(
       };
       grouped.set(key, project);
     }
-    project.entries.push(toTimeEntryDto(row));
+    project.entries.push(toTimeEntryDto(row, tagsByEntryId.get(row.id) ?? []));
     project.dailyMinutes[index] = (project.dailyMinutes[index] ?? 0) + minutes;
   }
 
@@ -568,6 +689,10 @@ export async function copyPreviousWeek(
       (entry.durationMinutes !== null || entry.endAt !== null) && entryMinutes(entry, now) > 0,
   );
   if (completed.length === 0) return { copiedEntries: 0 };
+  const sourceTags = await hydrateTagsForEntries(
+    ctx,
+    completed.map((entry) => entry.id),
+  );
   const inserted = await ctx.db.client
     .insert(timeEntries)
     .values(
@@ -584,6 +709,16 @@ export async function copyPreviousWeek(
       })),
     )
     .returning();
+  const tagLinks: Promise<void>[] = [];
+  for (const [index, entry] of inserted.entries()) {
+    const source = completed[index];
+    if (!source) continue;
+    const entryTags = sourceTags.get(source.id) ?? [];
+    if (entryTags.length > 0) {
+      tagLinks.push(replaceEntryTags(ctx, entry.id, entryTags));
+    }
+  }
+  await Promise.all(tagLinks);
   await Promise.all(
     inserted.map((entry) =>
       recordAudit(ctx, requestId, {

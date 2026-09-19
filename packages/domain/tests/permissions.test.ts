@@ -15,6 +15,8 @@ const allPermissions: Permission[] = [
   'project:manage',
   'client:read',
   'client:manage',
+  'tag:read',
+  'tag:manage',
   'reports:view',
   'reports:view:cost',
   'settings:manage',
@@ -53,18 +55,26 @@ describe('hasPermission', () => {
   it('lets members read catalog entities but not manage them', () => {
     expect(hasPermission('member', 'client:read')).toBe(true);
     expect(hasPermission('member', 'project:read')).toBe(true);
+    expect(hasPermission('member', 'tag:read')).toBe(true);
     expect(hasPermission('member', 'client:manage')).toBe(false);
     expect(hasPermission('member', 'project:manage')).toBe(false);
+    expect(hasPermission('member', 'tag:manage')).toBe(false);
   });
 
-  it('lets managers manage projects and read clients but not manage clients', () => {
+  it('lets managers manage projects and tags but not clients', () => {
     expect(hasPermission('manager', 'project:manage')).toBe(true);
     expect(hasPermission('manager', 'client:read')).toBe(true);
     expect(hasPermission('manager', 'client:manage')).toBe(false);
+    expect(hasPermission('manager', 'tag:manage')).toBe(true);
   });
 
   it('gives guests catalog read without manage or write', () => {
-    const guestAllowed = new Set<Permission>(['time:read:own', 'client:read', 'project:read']);
+    const guestAllowed = new Set<Permission>([
+      'time:read:own',
+      'client:read',
+      'project:read',
+      'tag:read',
+    ]);
     for (const permission of allPermissions) {
       expect(hasPermission('guest', permission)).toBe(guestAllowed.has(permission));
     }
