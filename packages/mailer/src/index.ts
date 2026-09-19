@@ -3,20 +3,7 @@ import mock from 'unemail/drivers/mock';
 import smtp from 'unemail/drivers/smtp';
 import { withCircuitBreaker, withLogger } from 'unemail/middleware';
 
-/**
- * Typed transactional events. Call sites use these, not raw SMTP payloads.
- *
- * @example
- * ```ts
- * const event: MailEvent = {
- *   type: 'workspace.invite',
- *   email: 'ada@example.com',
- *   inviterName: 'Grace',
- *   workspaceName: 'Acme Studio',
- *   inviteUrl: 'https://stampp.example/invite/abc',
- * };
- * ```
- */
+/** Call sites pass these events, not raw SMTP payloads. */
 export type MailEvent =
   | {
       type: 'workspace.invite';
@@ -36,46 +23,14 @@ export type MailEvent =
       resetUrl: string;
     };
 
-/**
- * Mail transport settings.
- *
- * `mode: 'mock'` records sends in-process (tests, default dev). `mode: 'smtp'` talks to Mailpit or a real provider.
- *
- * @example
- * ```ts
- * const env: MailerEnv = {
- *   from: 'Stampp <hello@stampp.example>',
- *   mode: 'mock',
- * };
- *
- * const smtpEnv: MailerEnv = {
- *   from: 'Stampp <hello@stampp.example>',
- *   mode: 'smtp',
- *   smtpHost: 'localhost',
- *   smtpPort: 1025,
- * };
- * ```
- */
 export type MailerEnv = {
   from: string;
+  /** `mock` records in-process (tests/dev). `smtp` talks to Mailpit or a provider. */
   mode: 'mock' | 'smtp';
   smtpHost?: string;
   smtpPort?: number;
 };
 
-/**
- * Normalized message ready for UnEmail `send`.
- *
- * @example
- * ```ts
- * const mail = renderMailEvent({
- *   type: 'auth.verify',
- *   email: 'bob@example.com',
- *   verifyUrl: 'https://stampp.example/verify?token=abc',
- * });
- * mail.subject; // 'Verify your Stampp email'
- * ```
- */
 export type RenderedMail = {
   to: string;
   subject: string;
@@ -83,27 +38,7 @@ export type RenderedMail = {
   html: string;
 };
 
-/**
- * Builds an UnEmail client for the given env.
- *
- * Includes logger and circuit breaker middleware. Queue retries belong to BullMQ, not UnEmail.
- *
- * @example
- * ```ts
- * const email = createMailer({
- *   from: 'Stampp <hello@stampp.example>',
- *   mode: 'mock',
- * });
- *
- * const { error } = await email.send(
- *   renderMailEvent({
- *     type: 'auth.verify',
- *     email: 'ada@example.com',
- *     verifyUrl: 'https://stampp.example/verify?token=abc',
- *   }),
- * );
- * ```
- */
+/** Queue retries belong to BullMQ, not UnEmail. */
 export function createMailer(env: MailerEnv) {
   const driver =
     env.mode === 'mock'
@@ -122,21 +57,6 @@ export function createMailer(env: MailerEnv) {
   });
 }
 
-/**
- * Turns a {@link MailEvent} into subject/body. HTML values are escaped.
- *
- * @example
- * ```ts
- * const mail = renderMailEvent({
- *   type: 'workspace.invite',
- *   email: 'ada@example.com',
- *   inviterName: 'Ada <Admin>',
- *   workspaceName: 'Acme & Co',
- *   inviteUrl: 'https://stampp.example/invite/abc',
- * });
- * mail.html.includes('&amp;'); // true
- * ```
- */
 export function renderMailEvent(event: MailEvent): RenderedMail {
   if (event.type === 'workspace.invite') {
     return {
@@ -164,48 +84,11 @@ export function renderMailEvent(event: MailEvent): RenderedMail {
   };
 }
 
-/**
- * Call-site API for product code. Prefer this over `createMailer` in handlers.
- *
- * @example
- * ```ts
- * const mail = createMailDispatch({
- *   from: 'Stampp <hello@stampp.example>',
- *   mode: 'mock',
- * });
- *
- * await mail.notify({
- *   type: 'auth.verify',
- *   email: 'ada@example.com',
- *   verifyUrl: 'https://stampp.example/verify?token=abc',
- * });
- * ```
- */
+/** Product handlers use this instead of `createMailer`. */
 export type MailDispatch = {
   notify: (event: MailEvent) => Promise<void>;
 };
 
-/**
- * Creates a {@link MailDispatch} that renders and sends through UnEmail.
- *
- * Throws when the transport rejects the message (invalid from, provider error).
- *
- * @example
- * ```ts
- * const dispatch = createMailDispatch({
- *   from: 'Stampp <hello@stampp.example>',
- *   mode: 'mock',
- * });
- *
- * await dispatch.notify({
- *   type: 'workspace.invite',
- *   email: 'bob@example.com',
- *   inviterName: 'Ada',
- *   workspaceName: 'Acme',
- *   inviteUrl: 'https://stampp.example/invite/1',
- * });
- * ```
- */
 export function createMailDispatch(env: MailerEnv): MailDispatch {
   const email = createMailer(env);
 

@@ -21,7 +21,6 @@ const optionalAssignmentSchema = {
   taskId: v.optional(v.nullable(idSchema)),
 };
 
-/** Validates the assignment, description, billing choice, and timezone captured at timer start. */
 export const startTimerInputSchema = v.object({
   ...optionalAssignmentSchema,
   description: v.optional(descriptionSchema),
@@ -29,7 +28,6 @@ export const startTimerInputSchema = v.object({
   timezone: timezoneSchema,
 });
 
-/** Validates manual entries as either a closed interval or a positive whole-minute duration. */
 export const addManualTimeInputSchema = v.variant('kind', [
   v.object({
     kind: v.literal('interval'),
@@ -51,7 +49,6 @@ export const addManualTimeInputSchema = v.variant('kind', [
   }),
 ]);
 
-/** Validates a partial update; the TimeTracking module verifies the resulting entry shape. */
 export const updateTimeEntryInputSchema = v.object({
   projectId: v.optional(v.nullable(idSchema)),
   taskId: v.optional(v.nullable(idSchema)),
@@ -64,7 +61,6 @@ export const updateTimeEntryInputSchema = v.object({
   timezone: v.optional(timezoneSchema),
 });
 
-/** Validates cursor pagination and optional date and project filters for time-entry history. */
 export const timeEntryListQuerySchema = v.object({
   limit: v.optional(
     v.pipe(
@@ -81,7 +77,6 @@ export const timeEntryListQuerySchema = v.object({
   projectId: v.optional(idSchema),
 });
 
-/** Runtime contract for time entries returned by the API. */
 export const timeEntryDtoSchema = v.object({
   id: v.string(),
   workspaceId: v.string(),
@@ -100,19 +95,16 @@ export const timeEntryDtoSchema = v.object({
   updatedAt: v.string(),
 });
 
-/** Runtime contract for a cursor-paginated page of time entries. */
 export const timeEntryListResultSchema = v.object({
   items: v.array(timeEntryDtoSchema),
   nextCursor: v.nullable(v.string()),
 });
 
-/** Validates the Monday and IANA timezone that identify a user's weekly timesheet. */
 export const weeklyTimeQuerySchema = v.object({
   weekStart: calendarDateSchema,
   timezone: timezoneSchema,
 });
 
-/** Runtime contract for one day of logged, expected, and missing time. */
 export const weeklyTimeDaySchema = v.object({
   date: calendarDateSchema,
   totalMinutes: minutesSchema,
@@ -120,7 +112,6 @@ export const weeklyTimeDaySchema = v.object({
   missingMinutes: minutesSchema,
 });
 
-/** Runtime contract for a project's entries and seven daily totals. */
 export const weeklyTimeProjectSchema = v.object({
   projectId: v.nullable(v.string()),
   entries: v.array(timeEntryDtoSchema),
@@ -128,7 +119,6 @@ export const weeklyTimeProjectSchema = v.object({
   totalMinutes: minutesSchema,
 });
 
-/** Runtime contract for a Monday-through-Sunday timesheet summary. */
 export const weeklyTimeSummarySchema = v.object({
   weekStart: calendarDateSchema,
   weekEnd: calendarDateSchema,
@@ -140,34 +130,20 @@ export const weeklyTimeSummarySchema = v.object({
   missingMinutes: minutesSchema,
 });
 
-/** Validates the destination week and timezone for a weekly copy operation. */
 export const copyPreviousWeekInputSchema = v.object({
   weekStart: calendarDateSchema,
   timezone: timezoneSchema,
 });
 
-/** Runtime contract for the number of entries created by a weekly copy. */
 export const copyPreviousWeekResultSchema = v.object({
   copiedEntries: v.pipe(v.number(), v.integer(), v.minValue(0)),
 });
 
-/** Input for starting the current user's workspace timer. */
 export type StartTimerInput = v.InferOutput<typeof startTimerInputSchema>;
-
-/** Manual work represented by an interval or a fixed duration. */
 export type AddManualTimeInput = v.InferOutput<typeof addManualTimeInputSchema>;
-
-/** Editable fields on an unlocked time entry. */
 export type UpdateTimeEntryInput = v.InferOutput<typeof updateTimeEntryInputSchema>;
-
-/** Filters for the current user's time-entry history. */
 export type TimeEntryListQuery = v.InferOutput<typeof timeEntryListQuerySchema>;
-
-/** API representation of a time entry. Dates use ISO-8601 strings. */
 export type TimeEntryDto = v.InferOutput<typeof timeEntryDtoSchema>;
-/** Query for one Monday-through-Sunday timesheet. */
 export type WeeklyTimeQuery = v.InferOutput<typeof weeklyTimeQuerySchema>;
-/** Weekly entries and daily expectation totals for the current user. */
 export type WeeklyTimeSummary = v.InferOutput<typeof weeklyTimeSummarySchema>;
-/** Input used to copy the preceding week into the selected week. */
 export type CopyPreviousWeekInput = v.InferOutput<typeof copyPreviousWeekInputSchema>;

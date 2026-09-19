@@ -54,13 +54,9 @@ export default defineNuxtConfig({
   modules: ['@nuxt/ui', '@pinia/nuxt', '@vueuse/nuxt', 'pinia-plugin-persistedstate/nuxt'],
   runtimeConfig: {
     public: {
-      /** Public origin for absolute links (varlock PUBLIC_APP_URL). */
       appUrl: process.env.PUBLIC_APP_URL ?? 'http://localhost:3000',
-      /** Base URL of the product API (varlock PUBLIC_API_URL). */
       apiUrl: process.env.PUBLIC_API_URL ?? 'http://localhost:3001',
-      /** Better Auth base URL including basePath (varlock NUXT_PUBLIC_AUTH_BASE_URL). */
       authBaseURL: process.env.NUXT_PUBLIC_AUTH_BASE_URL ?? 'http://localhost:3001/api/auth',
-      /** Product API base URL including /api/v1 (varlock NUXT_PUBLIC_API_BASE_URL). */
       apiBaseURL: process.env.NUXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3001/api/v1',
     },
   },

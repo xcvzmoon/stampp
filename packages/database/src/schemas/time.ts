@@ -15,7 +15,6 @@ import { TIMESTAMP_CONFIG, generateEntityId, generateTimestamps } from './_helpe
 import { organizations, users } from './auth.ts';
 import { projects, tasks } from './projects.ts';
 
-/** A recorded block of work, stored as either an interval or a fixed duration. */
 export const timeEntries = pgTable(
   'time_entries',
   {
@@ -35,7 +34,7 @@ export const timeEntries = pgTable(
     durationMinutes: integer('duration_minutes'),
     workDate: date('work_date', { mode: 'string' }).notNull(),
     timezone: varchar('timezone', { length: 100 }).notNull(),
-    /** Set when an approval or manager lock makes the entry immutable. */
+    /** Non-null when approval or manager lock makes the entry immutable. */
     lockedAt: timestamp('locked_at', TIMESTAMP_CONFIG),
     ...generateTimestamps(),
   },
@@ -69,8 +68,5 @@ export const timeEntries = pgTable(
   ],
 );
 
-/** Persisted time-entry row. */
 export type TimeEntry = typeof timeEntries.$inferSelect;
-
-/** Values accepted when inserting a time entry. */
 export type NewTimeEntry = typeof timeEntries.$inferInsert;

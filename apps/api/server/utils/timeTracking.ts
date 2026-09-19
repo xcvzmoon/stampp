@@ -175,7 +175,6 @@ async function getOwnedEntry(
   return entry;
 }
 
-/** Returns the current user's running timer in a workspace. */
 export async function getRunningTimer(ctx: AuthorizedContext): Promise<TimeEntryDto | null> {
   const rows = await ctx.db.client
     .select()
@@ -192,7 +191,6 @@ export async function getRunningTimer(ctx: AuthorizedContext): Promise<TimeEntry
   return rows[0] ? toTimeEntryDto(rows[0]) : null;
 }
 
-/** Starts one timer for the current user in the workspace. */
 export async function startTimer(
   ctx: AuthorizedContext,
   input: StartTimerInput,
@@ -231,7 +229,6 @@ export async function startTimer(
   }
 }
 
-/** Stops a running timer owned by the current user. */
 export async function stopTimer(
   ctx: AuthorizedContext,
   entryId: string,
@@ -271,7 +268,6 @@ export async function stopTimer(
   }
 }
 
-/** Adds an interval or fixed-duration entry for the current user. */
 export async function addManualTime(
   ctx: AuthorizedContext,
   input: AddManualTimeInput,
@@ -321,7 +317,6 @@ export async function addManualTime(
   }
 }
 
-/** Lists the current user's entries in ascending ID order. */
 export async function listTimeEntries(
   ctx: AuthorizedContext,
   options: ListTimeEntriesOptions,
@@ -357,7 +352,6 @@ export async function listTimeEntries(
   };
 }
 
-/** Updates an unlocked entry owned by the current user. */
 export async function updateTimeEntry(
   ctx: AuthorizedContext,
   entryId: string,
@@ -444,7 +438,6 @@ function entryMinutes(entry: TimeEntry, now: Date): number {
   return Math.max(0, Math.round((endAt.getTime() - entry.startAt.getTime()) / 60_000));
 }
 
-/** Returns the current user's entries grouped into one Monday-through-Sunday summary. */
 export async function getWeeklyTimeSummary(
   ctx: AuthorizedContext,
   query: WeeklyTimeQuery,
@@ -529,7 +522,6 @@ export function buildWeeklyTimeSummary(
   };
 }
 
-/** Copies the preceding week's completed entries into an empty selected week. */
 export async function copyPreviousWeek(
   ctx: AuthorizedContext,
   query: WeeklyTimeQuery,
@@ -605,7 +597,6 @@ export async function copyPreviousWeek(
   return { copiedEntries: inserted.length };
 }
 
-/** Permanently removes an unlocked entry owned by the current user. */
 export async function removeTimeEntry(
   ctx: AuthorizedContext,
   entryId: string,

@@ -1,7 +1,7 @@
 import { boolean, index, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
 import { TIMESTAMP_CONFIG, generateAuthTimestamps, generateTextId } from './_helpers.ts';
 
-/** Better Auth core + organization tables. Workspace = organizations. */
+// Better Auth tables. Product "workspace" maps to organizations.id.
 
 export const users = pgTable(
   'users',

@@ -12,7 +12,6 @@ import {
 } from '@stampp/database';
 import { asc, eq } from 'drizzle-orm';
 
-/** Complete portable workspace data owned by Stampp, excluding credentials and sessions. */
 export async function exportWorkspace(ctx: AuthorizedContext) {
   const [
     workspaceRows,

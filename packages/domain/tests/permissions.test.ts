@@ -71,7 +71,6 @@ describe('hasPermission', () => {
   });
 
   it('never denies a role a permission it should have via a different role', () => {
-    // Cross-check: every permission granted to member is also granted to manager/admin/owner.
     for (const permission of allPermissions) {
       if (!hasPermission('member', permission)) continue;
       expect(hasPermission('manager', permission)).toBe(true);
