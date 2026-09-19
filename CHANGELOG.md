@@ -1,5 +1,59 @@
 # Changelog
 
+## v0.2.0
+
+[compare changes](https://github.com/xcvzmoon/stampp/compare/v0.1.0...v0.2.0)
+
+### 🚀 Enhancements
+
+- **varlock:** Typed ENV, action CI, docker entrypoint, and audit ([15f1eee](https://github.com/xcvzmoon/stampp/commit/15f1eee))
+- **web:** Add invite accept and team pages ([2532828](https://github.com/xcvzmoon/stampp/commit/2532828))
+- **release:** Publish api and web images via genbumppush ([34066a5](https://github.com/xcvzmoon/stampp/commit/34066a5))
+- **mailer:** Add BullMQ email queue and UnEmail worker ([c377048](https://github.com/xcvzmoon/stampp/commit/c377048))
+- **api:** Enqueue mail and host the email worker ([275e890](https://github.com/xcvzmoon/stampp/commit/275e890))
+- **database:** Add tags and time_entry_tags schema ([a14eaaa](https://github.com/xcvzmoon/stampp/commit/a14eaaa))
+- **domain:** Add tag read and manage permissions ([9808f8d](https://github.com/xcvzmoon/stampp/commit/9808f8d))
+- **shared:** Add tag schemas and time entry tag contracts ([9c2d308](https://github.com/xcvzmoon/stampp/commit/9c2d308))
+- **api:** Expose workspace tags and attach them to time entries ([2b383d9](https://github.com/xcvzmoon/stampp/commit/2b383d9))
+- **web:** Add tags page and timer tag picker ([65412f4](https://github.com/xcvzmoon/stampp/commit/65412f4))
+- **api:** Enable Nitro OpenAPI at /api/v1/openapi.json ([512e84d](https://github.com/xcvzmoon/stampp/commit/512e84d))
+- **api:** Annotate v0.1 routes with OpenAPI metadata ([1cd8724](https://github.com/xcvzmoon/stampp/commit/1cd8724))
+- **api:** Add time entry duplicate endpoint and timesheet week entries ([875b5af](https://github.com/xcvzmoon/stampp/commit/875b5af))
+- **api:** Instrument Nitro with evlog wide events ([cbcd6c2](https://github.com/xcvzmoon/stampp/commit/cbcd6c2))
+- **web:** Wire evlog Nuxt module and local drain ([55c7304](https://github.com/xcvzmoon/stampp/commit/55c7304))
+
+### 🩹 Fixes
+
+- **ci:** Load varlock env in release workflow ([e813c67](https://github.com/xcvzmoon/stampp/commit/e813c67))
+- **deploy:** Make compose images build and run ([f5ffac0](https://github.com/xcvzmoon/stampp/commit/f5ffac0))
+- **deploy:** Run varlock via vp exec in image builds ([189866e](https://github.com/xcvzmoon/stampp/commit/189866e))
+
+### 💅 Refactors
+
+- Strip descriptive comments and export docs ([078c6b1](https://github.com/xcvzmoon/stampp/commit/078c6b1))
+
+### 📖 Documentation
+
+- Describe mailer as BullMQ queue and UnEmail dispatch ([409ac08](https://github.com/xcvzmoon/stampp/commit/409ac08))
+
+### 🏡 Chore
+
+- **skills:** Add varlock ([c50b41d](https://github.com/xcvzmoon/stampp/commit/c50b41d))
+- **varlock:** Align schemas and scripts with skill guidance ([b544114](https://github.com/xcvzmoon/stampp/commit/b544114))
+- **varlock:** Pin compose APP_ENV and fail on codegen drift ([488ad86](https://github.com/xcvzmoon/stampp/commit/488ad86))
+- Bump genbumppush ([1e8853e](https://github.com/xcvzmoon/stampp/commit/1e8853e))
+- **skills:** Add evlog ([b4139a6](https://github.com/xcvzmoon/stampp/commit/b4139a6))
+
+### ✅ Tests
+
+- **api:** Cover numeric SMTP_PORT from typed ENV ([2303227](https://github.com/xcvzmoon/stampp/commit/2303227))
+- **api:** Cover v0.1 OpenAPI product operations ([8d6b6e5](https://github.com/xcvzmoon/stampp/commit/8d6b6e5))
+- **api:** Cover catalog export and auth tenant isolation ([36d425f](https://github.com/xcvzmoon/stampp/commit/36d425f))
+
+### ❤️ Contributors
+
+- Mon Albert Gamil ([@xcvzmoon](https://github.com/xcvzmoon))
+
 ## v0.1.0
 
 
