@@ -140,6 +140,16 @@ describe('weekly time summary', () => {
     expect(summary.missingMinutes).toBe(0);
     expect(summary.days[0]?.missingMinutes).toBe(0);
   });
+
+  it('includes hydrated tags on weekly entry DTOs', () => {
+    const summary = buildWeeklyTimeSummary(
+      [timeEntry('te_1', 'prj_1', '2026-10-26', 60)],
+      { weekStart: '2026-10-26', timezone: 'UTC' },
+      new Date('2026-10-26T12:00:00.000Z'),
+      new Map([['te_1', [{ id: 'tag_1', name: 'billable' }]]]),
+    );
+    expect(summary.projects[0]?.entries[0]?.tags).toEqual([{ id: 'tag_1', name: 'billable' }]);
+  });
 });
 
 describe('weekly time workspace isolation', () => {

@@ -3,15 +3,18 @@ import type {
   ClientDto,
   CreateClientInput,
   CreateProjectInput,
+  CreateTagInput,
   CreateTaskInput,
   ListResult,
   ProjectDto,
+  TagDto,
   TaskDto,
   UpdateClientInput,
   UpdateProjectInput,
+  UpdateTagInput,
   UpdateTaskInput,
 } from '@stampp/shared';
-import { clients, projects, tasks } from '@stampp/database';
+import { clients, projects, tags, tasks } from '@stampp/database';
 import { ERROR_CODES } from '@stampp/shared';
 import { and, asc, eq, gt, ilike, isNull } from 'drizzle-orm';
 import { toApiError } from '~/server/middleware/request-id.ts';
@@ -21,6 +24,7 @@ import {
   isUniqueViolation,
   toClientDto,
   toProjectDto,
+  toTagDto,
   toTaskDto,
 } from '~/server/utils/catalog.ts';
 
@@ -595,6 +599,141 @@ export async function archiveTask(
     action: 'task.archived',
     entityType: 'task',
     entityId: taskId,
+    before,
+  });
+}
+
+export async function listTags(
+  ctx: AuthorizedContext,
+  options: ListOptions,
+): Promise<ListResult<TagDto>> {
+  return listWithCursor({
+    limit: options.limit,
+    cursor: options.cursor,
+    search: options.search,
+    async run(cursorId) {
+      const conditions = [eq(tags.workspaceId, ctx.workspaceId), isNull(tags.deletedAt)];
+      if (cursorId) {
+        conditions.push(gt(tags.id, cursorId));
+      }
+      if (options.search) {
+        conditions.push(ilike(tags.name, `%${options.search}%`));
+      }
+      const rows = await ctx.db.client
+        .select()
+        .from(tags)
+        .where(and(...conditions))
+        .orderBy(asc(tags.id))
+        .limit(options.limit + 1);
+      return rows.map(toTagDto);
+    },
+  });
+}
+
+export async function getTag(
+  ctx: AuthorizedContext,
+  tagId: string,
+  requestId: string,
+): Promise<TagDto> {
+  const rows = await ctx.db.client
+    .select()
+    .from(tags)
+    .where(and(eq(tags.workspaceId, ctx.workspaceId), eq(tags.id, tagId), isNull(tags.deletedAt)))
+    .limit(1);
+  const row = rows[0];
+  if (!row) {
+    throw notFound(requestId, 'Tag');
+  }
+  return toTagDto(row);
+}
+
+export async function createTag(
+  ctx: AuthorizedContext,
+  input: CreateTagInput,
+  requestId: string,
+): Promise<TagDto> {
+  try {
+    const inserted = await ctx.db.client
+      .insert(tags)
+      .values({
+        workspaceId: ctx.workspaceId,
+        name: input.name,
+      })
+      .returning();
+    const row = inserted[0];
+    if (!row) {
+      throw toApiError(ERROR_CODES.INTERNAL, 'Failed to create tag', requestId);
+    }
+    await recordAudit(ctx, requestId, {
+      action: 'tag.created',
+      entityType: 'tag',
+      entityId: row.id,
+      after: row,
+    });
+    return toTagDto(row);
+  } catch (error) {
+    if (isUniqueViolation(error)) {
+      throw conflict(requestId, 'Tag name already exists in this workspace');
+    }
+    throw error;
+  }
+}
+
+export async function updateTag(
+  ctx: AuthorizedContext,
+  tagId: string,
+  input: UpdateTagInput,
+  requestId: string,
+): Promise<TagDto> {
+  if (!hasAtLeastOneField(input)) {
+    throw emptyUpdate(requestId);
+  }
+
+  const before = await getTag(ctx, tagId, requestId);
+  try {
+    const updated = await ctx.db.client
+      .update(tags)
+      .set({ name: input.name })
+      .where(and(eq(tags.workspaceId, ctx.workspaceId), eq(tags.id, tagId), isNull(tags.deletedAt)))
+      .returning();
+    const row = updated[0];
+    if (!row) {
+      throw notFound(requestId, 'Tag');
+    }
+    await recordAudit(ctx, requestId, {
+      action: 'tag.updated',
+      entityType: 'tag',
+      entityId: row.id,
+      before,
+      after: row,
+    });
+    return toTagDto(row);
+  } catch (error) {
+    if (isUniqueViolation(error)) {
+      throw conflict(requestId, 'Tag name already exists in this workspace');
+    }
+    throw error;
+  }
+}
+
+export async function archiveTag(
+  ctx: AuthorizedContext,
+  tagId: string,
+  requestId: string,
+): Promise<void> {
+  const before = await getTag(ctx, tagId, requestId);
+  const updated = await ctx.db.client
+    .update(tags)
+    .set({ deletedAt: new Date() })
+    .where(and(eq(tags.workspaceId, ctx.workspaceId), eq(tags.id, tagId), isNull(tags.deletedAt)))
+    .returning({ id: tags.id });
+  if (!updated[0]) {
+    throw notFound(requestId, 'Tag');
+  }
+  await recordAudit(ctx, requestId, {
+    action: 'tag.archived',
+    entityType: 'tag',
+    entityId: tagId,
     before,
   });
 }
