@@ -8,7 +8,7 @@ catalogMode: prefer
 catalog:
   '@oxlint/plugins': 1.82.0
   '@types/node': ^26.6.1
-  genbumppush: ^0.0.7
+  genbumppush: ^0.0.8
   typescript: ^6.0.3
   vite: npm:@voidzero-dev/vite-plus-core@0.3.2
   vite-plus: 0.3.2
@@ -64,4 +64,4 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - '@types/node@26.6.1'
-  - genbumppush@0.0.7
+  - genbumppush@0.0.8

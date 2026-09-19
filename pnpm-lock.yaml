@@ -192,8 +192,8 @@ catalogs:
       specifier: ^26.6.1
       version: 26.6.1
     genbumppush:
-      specifier: ^0.0.7
-      version: 0.0.7
+      specifier: ^0.0.8
+      version: 0.0.8
     typescript:
       specifier: ^6.0.3
       version: 6.0.3
@@ -282,7 +282,7 @@ importers:
         version: 1.82.0
       genbumppush:
         specifier: 'catalog:'
-        version: 0.0.7(chokidar@5.0.0)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magicast@0.5.5)
+        version: 0.0.8(chokidar@5.0.0)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magicast@0.5.5)
       node:
         specifier: runtime:^26
         version: runtime:26.9.0
@@ -4149,8 +4149,8 @@ packages:
   fzf@0.5.2:
     resolution: {integrity: sha512-Tt4kuxLXFKHy8KT40zwsUPUkg1CrsgY25FxA2U/j/0WgEDCk3ddc/zLTCCcbSHX9FcKtLuVaDGtGE/STWC+j3Q==}
 
-  genbumppush@0.0.7:
-    resolution: {integrity: sha512-yLiIfuoTRoTePkLOt8CORsrZ0VN7sHV/wBTby/p3NneM+m7qmNuuOyLb63dDa1X8xpqRbG9WiV4IDvCGZZvsrw==}
+  genbumppush@0.0.8:
+    resolution: {integrity: sha512-Uocbmx2k2l/MDbWaYgU7cWgD7Kxo32lRbDNEIemYBKXFUMeb4zmxPQVRG/7l4mNE85CWJ5hvaqxZWL55nKu53Q==}
     engines: {node: '>=20.19.0'}
     hasBin: true
 
@@ -9666,7 +9666,7 @@ snapshots:
 
   fzf@0.5.2: {}
 
-  genbumppush@0.0.7(chokidar@5.0.0)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magicast@0.5.5):
+  genbumppush@0.0.8(chokidar@5.0.0)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magicast@0.5.5):
     dependencies:
       c12: 4.0.0-rc.1(chokidar@5.0.0)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magicast@0.5.5)
       changelogen: 0.6.2(magicast@0.5.5)
