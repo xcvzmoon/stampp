@@ -1,3 +1,4 @@
+import { useLogger } from 'evlog/nitro/v3';
 import { defineHandler, defineRouteMeta } from 'nitro';
 import { getRequestId, parseBody, readJsonBody } from '~/server/utils/catalog.ts';
 import { timeSchemas } from '~/server/utils/time.ts';
@@ -67,5 +68,14 @@ export default defineHandler(async (event) => {
   const ctx = await requireWorkspace(event, 'time:write:own');
   const body = await readJsonBody(event, requestId);
   const input = parseBody(timeSchemas.startTimer, body, requestId);
-  return startTimer(ctx, input, requestId);
+  const entry = await startTimer(ctx, input, requestId);
+  useLogger(event).set({
+    action: 'timer.start',
+    timeEntry: {
+      id: entry.id,
+      projectId: entry.projectId,
+      tagIds: entry.tags.map((tag) => tag.id),
+    },
+  });
+  return entry;
 });

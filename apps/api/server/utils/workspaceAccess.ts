@@ -5,6 +5,7 @@ import { enterWorkspace, WorkspaceAccessError } from '@stampp/access';
 import { members } from '@stampp/database';
 import { ERROR_CODES } from '@stampp/shared';
 import { and, eq } from 'drizzle-orm';
+import { useLogger } from 'evlog/nitro/v3';
 import { readEventRequestId, toApiError } from '~/server/middleware/request-id.ts';
 import { getAuth } from '~/server/utils/auth.ts';
 import { getDb } from '~/server/utils/db.ts';
@@ -46,18 +47,34 @@ export async function requireWorkspace(
   permission: Permission,
 ): Promise<AuthorizedContext> {
   const requestId = readEventRequestId(event);
+  const log = useLogger(event);
   const workspaceId = event.context.params?.workspaceId;
   if (!workspaceId) {
     throw toApiError(ERROR_CODES.BAD_REQUEST, 'workspaceId is required', requestId);
   }
 
   try {
-    return await enterWorkspace(createWorkspaceAccessDeps(event.req.headers), {
+    const ctx = await enterWorkspace(createWorkspaceAccessDeps(event.req.headers), {
       workspaceId,
       permission,
     });
+    log.set({
+      workspace: {
+        id: ctx.workspaceId,
+        role: ctx.role,
+        permission,
+      },
+    });
+    return ctx;
   } catch (error) {
     if (error instanceof WorkspaceAccessError) {
+      log.set({
+        workspace: {
+          id: workspaceId,
+          permission,
+          denied: error.kind,
+        },
+      });
       const code =
         error.kind === 'unauthenticated' ? ERROR_CODES.UNAUTHENTICATED : ERROR_CODES.FORBIDDEN;
       throw toApiError(code, error.message, requestId);

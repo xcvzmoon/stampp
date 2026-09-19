@@ -1,5 +1,6 @@
 // oxlint-disable-next-line import/no-unassigned-import
 import 'varlock/auto-load';
+import evlog from 'evlog/nitro/v3';
 import { defineConfig } from 'nitro';
 import { ENV } from './env.ts';
 
@@ -44,4 +45,11 @@ export default defineConfig({
       },
     },
   },
+  modules: [
+    evlog({
+      env: { service: 'stampp-api' },
+      include: ['/api/**', '/healthz', '/readyz'],
+      exclude: ['/healthz', '/readyz'],
+    }),
+  ],
 });

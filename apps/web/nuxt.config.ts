@@ -51,7 +51,13 @@ export default defineNuxtConfig({
     },
   },
   css: ['~/assets/css/main.css'],
-  modules: ['@nuxt/ui', '@pinia/nuxt', '@vueuse/nuxt', 'pinia-plugin-persistedstate/nuxt'],
+  modules: [
+    '@nuxt/ui',
+    '@pinia/nuxt',
+    '@vueuse/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
+    'evlog/nuxt',
+  ],
   runtimeConfig: {
     public: {
       appUrl: process.env.PUBLIC_APP_URL ?? 'http://localhost:3000',
@@ -59,5 +65,8 @@ export default defineNuxtConfig({
       authBaseURL: process.env.NUXT_PUBLIC_AUTH_BASE_URL ?? 'http://localhost:3001/api/auth',
       apiBaseURL: process.env.NUXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3001/api/v1',
     },
+  },
+  evlog: {
+    env: { service: 'stampp-web' },
   },
 });
