@@ -22,6 +22,11 @@
       active: route.path.startsWith(`/w/${workspaceId.value}/clients`),
     },
     {
+      label: 'Tags',
+      to: `/w/${workspaceId.value}/tags`,
+      active: route.path.startsWith(`/w/${workspaceId.value}/tags`),
+    },
+    {
       label: 'Team',
       to: `/w/${workspaceId.value}/team`,
       active: route.path.startsWith(`/w/${workspaceId.value}/team`),
