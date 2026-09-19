@@ -1,4 +1,5 @@
 import * as v from 'valibot';
+import { tagIdsSchema } from './catalog.ts';
 import { calendarDateSchema, idSchema, isoDateSchema, minutesSchema } from './schemas.ts';
 
 const descriptionSchema = v.pipe(v.string(), v.trim(), v.maxLength(1000));
@@ -25,6 +26,7 @@ export const startTimerInputSchema = v.object({
   ...optionalAssignmentSchema,
   description: v.optional(descriptionSchema),
   billable: v.optional(v.boolean()),
+  tagIds: v.optional(tagIdsSchema),
   timezone: timezoneSchema,
 });
 
@@ -34,6 +36,7 @@ export const addManualTimeInputSchema = v.variant('kind', [
     ...optionalAssignmentSchema,
     description: v.optional(descriptionSchema),
     billable: v.optional(v.boolean()),
+    tagIds: v.optional(tagIdsSchema),
     startAt: isoDateSchema,
     endAt: isoDateSchema,
     timezone: timezoneSchema,
@@ -43,6 +46,7 @@ export const addManualTimeInputSchema = v.variant('kind', [
     ...optionalAssignmentSchema,
     description: v.optional(descriptionSchema),
     billable: v.optional(v.boolean()),
+    tagIds: v.optional(tagIdsSchema),
     durationMinutes: v.pipe(minutesSchema, v.minValue(1)),
     workDate: v.optional(calendarDateSchema),
     timezone: timezoneSchema,
@@ -54,6 +58,7 @@ export const updateTimeEntryInputSchema = v.object({
   taskId: v.optional(v.nullable(idSchema)),
   description: v.optional(descriptionSchema),
   billable: v.optional(v.boolean()),
+  tagIds: v.optional(tagIdsSchema),
   startAt: v.optional(isoDateSchema),
   endAt: v.optional(v.nullable(isoDateSchema)),
   durationMinutes: v.optional(v.nullable(v.pipe(minutesSchema, v.minValue(1)))),
@@ -77,6 +82,11 @@ export const timeEntryListQuerySchema = v.object({
   projectId: v.optional(idSchema),
 });
 
+export const timeEntryTagRefSchema = v.object({
+  id: v.string(),
+  name: v.string(),
+});
+
 export const timeEntryDtoSchema = v.object({
   id: v.string(),
   workspaceId: v.string(),
@@ -90,6 +100,7 @@ export const timeEntryDtoSchema = v.object({
   durationMinutes: v.nullable(v.number()),
   workDate: calendarDateSchema,
   timezone: v.string(),
+  tags: v.array(timeEntryTagRefSchema),
   lockedAt: v.nullable(v.string()),
   createdAt: v.string(),
   updatedAt: v.string(),
@@ -143,6 +154,7 @@ export type StartTimerInput = v.InferOutput<typeof startTimerInputSchema>;
 export type AddManualTimeInput = v.InferOutput<typeof addManualTimeInputSchema>;
 export type UpdateTimeEntryInput = v.InferOutput<typeof updateTimeEntryInputSchema>;
 export type TimeEntryListQuery = v.InferOutput<typeof timeEntryListQuerySchema>;
+export type TimeEntryTagRef = v.InferOutput<typeof timeEntryTagRefSchema>;
 export type TimeEntryDto = v.InferOutput<typeof timeEntryDtoSchema>;
 export type WeeklyTimeQuery = v.InferOutput<typeof weeklyTimeQuerySchema>;
 export type WeeklyTimeSummary = v.InferOutput<typeof weeklyTimeSummarySchema>;
