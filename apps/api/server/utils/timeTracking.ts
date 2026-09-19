@@ -732,6 +732,58 @@ export async function copyPreviousWeek(
   return { copiedEntries: inserted.length };
 }
 
+export async function duplicateTimeEntry(
+  ctx: AuthorizedContext,
+  entryId: string,
+  requestId: string,
+): Promise<TimeEntryDto> {
+  const source = await getOwnedEntry(ctx, entryId, requestId);
+  if (source.lockedAt) throw locked(requestId);
+  if (source.startAt !== null && source.endAt === null) {
+    throw toApiError(ERROR_CODES.CONFLICT, 'Stop the timer before duplicating it', requestId);
+  }
+
+  const minutes = entryMinutes(source, new Date());
+  if (minutes <= 0) {
+    throw toApiError(ERROR_CODES.BAD_REQUEST, 'Time entry has no duration to duplicate', requestId);
+  }
+
+  const sourceTags = await hydrateTagsForEntries(ctx, [source.id]);
+  try {
+    const inserted = await ctx.db.client
+      .insert(timeEntries)
+      .values({
+        workspaceId: ctx.workspaceId,
+        userId: ctx.userId,
+        projectId: source.projectId,
+        taskId: source.taskId,
+        description: source.description,
+        billable: source.billable,
+        durationMinutes: minutes,
+        workDate: source.workDate,
+        timezone: source.timezone,
+      })
+      .returning();
+    const entry = inserted[0];
+    if (!entry) {
+      throw toApiError(ERROR_CODES.INTERNAL, 'Failed to duplicate time entry', requestId);
+    }
+    const entryTags = sourceTags.get(source.id) ?? [];
+    if (entryTags.length > 0) {
+      await replaceEntryTags(ctx, entry.id, entryTags);
+    }
+    await recordAudit(ctx, requestId, {
+      action: 'time_entry.created',
+      entityType: 'time_entry',
+      entityId: entry.id,
+      after: entry,
+    });
+    return toTimeEntryDto(entry, entryTags);
+  } catch (error) {
+    return mapConstraintError(error, requestId);
+  }
+}
+
 export async function removeTimeEntry(
   ctx: AuthorizedContext,
   entryId: string,
