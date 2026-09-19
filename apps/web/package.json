@@ -19,6 +19,7 @@
     "@vueuse/core": "catalog:ui",
     "@vueuse/nuxt": "catalog:ui",
     "better-auth": "catalog:auth",
+    "evlog": "catalog:observability",
     "nuxt": "catalog:ui",
     "pinia": "catalog:ui",
     "pinia-plugin-persistedstate": "catalog:ui",

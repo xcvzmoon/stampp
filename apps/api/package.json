@@ -20,6 +20,7 @@
     "better-auth": "catalog:auth",
     "bullmq": "catalog:platform",
     "drizzle-orm": "catalog:db",
+    "evlog": "catalog:observability",
     "ioredis": "catalog:platform",
     "postgres": "catalog:db",
     "uuid": "catalog:platform",

@@ -33,3 +33,6 @@ dist-ssr
 *.sw?
 
 .vite-hooks/_
+
+# evlog local drain
+.evlog/
