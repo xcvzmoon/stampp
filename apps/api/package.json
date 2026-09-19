@@ -18,6 +18,7 @@
     "@stampp/mailer": "workspace:*",
     "@stampp/shared": "workspace:*",
     "better-auth": "catalog:auth",
+    "bullmq": "catalog:platform",
     "drizzle-orm": "catalog:db",
     "ioredis": "catalog:platform",
     "postgres": "catalog:db",
