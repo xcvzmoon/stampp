@@ -1,7 +1,44 @@
-import { defineHandler } from 'nitro';
+import { defineHandler, defineRouteMeta } from 'nitro';
 import { catalogSchemas, getRequestId, parseBody, readJsonBody } from '~/server/utils/catalog.ts';
 import { updateTag } from '~/server/utils/catalogService.ts';
 import { requireParam, requireWorkspace } from '~/server/utils/workspaceAccess.ts';
+
+defineRouteMeta({
+  openAPI: {
+    tags: ['tags'],
+    summary: 'Update tag',
+    security: [{ sessionCookie: [] }],
+    requestBody: {
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['name'],
+            properties: {
+              name: { type: 'string', minLength: 1, maxLength: 50 },
+            },
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Updated tag',
+        content: {
+          'application/json': {
+            schema: { $ref: '#/components/schemas/TagDto' },
+          },
+        },
+      },
+      400: { $ref: '#/components/responses/ValidationFailed' },
+      401: { $ref: '#/components/responses/Unauthenticated' },
+      403: { $ref: '#/components/responses/Forbidden' },
+      404: { $ref: '#/components/responses/NotFound' },
+      409: { $ref: '#/components/responses/Conflict' },
+    },
+  },
+});
 
 export default defineHandler(async (event) => {
   const requestId = getRequestId(event);
