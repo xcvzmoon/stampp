@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test';
 import { resolveAuthEnv } from '~/server/utils/auth.ts';
-import { resolveMailerEnv } from '~/server/utils/mailer.ts';
+import { resolveMailDispatchMode, resolveMailerEnv } from '~/server/utils/mailer.ts';
 
 const longSecret = 'a'.repeat(32);
 
@@ -84,5 +84,17 @@ describe('resolveMailerEnv', () => {
 
   it('treats unknown MAIL_MODE as mock', () => {
     expect(resolveMailerEnv({ MAIL_MODE: 'sendgrid' }).mode).toBe('mock');
+  });
+});
+
+describe('resolveMailDispatchMode', () => {
+  it('keeps test runs on the in-process transport', () => {
+    expect(resolveMailDispatchMode('test')).toBe('in-process');
+  });
+
+  it('enqueues on Valkey for development and production', () => {
+    expect(resolveMailDispatchMode('development')).toBe('queue');
+    expect(resolveMailDispatchMode('production')).toBe('queue');
+    expect(resolveMailDispatchMode(undefined)).toBe('queue');
   });
 });
