@@ -21,9 +21,9 @@ find "$migrations_dir" -mindepth 2 -maxdepth 2 -name migration.sql -type f | sor
       ;;
   esac
   checksum=$(sha256sum "$migration" | cut -d ' ' -f 1)
+  # psql --command does not interpolate :'var'; name is validated [A-Za-z0-9_-] above.
   applied_checksum=$(psql $psql_args --tuples-only --no-align \
-    --set=migration_name="$name" \
-    --command="SELECT checksum FROM stampp_migrations WHERE name = :'migration_name'")
+    --command="SELECT checksum FROM stampp_migrations WHERE name = '$name'")
 
   if [ -n "$applied_checksum" ]; then
     if [ "$applied_checksum" != "$checksum" ]; then
