@@ -31,6 +31,7 @@ const productOperations = [
   'delete /api/v1/workspaces/{workspaceId}/time-entries/{entryId}',
   'get /api/v1/workspaces/{workspaceId}/time-entries/weekly',
   'post /api/v1/workspaces/{workspaceId}/time-entries/copy-previous-week',
+  'post /api/v1/workspaces/{workspaceId}/time-entries/{entryId}/duplicate',
   'get /api/v1/workspaces/{workspaceId}/reports/summary',
   'get /api/v1/workspaces/{workspaceId}/reports/detailed',
   'get /api/v1/workspaces/{workspaceId}/reports/weekly',
@@ -74,7 +75,7 @@ describe('v0.1 openapi contract', () => {
     expect(productOperations).toContain('get /api/v1/workspaces/{workspaceId}/tags');
     expect(productOperations).toContain('post /api/v1/workspaces/{workspaceId}/timer/start');
     expect(productOperations).toContain('get /api/v1/workspaces/{workspaceId}/export');
-    expect(productOperations.length).toBe(31);
+    expect(productOperations.length).toBe(32);
   });
 
   it('keeps product routes workspace-scoped', () => {

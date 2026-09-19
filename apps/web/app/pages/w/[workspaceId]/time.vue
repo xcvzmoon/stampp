@@ -27,6 +27,7 @@
   const loading = shallowRef(true);
   const copying = shallowRef(false);
   const savingCell = shallowRef<string | null>(null);
+  const duplicatingEntry = shallowRef<string | null>(null);
   const errorMessage = shallowRef<string | null>(null);
   const successMessage = shallowRef<string | null>(null);
 
@@ -39,6 +40,55 @@
     });
     return `${formatter.format(new Date(`${summary.value.weekStart}T12:00:00.000Z`))} – ${formatter.format(new Date(`${summary.value.weekEnd}T12:00:00.000Z`))}`;
   });
+
+  const weekEntries = computed(() => {
+    if (!summary.value) return [];
+    const items: TimeEntryDto[] = [];
+    for (const project of summary.value.projects) {
+      for (const entry of project.entries) {
+        items.push(entry);
+      }
+    }
+    items.sort(
+      (left, right) =>
+        right.workDate.localeCompare(left.workDate) || left.id.localeCompare(right.id),
+    );
+    return items;
+  });
+
+  const projectNameById = computed(() => {
+    const map = new Map<string, string>();
+    for (const project of projects.value) map.set(project.id, project.name);
+    return map;
+  });
+
+  function projectLabel(entry: TimeEntryDto): string {
+    if (!entry.projectId) return 'No project';
+    return projectNameById.value.get(entry.projectId) ?? 'Archived project';
+  }
+
+  function canDuplicate(entry: TimeEntryDto): boolean {
+    return entry.lockedAt === null && (entry.durationMinutes !== null || entry.endAt !== null);
+  }
+
+  async function duplicateEntry(entry: TimeEntryDto): Promise<void> {
+    duplicatingEntry.value = entry.id;
+    errorMessage.value = null;
+    successMessage.value = null;
+    try {
+      await apiFetch(
+        timeEntryDtoSchema,
+        `/workspaces/${workspaceId.value}/time-entries/${entry.id}/duplicate`,
+        { method: 'POST' },
+      );
+      successMessage.value = 'Entry duplicated.';
+      await loadPage();
+    } catch (error) {
+      errorMessage.value = error instanceof Error ? error.message : 'Could not duplicate entry';
+    } finally {
+      duplicatingEntry.value = null;
+    }
+  }
 
   function weeklyPath(): string {
     const params = new URLSearchParams({ weekStart: weekStart.value, timezone });
@@ -275,6 +325,57 @@
         :saving-cell="savingCell"
         @save="saveCell"
       />
+
+      <section
+        v-if="weekEntries.length > 0"
+        class="space-y-3"
+      >
+        <div>
+          <h2 class="text-sm font-semibold text-highlighted">Week entries</h2>
+          <p class="text-sm text-muted">
+            The grid stays the timesheet home. Duplicate a completed entry when you need the same
+            work again.
+          </p>
+        </div>
+        <div class="divide-y divide-default">
+          <div
+            v-for="entry in weekEntries"
+            :key="entry.id"
+            class="flex flex-wrap items-center justify-between gap-3 py-3"
+          >
+            <div class="min-w-0 flex-1 space-y-1">
+              <p class="truncate text-sm font-medium text-highlighted">
+                {{ entry.description || 'No description' }}
+              </p>
+              <p class="text-xs text-muted">
+                {{ projectLabel(entry) }} · {{ entry.workDate }} ·
+                {{ formatMinutes(entryMinutes(entry)) }}
+                <template v-if="entry.tags.length">
+                  ·
+                  <span
+                    v-for="tag in entry.tags"
+                    :key="tag.id"
+                    class="mr-1"
+                  >
+                    {{ tag.name }}
+                  </span>
+                </template>
+              </p>
+            </div>
+            <UButton
+              size="sm"
+              color="neutral"
+              variant="soft"
+              icon="i-lucide-copy"
+              :disabled="!canDuplicate(entry)"
+              :loading="duplicatingEntry === entry.id"
+              @click="duplicateEntry(entry)"
+            >
+              Duplicate
+            </UButton>
+          </div>
+        </div>
+      </section>
     </template>
   </div>
 </template>
