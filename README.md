@@ -103,7 +103,7 @@ vp run build
 | `packages/access`   | Workspace authorization boundary             |
 | `packages/database` | Drizzle schemas and migrations               |
 | `packages/domain`   | Duration, money, and permission rules        |
-| `packages/mailer`   | Transactional mail dispatch                  |
+| `packages/mailer`   | BullMQ queue + UnEmail mail dispatch         |
 | `packages/shared`   | Shared validation schemas and API contracts  |
 | `deploy/docker`     | Production images and Docker Compose service |
 
