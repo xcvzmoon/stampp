@@ -1,12 +1,21 @@
 <script setup lang="ts">
-  import type { ClientDto, ProjectDto, SummaryReport } from '@stampp/shared';
+  import type {
+    ClientDto,
+    ProjectDto,
+    ProfitabilityReport,
+    SummaryReport,
+    UtilizationReport,
+  } from '@stampp/shared';
   import {
     clientDtoSchema,
     listResultSchema,
+    profitabilityReportSchema,
     projectDtoSchema,
     summaryReportSchema,
+    utilizationReportSchema,
   } from '@stampp/shared';
-  import { addCalendarDays, calendarDateInTimezone } from '~/utils/week';
+  import { formatRateAmount } from '~/utils/rates';
+  import { addCalendarDays, calendarDateInTimezone, formatMinutes } from '~/utils/week';
 
   definePageMeta({ layout: 'workspace' });
 
@@ -26,9 +35,47 @@
   const projects = shallowRef<ProjectDto[]>([]);
   const clients = shallowRef<ClientDto[]>([]);
   const report = shallowRef<SummaryReport | null>(null);
+  const profitability = shallowRef<ProfitabilityReport | null>(null);
+  const utilization = shallowRef<UtilizationReport | null>(null);
   const loading = shallowRef(true);
   const exporting = shallowRef(false);
   const errorMessage = shallowRef<string | null>(null);
+
+  function percent(value: number | null): string {
+    return value === null ? '—' : `${(value * 100).toFixed(1)}%`;
+  }
+
+  async function loadReport(): Promise<void> {
+    loading.value = true;
+    errorMessage.value = null;
+    try {
+      const params = reportParameters().toString();
+      const utilParams = new URLSearchParams({
+        from: from.value,
+        to: to.value,
+        timezone,
+        groupBy: groupBy.value === 'client' ? 'project' : groupBy.value,
+      });
+      const [summary, profit, util] = await Promise.all([
+        apiFetch(summaryReportSchema, `/workspaces/${workspaceId.value}/reports/summary?${params}`),
+        apiFetch(
+          profitabilityReportSchema,
+          `/workspaces/${workspaceId.value}/reports/profitability?${params}`,
+        ).catch(() => null),
+        apiFetch(
+          utilizationReportSchema,
+          `/workspaces/${workspaceId.value}/reports/utilization?${utilParams.toString()}`,
+        ).catch(() => null),
+      ]);
+      report.value = summary;
+      profitability.value = profit;
+      utilization.value = util;
+    } catch (error) {
+      errorMessage.value = error instanceof Error ? error.message : 'Could not load the report';
+    } finally {
+      loading.value = false;
+    }
+  }
 
   const projectOptions = computed(() => [
     { label: 'All projects', value: '' },
@@ -52,21 +99,6 @@
     if (userId.value) parameters.set('userId', userId.value);
     if (billable.value) parameters.set('billable', billable.value);
     return parameters;
-  }
-
-  async function loadReport(): Promise<void> {
-    loading.value = true;
-    errorMessage.value = null;
-    try {
-      report.value = await apiFetch(
-        summaryReportSchema,
-        `/workspaces/${workspaceId.value}/reports/summary?${reportParameters().toString()}`,
-      );
-    } catch (error) {
-      errorMessage.value = error instanceof Error ? error.message : 'Could not load the report';
-    } finally {
-      loading.value = false;
-    }
   }
 
   async function download(path: string, filename: string): Promise<void> {
@@ -186,5 +218,107 @@
       v-else-if="report"
       :report="report"
     />
+
+    <section
+      v-if="profitability"
+      class="space-y-3"
+    >
+      <h2 class="text-lg font-medium text-highlighted">Profitability</h2>
+      <div class="grid gap-3 sm:grid-cols-4">
+        <UCard>
+          <p class="text-xs font-medium tracking-wide text-muted uppercase">Revenue</p>
+          <p class="mt-1 font-mono text-xl font-semibold text-highlighted">
+            {{ formatRateAmount(profitability.totals.revenueMinor, profitability.currency) }}
+          </p>
+        </UCard>
+        <UCard>
+          <p class="text-xs font-medium tracking-wide text-muted uppercase">Labor cost</p>
+          <p class="mt-1 font-mono text-xl font-semibold text-highlighted">
+            {{ formatRateAmount(profitability.totals.laborCostMinor, profitability.currency) }}
+          </p>
+        </UCard>
+        <UCard>
+          <p class="text-xs font-medium tracking-wide text-muted uppercase">Expenses</p>
+          <p class="mt-1 font-mono text-xl font-semibold text-highlighted">
+            {{ formatRateAmount(profitability.totals.expenseMinor, profitability.currency) }}
+          </p>
+        </UCard>
+        <UCard>
+          <p class="text-xs font-medium tracking-wide text-muted uppercase">Profit / margin</p>
+          <p
+            class="mt-1 font-mono text-xl font-semibold"
+            :class="profitability.totals.profitMinor < 0 ? 'text-error' : 'text-success'"
+          >
+            {{ formatRateAmount(profitability.totals.profitMinor, profitability.currency) }}
+          </p>
+          <p class="text-sm text-muted">{{ percent(profitability.totals.marginRatio) }}</p>
+        </UCard>
+      </div>
+      <div
+        v-if="profitability.groups.length"
+        class="divide-y divide-default rounded-lg border border-default"
+      >
+        <div
+          v-for="group in profitability.groups"
+          :key="group.id ?? group.name"
+          class="grid gap-2 px-4 py-3 sm:grid-cols-5"
+        >
+          <p class="font-medium text-highlighted">{{ group.name }}</p>
+          <p class="text-sm text-muted">
+            Rev {{ formatRateAmount(group.revenueMinor, profitability.currency) }}
+          </p>
+          <p class="text-sm text-muted">
+            Cost {{ formatRateAmount(group.laborCostMinor, profitability.currency) }}
+          </p>
+          <p class="text-sm text-muted">
+            Profit {{ formatRateAmount(group.profitMinor, profitability.currency) }}
+          </p>
+          <p class="text-sm text-muted">{{ percent(group.marginRatio) }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section
+      v-if="utilization"
+      class="space-y-3"
+    >
+      <h2 class="text-lg font-medium text-highlighted">Utilization</h2>
+      <UCard>
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p class="text-xs font-medium tracking-wide text-muted uppercase">
+              Billable utilization
+            </p>
+            <p class="mt-1 font-mono text-2xl font-semibold text-highlighted">
+              {{ percent(utilization.totals.utilizationRatio) }}
+            </p>
+          </div>
+          <p class="text-sm text-muted">
+            {{ formatMinutes(utilization.totals.billableMinutes) }} billable /
+            {{ formatMinutes(utilization.totals.totalMinutes) }} total
+          </p>
+        </div>
+      </UCard>
+      <div
+        v-if="utilization.groups.length"
+        class="divide-y divide-default rounded-lg border border-default"
+      >
+        <div
+          v-for="group in utilization.groups"
+          :key="group.id ?? group.name"
+          class="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
+        >
+          <div>
+            <p class="font-medium text-highlighted">{{ group.name }}</p>
+            <p class="text-sm text-muted">
+              {{ formatMinutes(group.billableMinutes) }} / {{ formatMinutes(group.totalMinutes) }}
+            </p>
+          </div>
+          <p class="font-mono text-sm font-semibold text-highlighted">
+            {{ percent(group.utilizationRatio) }}
+          </p>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
