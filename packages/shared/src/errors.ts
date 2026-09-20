@@ -19,6 +19,7 @@ export const ERROR_CODES = {
   TIMESHEET_INVALID_TRANSITION: 'timesheet.invalid_transition',
   TIMESHEET_EMPTY: 'timesheet.empty',
   TIMESHEET_FROZEN: 'timesheet.frozen',
+  STORAGE_NOT_CONFIGURED: 'storage.not_configured',
 } as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
