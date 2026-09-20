@@ -16,6 +16,7 @@ import { and, asc, eq, gt, gte, inArray, isNull, lte, or } from 'drizzle-orm';
 import * as v from 'valibot';
 import { toApiError } from '~/server/middleware/request-id.ts';
 import { recordAudit } from '~/server/utils/audit.ts';
+import { assertEntryWeekEditable, assertWeekEditable } from '~/server/utils/timesheets.ts';
 import { addCalendarDays, calendarDateInTimezone } from '~/server/utils/week.ts';
 
 type ListTimeEntriesOptions = TimeEntryListQuery & { limit: number };
@@ -293,6 +294,7 @@ export async function startTimer(
   const assignment = await resolveAssignment(ctx, input.projectId, input.taskId, requestId);
   const entryTags = await resolveActiveTags(ctx, input.tagIds ?? [], requestId);
   const now = new Date();
+  await assertWeekEditable(ctx, calendarDateInTimezone(now, input.timezone), requestId);
   try {
     const rows = await ctx.db.client
       .insert(timeEntries)
@@ -383,6 +385,7 @@ export async function addManualTime(
   const workDate = interval
     ? calendarDateInTimezone(startAt ?? new Date(), input.timezone)
     : (input.workDate ?? calendarDateInTimezone(new Date(), input.timezone));
+  await assertWeekEditable(ctx, workDate, requestId);
 
   try {
     const rows = await ctx.db.client
@@ -467,6 +470,7 @@ export async function updateTimeEntry(
 ): Promise<TimeEntryDto> {
   const before = await getOwnedEntry(ctx, entryId, requestId);
   if (before.lockedAt) throw locked(requestId);
+  await assertEntryWeekEditable(ctx, before.workDate, requestId);
   if (Object.keys(input).length === 0) {
     throw toApiError(ERROR_CODES.BAD_REQUEST, 'At least one field is required', requestId);
   }
@@ -668,6 +672,7 @@ export async function copyPreviousWeek(
       requestId,
     );
   }
+  await assertWeekEditable(ctx, query.weekStart, requestId);
 
   const sourceStart = addCalendarDays(query.weekStart, -7);
   const sourceEnd = addCalendarDays(query.weekStart, -1);
@@ -739,6 +744,7 @@ export async function duplicateTimeEntry(
 ): Promise<TimeEntryDto> {
   const source = await getOwnedEntry(ctx, entryId, requestId);
   if (source.lockedAt) throw locked(requestId);
+  await assertEntryWeekEditable(ctx, source.workDate, requestId);
   if (source.startAt !== null && source.endAt === null) {
     throw toApiError(ERROR_CODES.CONFLICT, 'Stop the timer before duplicating it', requestId);
   }
@@ -791,6 +797,7 @@ export async function removeTimeEntry(
 ): Promise<void> {
   const before = await getOwnedEntry(ctx, entryId, requestId);
   if (before.lockedAt) throw locked(requestId);
+  await assertEntryWeekEditable(ctx, before.workDate, requestId);
   const rows = await ctx.db.client
     .delete(timeEntries)
     .where(

@@ -15,6 +15,7 @@
     summary: WeeklyTimeSummary;
     projects: ProjectDto[];
     savingCell: string | null;
+    readonly?: boolean;
   }>();
 
   const emit = defineEmits<{
@@ -86,6 +87,7 @@
   watch(() => props.summary, syncValues, { immediate: true });
 
   function save(row: TimesheetRow, date: string): void {
+    if (props.readonly) return;
     const key = cellKey(row.projectId, date);
     emit('save', row.projectId, date, values[key] ?? '');
   }
@@ -150,6 +152,7 @@
               class="w-full"
               inputmode="decimal"
               placeholder="0:00"
+              :disabled="readonly"
               :loading="savingCell === cellKey(row.projectId, day.date)"
               @blur="save(row, day.date)"
               @keydown.enter.prevent="blurOnEnter"

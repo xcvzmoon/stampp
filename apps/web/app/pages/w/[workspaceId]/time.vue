@@ -1,10 +1,17 @@
 <script setup lang="ts">
-  import type { ProjectDto, TimeEntryDto, WeeklyTimeSummary } from '@stampp/shared';
+  import type {
+    OwnTimesheetState,
+    ProjectDto,
+    TimeEntryDto,
+    WeeklyTimeSummary,
+  } from '@stampp/shared';
   import {
     copyPreviousWeekResultSchema,
     listResultSchema,
+    ownTimesheetStateSchema,
     projectDtoSchema,
     timeEntryDtoSchema,
+    timesheetDtoSchema,
     weeklyTimeSummarySchema,
   } from '@stampp/shared';
   import {
@@ -23,13 +30,45 @@
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const weekStart = shallowRef(mondayForDate(calendarDateInTimezone(new Date(), timezone)));
   const summary = shallowRef<WeeklyTimeSummary | null>(null);
+  const ownState = shallowRef<OwnTimesheetState | null>(null);
   const projects = shallowRef<ProjectDto[]>([]);
   const loading = shallowRef(true);
   const copying = shallowRef(false);
+  const submitting = shallowRef(false);
+  const withdrawing = shallowRef(false);
   const savingCell = shallowRef<string | null>(null);
   const duplicatingEntry = shallowRef<string | null>(null);
   const errorMessage = shallowRef<string | null>(null);
   const successMessage = shallowRef<string | null>(null);
+
+  const weekEditable = computed(() => ownState.value?.editable ?? true);
+  const timesheetStatus = computed(() => ownState.value?.status ?? null);
+
+  const statusLabel = computed(() => {
+    switch (timesheetStatus.value) {
+      case 'submitted':
+        return 'Submitted';
+      case 'approved':
+        return 'Approved';
+      case 'rejected':
+        return 'Rejected';
+      default:
+        return 'Draft';
+    }
+  });
+
+  const statusColor = computed(() => {
+    switch (timesheetStatus.value) {
+      case 'submitted':
+        return 'info' as const;
+      case 'approved':
+        return 'success' as const;
+      case 'rejected':
+        return 'error' as const;
+      default:
+        return 'neutral' as const;
+    }
+  });
 
   const weekLabel = computed(() => {
     if (!summary.value) return '';
@@ -68,10 +107,18 @@
   }
 
   function canDuplicate(entry: TimeEntryDto): boolean {
-    return entry.lockedAt === null && (entry.durationMinutes !== null || entry.endAt !== null);
+    return (
+      weekEditable.value &&
+      entry.lockedAt === null &&
+      (entry.durationMinutes !== null || entry.endAt !== null)
+    );
   }
 
   async function duplicateEntry(entry: TimeEntryDto): Promise<void> {
+    if (!weekEditable.value) {
+      errorMessage.value = 'This week is submitted or approved and cannot be edited.';
+      return;
+    }
     duplicatingEntry.value = entry.id;
     errorMessage.value = null;
     successMessage.value = null;
@@ -95,23 +142,66 @@
     return `/workspaces/${workspaceId.value}/time-entries/weekly?${params.toString()}`;
   }
 
+  function ownStatePath(): string {
+    const params = new URLSearchParams({ weekStart: weekStart.value });
+    return `/workspaces/${workspaceId.value}/timesheets/own?${params.toString()}`;
+  }
+
   async function loadPage(): Promise<void> {
     loading.value = true;
     errorMessage.value = null;
     try {
-      const [weeklySummary, projectResult] = await Promise.all([
+      const [weeklySummary, projectResult, stateResult] = await Promise.all([
         apiFetch(weeklyTimeSummarySchema, weeklyPath()),
         apiFetch(
           projectsListSchema,
           `/workspaces/${workspaceId.value}/projects?limit=200&status=active`,
         ),
+        apiFetch(ownTimesheetStateSchema, ownStatePath()),
       ]);
       summary.value = weeklySummary;
       projects.value = projectResult.items;
+      ownState.value = stateResult;
     } catch (error) {
       errorMessage.value = error instanceof Error ? error.message : 'Could not load the timesheet';
     } finally {
       loading.value = false;
+    }
+  }
+
+  async function submitWeek(): Promise<void> {
+    submitting.value = true;
+    errorMessage.value = null;
+    successMessage.value = null;
+    try {
+      await apiFetch(timesheetDtoSchema, `/workspaces/${workspaceId.value}/timesheets/submit`, {
+        method: 'POST',
+        body: JSON.stringify({ weekStart: weekStart.value }),
+      });
+      successMessage.value = 'Timesheet submitted for approval.';
+      await loadPage();
+    } catch (error) {
+      errorMessage.value = error instanceof Error ? error.message : 'Could not submit timesheet';
+    } finally {
+      submitting.value = false;
+    }
+  }
+
+  async function withdrawWeek(): Promise<void> {
+    withdrawing.value = true;
+    errorMessage.value = null;
+    successMessage.value = null;
+    try {
+      await apiSend(`/workspaces/${workspaceId.value}/timesheets/withdraw`, {
+        method: 'POST',
+        body: JSON.stringify({ weekStart: weekStart.value }),
+      });
+      successMessage.value = 'Submission withdrawn. The week is editable again.';
+      await loadPage();
+    } catch (error) {
+      errorMessage.value = error instanceof Error ? error.message : 'Could not withdraw timesheet';
+    } finally {
+      withdrawing.value = false;
     }
   }
 
@@ -133,6 +223,10 @@
   }
 
   async function saveCell(projectId: string | null, date: string, value: string): Promise<void> {
+    if (!weekEditable.value) {
+      errorMessage.value = 'This week is submitted or approved and cannot be edited.';
+      return;
+    }
     const desiredMinutes = parseDuration(value);
     if (desiredMinutes === null) {
       errorMessage.value = 'Enter time as hours (7.5) or hours and minutes (7:30).';
@@ -205,6 +299,10 @@
   }
 
   async function copyPreviousWeek(): Promise<void> {
+    if (!weekEditable.value) {
+      errorMessage.value = 'This week is submitted or approved and cannot be edited.';
+      return;
+    }
     copying.value = true;
     errorMessage.value = null;
     successMessage.value = null;
@@ -237,21 +335,51 @@
   <div class="space-y-6">
     <header class="flex flex-wrap items-start justify-between gap-4">
       <div class="space-y-1">
-        <h1 class="text-2xl font-semibold text-highlighted">Timesheet</h1>
+        <div class="flex flex-wrap items-center gap-2">
+          <h1 class="text-2xl font-semibold text-highlighted">Timesheet</h1>
+          <UBadge
+            :color="statusColor"
+            variant="subtle"
+            size="sm"
+          >
+            {{ statusLabel }}
+          </UBadge>
+        </div>
         <p class="text-sm text-muted">
-          Enter time in each project and day, then press Enter or leave the cell.
+          Enter time in each project and day, then press Enter or leave the cell. Submit the week
+          when it is ready for manager approval.
         </p>
       </div>
-      <UButton
-        color="neutral"
-        variant="soft"
-        icon="i-lucide-copy"
-        :loading="copying"
-        :disabled="loading || (summary?.totalMinutes ?? 0) > 0"
-        @click="copyPreviousWeek"
-      >
-        Copy previous week
-      </UButton>
+      <div class="flex flex-wrap gap-2">
+        <UButton
+          v-if="timesheetStatus === 'submitted'"
+          color="warning"
+          variant="soft"
+          :loading="withdrawing"
+          :disabled="loading"
+          @click="withdrawWeek"
+        >
+          Withdraw
+        </UButton>
+        <UButton
+          v-else-if="timesheetStatus !== 'approved'"
+          :loading="submitting"
+          :disabled="loading || (summary?.totalMinutes ?? 0) === 0"
+          @click="submitWeek"
+        >
+          Submit week
+        </UButton>
+        <UButton
+          color="neutral"
+          variant="soft"
+          icon="i-lucide-copy"
+          :loading="copying"
+          :disabled="loading || !weekEditable || (summary?.totalMinutes ?? 0) > 0"
+          @click="copyPreviousWeek"
+        >
+          Copy previous week
+        </UButton>
+      </div>
     </header>
 
     <div class="flex flex-wrap items-center justify-between gap-3">
@@ -285,6 +413,16 @@
       color="success"
       variant="subtle"
       :title="successMessage"
+    />
+    <UAlert
+      v-if="!weekEditable && !loading"
+      color="info"
+      variant="subtle"
+      :title="
+        timesheetStatus === 'approved'
+          ? 'This week is approved and locked.'
+          : 'This week is submitted. Withdraw to edit, or wait for a decision.'
+      "
     />
 
     <p
@@ -323,6 +461,7 @@
         :summary="summary"
         :projects="projects"
         :saving-cell="savingCell"
+        :readonly="!weekEditable"
         @save="saveCell"
       />
 

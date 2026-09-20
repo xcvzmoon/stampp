@@ -17,11 +17,15 @@ export function mapErrorCodeToStatus(code: string): number {
     code === ERROR_CODES.PROJECT_ARCHIVED ||
     code === ERROR_CODES.RATE_INVALID_TARGET ||
     code === ERROR_CODES.RATE_CURRENCY_MISMATCH ||
-    code === ERROR_CODES.RATE_NOT_REVOCABLE
+    code === ERROR_CODES.RATE_NOT_REVOCABLE ||
+    code === ERROR_CODES.TIMESHEET_INVALID_TRANSITION ||
+    code === ERROR_CODES.TIMESHEET_EMPTY
   ) {
     return 422;
   }
-  if (code === ERROR_CODES.TIME_ENTRY_LOCKED) return 423;
+  if (code === ERROR_CODES.TIME_ENTRY_LOCKED || code === ERROR_CODES.TIMESHEET_FROZEN) {
+    return 423;
+  }
   if (code === ERROR_CODES.VALIDATION_FAILED) return 400;
   if (code === ERROR_CODES.BAD_REQUEST) return 400;
   if (code === ERROR_CODES.RATE_LIMITED) return 429;
