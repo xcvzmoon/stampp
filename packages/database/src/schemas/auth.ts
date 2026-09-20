@@ -1,5 +1,18 @@
-import { boolean, index, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
-import { TIMESTAMP_CONFIG, generateAuthTimestamps, generateTextId } from './_helpers.ts';
+import {
+  boolean,
+  index,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+  uniqueIndex,
+} from 'drizzle-orm/pg-core';
+import {
+  TIMESTAMP_CONFIG,
+  generateAuthTimestamps,
+  generateEntityId,
+  generateTextId,
+} from './_helpers.ts';
 
 // Better Auth tables. Product "workspace" maps to organizations.id.
 
@@ -11,6 +24,7 @@ export const users = pgTable(
     email: text('email').notNull(),
     emailVerified: boolean('email_verified').notNull().default(false),
     image: text('image'),
+    twoFactorEnabled: boolean('two_factor_enabled').notNull().default(false),
     ...generateAuthTimestamps(),
   },
   (table) => [uniqueIndex('users_email_unique').on(table.email)],
@@ -123,8 +137,52 @@ export const invitations = pgTable(
   ],
 );
 
+/** Better Auth two-factor secret storage (model `twoFactor`, plural table). */
+export const twoFactors = pgTable(
+  'twofactors',
+  {
+    id: generateTextId(),
+    secret: text('secret').notNull(),
+    backupCodes: text('backup_codes').notNull(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    verified: boolean('verified').notNull().default(true),
+    failedVerificationCount: integer('failed_verification_count').notNull().default(0),
+    lockedUntil: timestamp('locked_until', TIMESTAMP_CONFIG),
+    ...generateAuthTimestamps(),
+  },
+  (table) => [index('twofactors_user_id_idx').on(table.userId)],
+);
+
+/** Stampp-owned personal access tokens for product API calls. */
+export const personalAccessTokens = pgTable(
+  'personal_access_tokens',
+  {
+    id: generateEntityId('pat'),
+    workspaceId: text('workspace_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    tokenHash: text('token_hash').notNull(),
+    lastUsedAt: timestamp('last_used_at', TIMESTAMP_CONFIG),
+    expiresAt: timestamp('expires_at', TIMESTAMP_CONFIG),
+    revokedAt: timestamp('revoked_at', TIMESTAMP_CONFIG),
+    ...generateAuthTimestamps(),
+  },
+  (table) => [
+    uniqueIndex('personal_access_tokens_token_hash_unique').on(table.tokenHash),
+    index('personal_access_tokens_workspace_user_idx').on(table.workspaceId, table.userId),
+  ],
+);
+
 export type User = typeof users.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
 export type Organization = typeof organizations.$inferSelect;
 export type Member = typeof members.$inferSelect;
 export type Invitation = typeof invitations.$inferSelect;
+export type TwoFactor = typeof twoFactors.$inferSelect;
+export type PersonalAccessToken = typeof personalAccessTokens.$inferSelect;
