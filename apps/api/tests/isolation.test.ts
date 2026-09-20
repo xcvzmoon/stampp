@@ -6,12 +6,13 @@ import {
   createTestDb,
   organizations,
   projects,
+  rates,
   tags,
   tasks,
   timeEntries,
   timeEntryTags,
 } from '@stampp/database';
-import { and, asc, eq, gt, isNull } from 'drizzle-orm';
+import { and, asc, eq, gt, isNull, lte, or } from 'drizzle-orm';
 import { describe, expect, it } from 'vite-plus/test';
 import { reportScope } from '~/server/utils/reports.ts';
 import { weeklyTimeScope } from '~/server/utils/timeTracking.ts';
@@ -112,6 +113,31 @@ describe('catalog tenant isolation', () => {
       .toSQL();
     expect(query.sql).toContain('"workspace_id" = $1');
     expect(query.params[0]).toBe(workspaceA);
+  });
+
+  it('binds workspace_id on rates list and as-of windows', () => {
+    const db = createTestDb();
+    const list = db.select().from(rates).where(eq(rates.workspaceId, workspaceA)).toSQL();
+    const asOf = db
+      .select()
+      .from(rates)
+      .where(
+        and(
+          eq(rates.workspaceId, workspaceB),
+          lte(rates.effectiveFrom, new Date('2026-01-01T00:00:00.000Z')),
+          or(
+            isNull(rates.effectiveTo),
+            gt(rates.effectiveTo, new Date('2026-01-01T00:00:00.000Z')),
+          ),
+        ),
+      )
+      .toSQL();
+
+    expect(list.sql).toContain('"workspace_id" = $1');
+    expect(list.params[0]).toBe(workspaceA);
+    expect(asOf.sql).toContain('"workspace_id" = $1');
+    expect(asOf.params[0]).toBe(workspaceB);
+    expect(asOf.params).not.toContain(workspaceA);
   });
 });
 

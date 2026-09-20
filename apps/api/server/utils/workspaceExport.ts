@@ -6,6 +6,7 @@ import {
   members,
   organizations,
   projects,
+  rates,
   tags,
   tasks,
   timeEntries,
@@ -25,6 +26,7 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     tagRows,
     entryRows,
     entryTagRows,
+    rateRows,
     auditRows,
   ] = await Promise.all([
     ctx.db.client
@@ -84,6 +86,11 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
       .orderBy(asc(timeEntryTags.timeEntryId), asc(timeEntryTags.tagId)),
     ctx.db.client
       .select()
+      .from(rates)
+      .where(eq(rates.workspaceId, ctx.workspaceId))
+      .orderBy(asc(rates.id)),
+    ctx.db.client
+      .select()
       .from(auditEvents)
       .where(eq(auditEvents.workspaceId, ctx.workspaceId))
       .orderBy(asc(auditEvents.createdAt), asc(auditEvents.id)),
@@ -102,6 +109,7 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     tags: tagRows,
     timeEntries: entryRows,
     timeEntryTags: entryTagRows,
+    rates: rateRows,
     auditEvents: auditRows,
   };
 }

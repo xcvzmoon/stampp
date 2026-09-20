@@ -13,6 +13,9 @@ export const ERROR_CODES = {
   TIMER_ALREADY_RUNNING: 'timer.already_running',
   PROJECT_ARCHIVED: 'project.archived',
   PROJECT_NOT_ACTIVE: 'project.not_active',
+  RATE_INVALID_TARGET: 'rate.invalid_target',
+  RATE_CURRENCY_MISMATCH: 'rate.currency_mismatch',
+  RATE_NOT_REVOCABLE: 'rate.not_revocable',
 } as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];

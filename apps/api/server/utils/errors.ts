@@ -12,7 +12,13 @@ export function mapErrorCodeToStatus(code: string): number {
   ) {
     return 409;
   }
-  if (code === ERROR_CODES.PROJECT_NOT_ACTIVE || code === ERROR_CODES.PROJECT_ARCHIVED) {
+  if (
+    code === ERROR_CODES.PROJECT_NOT_ACTIVE ||
+    code === ERROR_CODES.PROJECT_ARCHIVED ||
+    code === ERROR_CODES.RATE_INVALID_TARGET ||
+    code === ERROR_CODES.RATE_CURRENCY_MISMATCH ||
+    code === ERROR_CODES.RATE_NOT_REVOCABLE
+  ) {
     return 422;
   }
   if (code === ERROR_CODES.TIME_ENTRY_LOCKED) return 423;
