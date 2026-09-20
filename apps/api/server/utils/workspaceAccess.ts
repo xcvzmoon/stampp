@@ -2,7 +2,7 @@ import type { AuthorizedContext, WorkspaceAccessDeps } from '@stampp/access';
 import type { Permission, StamppRole } from '@stampp/domain';
 import type { H3Event } from 'nitro';
 import { enterWorkspace, WorkspaceAccessError } from '@stampp/access';
-import { members } from '@stampp/database';
+import { applyWorkspaceRlsContext, members } from '@stampp/database';
 import { ERROR_CODES } from '@stampp/shared';
 import { and, eq } from 'drizzle-orm';
 import { useLogger } from 'evlog/nitro/v3';
@@ -67,6 +67,7 @@ export async function requireWorkspace(
       workspaceId,
       permission,
     });
+    await applyWorkspaceRlsContext(ctx.db.client, ctx.workspaceId).catch(() => undefined);
     log.set({
       workspace: {
         id: ctx.workspaceId,
