@@ -11,6 +11,7 @@ import {
   tasks,
   timeEntries,
   timeEntryTags,
+  timesheets,
   users,
 } from '@stampp/database';
 import { asc, eq } from 'drizzle-orm';
@@ -27,6 +28,7 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     entryRows,
     entryTagRows,
     rateRows,
+    timesheetRows,
     auditRows,
   ] = await Promise.all([
     ctx.db.client
@@ -91,6 +93,11 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
       .orderBy(asc(rates.id)),
     ctx.db.client
       .select()
+      .from(timesheets)
+      .where(eq(timesheets.workspaceId, ctx.workspaceId))
+      .orderBy(asc(timesheets.id)),
+    ctx.db.client
+      .select()
       .from(auditEvents)
       .where(eq(auditEvents.workspaceId, ctx.workspaceId))
       .orderBy(asc(auditEvents.createdAt), asc(auditEvents.id)),
@@ -110,6 +117,7 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     timeEntries: entryRows,
     timeEntryTags: entryTagRows,
     rates: rateRows,
+    timesheets: timesheetRows,
     auditEvents: auditRows,
   };
 }

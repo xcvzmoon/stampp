@@ -11,6 +11,7 @@ import {
   tasks,
   timeEntries,
   timeEntryTags,
+  timesheets,
 } from '@stampp/database';
 import { and, asc, eq, gt, isNull, lte, or } from 'drizzle-orm';
 import { describe, expect, it } from 'vite-plus/test';
@@ -138,6 +139,32 @@ describe('catalog tenant isolation', () => {
     expect(asOf.sql).toContain('"workspace_id" = $1');
     expect(asOf.params[0]).toBe(workspaceB);
     expect(asOf.params).not.toContain(workspaceA);
+  });
+
+  it('binds workspace_id on timesheet approval queries', () => {
+    const db = createTestDb();
+    const list = db
+      .select()
+      .from(timesheets)
+      .where(and(eq(timesheets.workspaceId, workspaceA), eq(timesheets.status, 'submitted')))
+      .toSQL();
+    const own = db
+      .select()
+      .from(timesheets)
+      .where(
+        and(
+          eq(timesheets.workspaceId, workspaceB),
+          eq(timesheets.userId, userId),
+          eq(timesheets.weekStart, '2026-09-14'),
+        ),
+      )
+      .toSQL();
+
+    expect(list.sql).toContain('"workspace_id" = $1');
+    expect(list.params[0]).toBe(workspaceA);
+    expect(own.sql).toContain('"workspace_id" = $1');
+    expect(own.params[0]).toBe(workspaceB);
+    expect(own.params).not.toContain(workspaceA);
   });
 });
 
