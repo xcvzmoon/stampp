@@ -9,6 +9,7 @@ import { useLogger } from 'evlog/nitro/v3';
 import { readEventRequestId, toApiError } from '~/server/middleware/request-id.ts';
 import { getAuth } from '~/server/utils/auth.ts';
 import { getDb } from '~/server/utils/db.ts';
+import { resolvePersonalAccessTokenUser } from '~/server/utils/personalAccessTokens.ts';
 
 function toStamppRole(role: string): StamppRole | null {
   switch (role) {
@@ -26,6 +27,14 @@ function toStamppRole(role: string): StamppRole | null {
 export function createWorkspaceAccessDeps(headers: Headers): WorkspaceAccessDeps {
   return {
     getSessionUserId: async () => {
+      const authorization = headers.get('authorization');
+      if (authorization?.startsWith('Bearer ')) {
+        const token = authorization.slice('Bearer '.length).trim();
+        const tokenUserId = await resolvePersonalAccessTokenUser(token);
+        if (tokenUserId) {
+          return tokenUserId;
+        }
+      }
       const session = await getAuth().api.getSession({ headers });
       return session?.user?.id ?? null;
     },

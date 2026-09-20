@@ -1,11 +1,25 @@
 <script setup lang="ts">
   const route = useRoute();
+  const config = useRuntimeConfig();
   const client = useAuthClient();
 
   const email = ref('');
   const password = ref('');
+  const totpCode = ref('');
+  const needsTwoFactor = ref(false);
   const loading = ref(false);
   const errorMessage = ref<string | null>(null);
+
+  const oauthProviders = computed(() => {
+    const providers: { id: string; label: string }[] = [];
+    if (config.public.authProviders?.google) {
+      providers.push({ id: 'google', label: 'Continue with Google' });
+    }
+    if (config.public.authProviders?.github) {
+      providers.push({ id: 'github', label: 'Continue with GitHub' });
+    }
+    return providers;
+  });
 
   function resolveNextPath(candidate: string | null | undefined): string {
     if (candidate?.startsWith('/')) {
@@ -14,21 +28,56 @@
     return '/workspaces';
   }
 
+  function nextPath(): string {
+    const rawNext = route.query.next;
+    const nextCandidate = Array.isArray(rawNext) ? rawNext[0] : rawNext;
+    return resolveNextPath(nextCandidate);
+  }
+
   async function signIn() {
     loading.value = true;
     errorMessage.value = null;
-    const { error } = await client.signIn.email({
+    if (needsTwoFactor.value) {
+      const { error } = await client.twoFactor.verifyTotp({
+        code: totpCode.value,
+      });
+      loading.value = false;
+      if (error) {
+        errorMessage.value = error.message ?? 'Two-factor verification failed';
+        return;
+      }
+      await navigateTo(nextPath());
+      return;
+    }
+
+    const { error, data } = await client.signIn.email({
       email: email.value,
       password: password.value,
     });
     loading.value = false;
     if (error) {
+      if (
+        error.status === 403 &&
+        (error.code === 'TOTP_REQUIRED' || error.message?.toLowerCase().includes('two-factor'))
+      ) {
+        needsTwoFactor.value = true;
+        errorMessage.value = null;
+        return;
+      }
       errorMessage.value = error.message ?? 'Sign in failed';
       return;
     }
-    const rawNext = route.query.next;
-    const nextCandidate = Array.isArray(rawNext) ? rawNext[0] : rawNext;
-    await navigateTo(resolveNextPath(nextCandidate));
+    if (data) {
+      await navigateTo(nextPath());
+    }
+  }
+
+  async function signInOAuth(provider: string) {
+    errorMessage.value = null;
+    await client.signIn.social({
+      provider,
+      callbackURL: nextPath(),
+    });
   }
 </script>
 
@@ -45,6 +94,7 @@
         @submit.prevent="signIn"
       >
         <UFormField
+          v-if="!needsTwoFactor"
           label="Email"
           required
         >
@@ -58,6 +108,7 @@
         </UFormField>
 
         <UFormField
+          v-if="!needsTwoFactor"
           label="Password"
           required
         >
@@ -70,6 +121,21 @@
           />
         </UFormField>
 
+        <UFormField
+          v-else
+          label="Two-factor code"
+          required
+        >
+          <UInput
+            v-model="totpCode"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            class="w-full"
+            required
+            maxlength="8"
+          />
+        </UFormField>
+
         <UAlert
           v-if="errorMessage"
           color="error"
@@ -79,22 +145,28 @@
 
         <UButton
           type="submit"
-          block
+          class="w-full"
           :loading="loading"
         >
-          Sign in
+          {{ needsTwoFactor ? 'Verify code' : 'Sign in' }}
         </UButton>
       </form>
-    </UCard>
 
-    <p class="text-center text-sm text-muted">
-      No account yet?
-      <ULink
-        to="/sign-up"
-        class="font-medium text-primary"
+      <div
+        v-if="oauthProviders.length && !needsTwoFactor"
+        class="mt-4 space-y-2 border-t border-default pt-4"
       >
-        Create one
-      </ULink>
-    </p>
+        <UButton
+          v-for="provider in oauthProviders"
+          :key="provider.id"
+          color="neutral"
+          variant="soft"
+          class="w-full"
+          @click="signInOAuth(provider.id)"
+        >
+          {{ provider.label }}
+        </UButton>
+      </div>
+    </UCard>
   </main>
 </template>

@@ -6,11 +6,12 @@ import {
   members,
   organizations,
   sessions,
+  twoFactors,
   users,
   verifications,
 } from '@stampp/database';
 import { betterAuth } from 'better-auth';
-import { organization } from 'better-auth/plugins';
+import { bearer, organization, twoFactor } from 'better-auth/plugins';
 import { getDb } from '~/server/utils/db.ts';
 import { ENV } from '~/server/utils/env.ts';
 import { getMailDispatch } from '~/server/utils/mailer.ts';
@@ -23,6 +24,7 @@ const schema = {
   organizations,
   members,
   invitations,
+  twoFactors,
 };
 
 export type AuthEnv = {
@@ -54,11 +56,24 @@ export function resolveAuthEnv(
   return { secret, baseURL };
 }
 
+function resolveSocialProviders() {
+  const googleId = ENV.GOOGLE_CLIENT_ID?.trim() ?? '';
+  const googleSecret = ENV.GOOGLE_CLIENT_SECRET?.trim() ?? '';
+  const githubId = ENV.GITHUB_CLIENT_ID?.trim() ?? '';
+  const githubSecret = ENV.GITHUB_CLIENT_SECRET?.trim() ?? '';
+  const google =
+    googleId && googleSecret ? { clientId: googleId, clientSecret: googleSecret } : undefined;
+  const github =
+    githubId && githubSecret ? { clientId: githubId, clientSecret: githubSecret } : undefined;
+  return { google, github };
+}
+
 export function createAuth() {
   const env = resolveAuthEnv();
   const mail = getMailDispatch();
   const appUrl = ENV.PUBLIC_APP_URL ?? env.baseURL;
   const isProd = ENV.APP_ENV === 'production';
+  const socialProviders = resolveSocialProviders();
 
   return betterAuth({
     appName: 'Stampp',
@@ -93,6 +108,7 @@ export function createAuth() {
         });
       },
     },
+    socialProviders,
     session: {
       expiresIn: 60 * 60 * 24 * 7,
       updateAge: 60 * 60 * 24,
@@ -130,6 +146,8 @@ export function createAuth() {
           },
         },
       }),
+      twoFactor(),
+      bearer(),
     ],
   });
 }

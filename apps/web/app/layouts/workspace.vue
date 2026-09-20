@@ -52,6 +52,11 @@
       active: route.path.startsWith(`/w/${workspaceId.value}/invoices`),
     },
     {
+      label: 'Security',
+      to: `/w/${workspaceId.value}/security`,
+      active: route.path.startsWith(`/w/${workspaceId.value}/security`),
+    },
+    {
       label: 'Reports',
       to: `/w/${workspaceId.value}/reports`,
       active: route.path.startsWith(`/w/${workspaceId.value}/reports`),
