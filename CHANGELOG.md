@@ -1,5 +1,59 @@
 # Changelog
 
+## v0.3.0
+
+[compare changes](https://github.com/xcvzmoon/stampp/compare/v0.2.0...v0.3.0)
+
+### 🚀 Enhancements
+
+- **domain:** Add rate precedence resolution and shared contracts ([d703615](https://github.com/xcvzmoon/stampp/commit/d703615))
+- **database:** Add versioned rates schema and migration ([d0a9e64](https://github.com/xcvzmoon/stampp/commit/d0a9e64))
+- **api:** Expose rates history and effective resolve endpoints ([76f8ec7](https://github.com/xcvzmoon/stampp/commit/76f8ec7))
+- **web:** Add rates settings page and workspace nav ([fe154f3](https://github.com/xcvzmoon/stampp/commit/fe154f3))
+- **domain:** Add timesheet approval transitions and shared contracts ([4108840](https://github.com/xcvzmoon/stampp/commit/4108840))
+- **database:** Add timesheets approval schema and migration ([73aa20d](https://github.com/xcvzmoon/stampp/commit/73aa20d))
+- **api:** Add timesheet submit withdraw and approval endpoints ([60ed1b9](https://github.com/xcvzmoon/stampp/commit/60ed1b9))
+- **web:** Add timesheet submit controls and approvals queue ([eb6e918](https://github.com/xcvzmoon/stampp/commit/eb6e918))
+- **domain:** Add project budget usage levels and shared contracts ([c64c43a](https://github.com/xcvzmoon/stampp/commit/c64c43a))
+- **database:** Add project budget columns and constraints ([ed729df](https://github.com/xcvzmoon/stampp/commit/ed729df))
+- **api:** Expose project budget usage and alert endpoints ([075bc8e](https://github.com/xcvzmoon/stampp/commit/075bc8e))
+- **web:** Add project budget editor and usage badges ([307436c](https://github.com/xcvzmoon/stampp/commit/307436c))
+- **domain:** Add expense rules and receipt guards ([b8cd7d0](https://github.com/xcvzmoon/stampp/commit/b8cd7d0))
+- **database:** Add expenses schema and migration ([b79e5be](https://github.com/xcvzmoon/stampp/commit/b79e5be))
+- **api:** Expose expenses with optional S3 receipt storage ([eb8e117](https://github.com/xcvzmoon/stampp/commit/eb8e117))
+- **web:** Add expenses page and workspace nav ([d6bce01](https://github.com/xcvzmoon/stampp/commit/d6bce01))
+- **domain:** Add invoice status machine and totals ([5264b40](https://github.com/xcvzmoon/stampp/commit/5264b40))
+- **database:** Add invoices schema and migration ([0dab333](https://github.com/xcvzmoon/stampp/commit/0dab333))
+- **api:** Add invoicing generate payments and pdf ([cea35a7](https://github.com/xcvzmoon/stampp/commit/cea35a7))
+- **web:** Add invoices page and workspace nav ([3a6894a](https://github.com/xcvzmoon/stampp/commit/3a6894a))
+- **domain:** Add profitability and utilization math ([a95ed35](https://github.com/xcvzmoon/stampp/commit/a95ed35))
+- **api:** Expose profitability and utilization reports ([2f3ef43](https://github.com/xcvzmoon/stampp/commit/2f3ef43))
+- **web:** Show profitability and utilization on reports ([fd4e8eb](https://github.com/xcvzmoon/stampp/commit/fd4e8eb))
+- **database:** Add two-factor and personal access token tables ([8febea8](https://github.com/xcvzmoon/stampp/commit/8febea8))
+- **api:** Enable 2fa oauth and personal access tokens ([9c94b68](https://github.com/xcvzmoon/stampp/commit/9c94b68))
+- **web:** Add security settings and oauth sign-in ([0f8c88d](https://github.com/xcvzmoon/stampp/commit/0f8c88d))
+- **mailer:** Add timesheet and invoice notification events ([df04b21](https://github.com/xcvzmoon/stampp/commit/df04b21))
+- **api:** Notify managers and members on timesheet and invoice changes ([e62dccc](https://github.com/xcvzmoon/stampp/commit/e62dccc))
+- **database:** Enable workspace row level security ([39e3f49](https://github.com/xcvzmoon/stampp/commit/39e3f49))
+- **api:** Expose prometheus metrics and apply workspace rls context ([be8a44a](https://github.com/xcvzmoon/stampp/commit/be8a44a))
+- **domain:** Add rate as-of window filter helpers ([e7bb37e](https://github.com/xcvzmoon/stampp/commit/e7bb37e))
+
+### 🩹 Fixes
+
+- **api:** Declare STORAGE_REGION in env schema ([acf538f](https://github.com/xcvzmoon/stampp/commit/acf538f))
+
+### 📖 Documentation
+
+- Mark M2 business features done in plan glossary and readme ([5cda3e1](https://github.com/xcvzmoon/stampp/commit/5cda3e1))
+
+### ✅ Tests
+
+- **api:** Cover M2 isolation budgets rates and invoice rules ([ee4e50f](https://github.com/xcvzmoon/stampp/commit/ee4e50f))
+
+### ❤️ Contributors
+
+- Mon Albert Gamil ([@xcvzmoon](https://github.com/xcvzmoon))
+
 ## v0.2.0
 
 [compare changes](https://github.com/xcvzmoon/stampp/compare/v0.1.0...v0.2.0)
