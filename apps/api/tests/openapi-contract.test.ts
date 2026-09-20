@@ -35,6 +35,10 @@ const productOperations = [
   'get /api/v1/workspaces/{workspaceId}/reports/summary',
   'get /api/v1/workspaces/{workspaceId}/reports/detailed',
   'get /api/v1/workspaces/{workspaceId}/reports/weekly',
+  'get /api/v1/workspaces/{workspaceId}/rates',
+  'post /api/v1/workspaces/{workspaceId}/rates',
+  'delete /api/v1/workspaces/{workspaceId}/rates/{rateId}',
+  'get /api/v1/workspaces/{workspaceId}/rates/effective',
   'get /api/v1/workspaces/{workspaceId}/export',
 ];
 
@@ -75,7 +79,7 @@ describe('v0.1 openapi contract', () => {
     expect(productOperations).toContain('get /api/v1/workspaces/{workspaceId}/tags');
     expect(productOperations).toContain('post /api/v1/workspaces/{workspaceId}/timer/start');
     expect(productOperations).toContain('get /api/v1/workspaces/{workspaceId}/export');
-    expect(productOperations.length).toBe(32);
+    expect(productOperations.length).toBe(36);
   });
 
   it('keeps product routes workspace-scoped', () => {
@@ -94,6 +98,8 @@ describe('v0.1 openapi contract', () => {
     expect(spec.components?.securitySchemes?.sessionCookie).toBeDefined();
     expect(spec.components?.schemas?.TimeEntryDto).toBeDefined();
     expect(spec.components?.schemas?.TagDto).toBeDefined();
+    expect(spec.components?.schemas?.RateDto).toBeDefined();
+    expect(spec.components?.schemas?.EffectiveRatesDto).toBeDefined();
 
     const available = new Set<string>();
     for (const [path, methods] of Object.entries(spec.paths)) {
