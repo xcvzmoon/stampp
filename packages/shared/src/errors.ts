@@ -20,6 +20,10 @@ export const ERROR_CODES = {
   TIMESHEET_EMPTY: 'timesheet.empty',
   TIMESHEET_FROZEN: 'timesheet.frozen',
   STORAGE_NOT_CONFIGURED: 'storage.not_configured',
+  INVOICE_INVALID_TRANSITION: 'invoice.invalid_transition',
+  INVOICE_EMPTY: 'invoice.empty',
+  INVOICE_OVERPAYMENT: 'invoice.overpayment',
+  INVOICE_NOT_DRAFT: 'invoice.not_draft',
 } as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];

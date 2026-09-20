@@ -3,6 +3,9 @@ import {
   auditEvents,
   clients,
   expenses,
+  invoiceLines,
+  invoicePayments,
+  invoices,
   invitations,
   members,
   organizations,
@@ -31,6 +34,9 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     rateRows,
     timesheetRows,
     expenseRows,
+    invoiceRows,
+    invoiceLineRows,
+    invoicePaymentRows,
     auditRows,
   ] = await Promise.all([
     ctx.db.client
@@ -105,6 +111,21 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
       .orderBy(asc(expenses.id)),
     ctx.db.client
       .select()
+      .from(invoices)
+      .where(eq(invoices.workspaceId, ctx.workspaceId))
+      .orderBy(asc(invoices.id)),
+    ctx.db.client
+      .select()
+      .from(invoiceLines)
+      .where(eq(invoiceLines.workspaceId, ctx.workspaceId))
+      .orderBy(asc(invoiceLines.id)),
+    ctx.db.client
+      .select()
+      .from(invoicePayments)
+      .where(eq(invoicePayments.workspaceId, ctx.workspaceId))
+      .orderBy(asc(invoicePayments.id)),
+    ctx.db.client
+      .select()
       .from(auditEvents)
       .where(eq(auditEvents.workspaceId, ctx.workspaceId))
       .orderBy(asc(auditEvents.createdAt), asc(auditEvents.id)),
@@ -126,6 +147,9 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     rates: rateRows,
     timesheets: timesheetRows,
     expenses: expenseRows,
+    invoices: invoiceRows,
+    invoiceLines: invoiceLineRows,
+    invoicePayments: invoicePaymentRows,
     auditEvents: auditRows,
   };
 }

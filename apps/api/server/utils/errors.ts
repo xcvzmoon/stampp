@@ -19,7 +19,11 @@ export function mapErrorCodeToStatus(code: string): number {
     code === ERROR_CODES.RATE_CURRENCY_MISMATCH ||
     code === ERROR_CODES.RATE_NOT_REVOCABLE ||
     code === ERROR_CODES.TIMESHEET_INVALID_TRANSITION ||
-    code === ERROR_CODES.TIMESHEET_EMPTY
+    code === ERROR_CODES.TIMESHEET_EMPTY ||
+    code === ERROR_CODES.INVOICE_INVALID_TRANSITION ||
+    code === ERROR_CODES.INVOICE_EMPTY ||
+    code === ERROR_CODES.INVOICE_OVERPAYMENT ||
+    code === ERROR_CODES.INVOICE_NOT_DRAFT
   ) {
     return 422;
   }
