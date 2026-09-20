@@ -123,12 +123,19 @@ describe('dto mappers', () => {
       status: 'archived',
       billable: false,
       notes: null,
+      budgetMinutes: 4_800,
+      budgetAmountMinor: 1_000_000,
+      budgetCurrency: 'USD',
+      budgetAlertAtPercent: 80,
       createdAt: now,
       updatedAt: now,
       deletedAt: null,
     });
     expect(dto.status).toBe('archived');
     expect(dto.billable).toBe(false);
+    expect(dto.budgetMinutes).toBe(4_800);
+    expect(dto.budgetCurrency).toBe('USD');
+    expect(dto.budgetAlertAtPercent).toBe(80);
   });
 
   it('maps tasks including null estimates', () => {
