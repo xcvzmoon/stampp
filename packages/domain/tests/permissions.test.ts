@@ -17,6 +17,10 @@ const allPermissions: Permission[] = [
   'client:manage',
   'tag:read',
   'tag:manage',
+  'expense:read:own',
+  'expense:read:any',
+  'expense:write:own',
+  'expense:manage',
   'reports:view',
   'reports:view:cost',
   'settings:manage',
@@ -50,6 +54,15 @@ describe('hasPermission', () => {
     expect(hasPermission('manager', 'members:manage')).toBe(false);
     expect(hasPermission('manager', 'export:workspace')).toBe(false);
     expect(hasPermission('manager', 'reports:view:cost')).toBe(false);
+    expect(hasPermission('manager', 'expense:read:any')).toBe(true);
+    expect(hasPermission('manager', 'expense:manage')).toBe(true);
+  });
+
+  it('lets members write only their own expenses', () => {
+    expect(hasPermission('member', 'expense:read:own')).toBe(true);
+    expect(hasPermission('member', 'expense:write:own')).toBe(true);
+    expect(hasPermission('member', 'expense:read:any')).toBe(false);
+    expect(hasPermission('member', 'expense:manage')).toBe(false);
   });
 
   it('lets members read catalog entities but not manage them', () => {
@@ -74,6 +87,7 @@ describe('hasPermission', () => {
       'client:read',
       'project:read',
       'tag:read',
+      'expense:read:own',
     ]);
     for (const permission of allPermissions) {
       expect(hasPermission('guest', permission)).toBe(guestAllowed.has(permission));

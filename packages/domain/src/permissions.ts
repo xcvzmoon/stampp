@@ -17,51 +17,43 @@ export type Permission =
   | 'client:manage'
   | 'tag:read'
   | 'tag:manage'
+  | 'expense:read:own'
+  | 'expense:read:any'
+  | 'expense:write:own'
+  | 'expense:manage'
   | 'reports:view'
   | 'reports:view:cost'
   | 'settings:manage'
   | 'members:manage'
   | 'export:workspace';
 
+const ownerAdminPermissions: Permission[] = [
+  'time:read:own',
+  'time:read:team',
+  'time:read:any',
+  'time:write:own',
+  'time:write:other',
+  'time:approve',
+  'project:read',
+  'project:manage',
+  'client:read',
+  'client:manage',
+  'tag:read',
+  'tag:manage',
+  'expense:read:own',
+  'expense:read:any',
+  'expense:write:own',
+  'expense:manage',
+  'reports:view',
+  'reports:view:cost',
+  'settings:manage',
+  'members:manage',
+  'export:workspace',
+];
+
 const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
-  owner: new Set<Permission>([
-    'time:read:own',
-    'time:read:team',
-    'time:read:any',
-    'time:write:own',
-    'time:write:other',
-    'time:approve',
-    'project:read',
-    'project:manage',
-    'client:read',
-    'client:manage',
-    'tag:read',
-    'tag:manage',
-    'reports:view',
-    'reports:view:cost',
-    'settings:manage',
-    'members:manage',
-    'export:workspace',
-  ]),
-  admin: new Set<Permission>([
-    'time:read:own',
-    'time:read:team',
-    'time:read:any',
-    'time:write:own',
-    'time:write:other',
-    'time:approve',
-    'project:read',
-    'project:manage',
-    'client:read',
-    'client:manage',
-    'tag:read',
-    'tag:manage',
-    'reports:view',
-    'reports:view:cost',
-    'settings:manage',
-    'members:manage',
-    'export:workspace',
-  ]),
+  owner: new Set<Permission>(ownerAdminPermissions),
+  admin: new Set<Permission>(ownerAdminPermissions),
   manager: new Set<Permission>([
     'time:read:own',
     'time:read:team',
@@ -73,6 +65,10 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'client:read',
     'tag:read',
     'tag:manage',
+    'expense:read:own',
+    'expense:read:any',
+    'expense:write:own',
+    'expense:manage',
     'reports:view',
   ]),
   member: new Set<Permission>([
@@ -81,9 +77,17 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'project:read',
     'client:read',
     'tag:read',
+    'expense:read:own',
+    'expense:write:own',
     'reports:view',
   ]),
-  guest: new Set<Permission>(['time:read:own', 'project:read', 'client:read', 'tag:read']),
+  guest: new Set<Permission>([
+    'time:read:own',
+    'project:read',
+    'client:read',
+    'tag:read',
+    'expense:read:own',
+  ]),
 };
 
 export function hasPermission(role: StamppRole, permission: Permission): boolean {
