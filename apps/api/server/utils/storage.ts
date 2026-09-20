@@ -26,13 +26,13 @@ function readStorageConfig(): StorageConfig | null {
   const endpoint = ENV.STORAGE_ENDPOINT;
   const accessKey = ENV.STORAGE_ACCESS_KEY;
   const secretKey = ENV.STORAGE_SECRET_KEY;
-  const bucket = process.env.STORAGE_BUCKET?.trim() ?? 'stampp';
+  const bucket = ENV.STORAGE_BUCKET?.trim() ?? 'stampp';
   if (!endpoint || !accessKey || !secretKey) {
     return null;
   }
   return {
     endpoint: endpoint.replace(/\/$/, ''),
-    region: process.env.STORAGE_REGION?.trim() ?? 'us-east-1',
+    region: ENV.STORAGE_REGION?.trim() ?? 'us-east-1',
     bucket,
     accessKey,
     secretKey,
