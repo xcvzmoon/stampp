@@ -2,6 +2,46 @@ import { describe, expect, it } from 'vite-plus/test';
 import { renderMailEvent } from '../src/index.ts';
 
 describe('renderMailEvent', () => {
+  it('renders timesheet submitted mail for managers', () => {
+    const mail = renderMailEvent({
+      type: 'timesheet.submitted',
+      email: 'manager@example.com',
+      memberName: 'Ada',
+      workspaceName: 'Acme Studio',
+      weekStart: '2026-09-14',
+      timesheetUrl: 'https://stampp.example/w/ws_1/approvals',
+    });
+    expect(mail.to).toBe('manager@example.com');
+    expect(mail.subject).toContain('Ada submitted a timesheet');
+    expect(mail.text).toContain('2026-09-14');
+  });
+
+  it('renders timesheet rejected mail with reason', () => {
+    const mail = renderMailEvent({
+      type: 'timesheet.rejected',
+      email: 'ada@example.com',
+      workspaceName: 'Acme Studio',
+      weekStart: '2026-09-14',
+      note: 'Missing project labels',
+      timesheetUrl: 'https://stampp.example/w/ws_1/time',
+    });
+    expect(mail.subject).toContain('rejected');
+    expect(mail.text).toContain('Missing project labels');
+  });
+
+  it('renders invoice status mail', () => {
+    const mail = renderMailEvent({
+      type: 'invoice.status',
+      email: 'billing@example.com',
+      workspaceName: 'Acme Studio',
+      invoiceNumber: 'INV-2026-0001',
+      status: 'paid',
+      invoiceUrl: 'https://stampp.example/w/ws_1/invoices',
+    });
+    expect(mail.subject).toContain('INV-2026-0001');
+    expect(mail.subject).toContain('paid');
+  });
+
   it('renders a workspace invite to the invitee', () => {
     const mail = renderMailEvent({
       type: 'workspace.invite',
