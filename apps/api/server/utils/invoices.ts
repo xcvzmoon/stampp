@@ -30,6 +30,7 @@ import { ERROR_CODES } from '@stampp/shared';
 import { and, asc, eq, gt, gte, inArray, lte } from 'drizzle-orm';
 import { toApiError } from '~/server/middleware/request-id.ts';
 import { recordAudit } from '~/server/utils/audit.ts';
+import { notifyInvoiceStatus } from '~/server/utils/productNotifications.ts';
 
 function notFound(requestId: string) {
   return toApiError(ERROR_CODES.NOT_FOUND, 'Invoice not found', requestId);
@@ -509,6 +510,12 @@ export async function transitionInvoice(
     before: bundle.invoice,
     after: row,
   });
+  await notifyInvoiceStatus(ctx, {
+    userId: ctx.userId,
+    invoiceNumber: row.number,
+    status,
+    workspaceId: ctx.workspaceId,
+  }).catch(() => undefined);
   return getInvoice(ctx, invoiceId, requestId);
 }
 

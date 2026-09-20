@@ -15,6 +15,10 @@ import { ERROR_CODES } from '@stampp/shared';
 import { and, asc, desc, eq, gt, gte, isNull, lte, type SQL } from 'drizzle-orm';
 import { toApiError } from '~/server/middleware/request-id.ts';
 import { recordAudit } from '~/server/utils/audit.ts';
+import {
+  notifyTimesheetDecision,
+  notifyTimesheetSubmitted,
+} from '~/server/utils/productNotifications.ts';
 import { addCalendarDays, requireMonday } from '~/server/utils/week.ts';
 
 function notFound(requestId: string) {
@@ -177,6 +181,11 @@ export async function submitTimesheet(
     entityId: row.id,
     after: row,
   });
+  await notifyTimesheetSubmitted(ctx, {
+    memberUserId: ctx.userId,
+    weekStart: row.weekStart,
+    workspaceId: ctx.workspaceId,
+  }).catch(() => undefined);
   return toTimesheetDto(row);
 }
 
@@ -276,6 +285,13 @@ async function decide(
     before,
     after: row,
   });
+  await notifyTimesheetDecision(ctx, {
+    memberUserId: before.userId,
+    weekStart: before.weekStart,
+    workspaceId: ctx.workspaceId,
+    decision: action === 'approve' ? 'approved' : 'rejected',
+    note: input.note,
+  }).catch(() => undefined);
   return toTimesheetDto(row);
 }
 
