@@ -4,7 +4,11 @@ import {
   auditEvents,
   clients,
   createTestDb,
+  expenses,
+  invoiceLines,
+  invoices,
   organizations,
+  personalAccessTokens,
   projects,
   rates,
   tags,
@@ -179,6 +183,16 @@ describe('export tenant isolation', () => {
       db.select().from(tags).where(eq(tags.workspaceId, workspaceA)).toSQL(),
       db.select().from(timeEntries).where(eq(timeEntries.workspaceId, workspaceA)).toSQL(),
       db.select().from(timeEntryTags).where(eq(timeEntryTags.workspaceId, workspaceA)).toSQL(),
+      db.select().from(rates).where(eq(rates.workspaceId, workspaceA)).toSQL(),
+      db.select().from(timesheets).where(eq(timesheets.workspaceId, workspaceA)).toSQL(),
+      db.select().from(expenses).where(eq(expenses.workspaceId, workspaceA)).toSQL(),
+      db.select().from(invoices).where(eq(invoices.workspaceId, workspaceA)).toSQL(),
+      db.select().from(invoiceLines).where(eq(invoiceLines.workspaceId, workspaceA)).toSQL(),
+      db
+        .select()
+        .from(personalAccessTokens)
+        .where(eq(personalAccessTokens.workspaceId, workspaceA))
+        .toSQL(),
       db.select().from(auditEvents).where(eq(auditEvents.workspaceId, workspaceA)).toSQL(),
     ];
 

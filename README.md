@@ -1,6 +1,6 @@
 # Stampp
 
-Stampp is a self-hosted time-tracking app for teams. It covers workspaces, clients, projects, tasks, timers, weekly timesheets, reports, CSV downloads, and workspace exports.
+Stampp is a self-hosted time-tracking app for teams. It covers workspaces, clients, projects, tasks, timers, weekly timesheets, rates, project budgets, expenses, invoices, approvals, reports (including profitability/utilization), security settings (2FA, PATs), and workspace exports.
 
 The project is under active development. The repository has not published a stable release yet.
 
