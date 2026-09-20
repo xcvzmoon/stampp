@@ -363,6 +363,12 @@ export async function updateProject(
   if (input.status !== undefined) patch.status = input.status;
   if (input.billable !== undefined) patch.billable = input.billable;
   if (input.notes !== undefined) patch.notes = input.notes;
+  if (input.budgetMinutes !== undefined) patch.budgetMinutes = input.budgetMinutes;
+  if (input.budgetAmountMinor !== undefined) patch.budgetAmountMinor = input.budgetAmountMinor;
+  if (input.budgetCurrency !== undefined) patch.budgetCurrency = input.budgetCurrency;
+  if (input.budgetAlertAtPercent !== undefined) {
+    patch.budgetAlertAtPercent = input.budgetAlertAtPercent;
+  }
 
   try {
     const updated = await ctx.db.client

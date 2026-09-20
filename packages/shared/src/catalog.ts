@@ -63,6 +63,18 @@ export const updateProjectInputSchema = v.object({
   status: v.optional(projectStatusSchema),
   billable: v.optional(v.boolean()),
   notes: v.optional(v.nullable(v.pipe(v.string(), v.trim(), v.maxLength(5000)))),
+  budgetMinutes: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(1)))),
+  budgetAmountMinor: v.optional(v.nullable(v.pipe(v.number(), v.integer(), v.minValue(0)))),
+  budgetCurrency: v.optional(
+    v.nullable(
+      v.pipe(
+        v.string(),
+        v.regex(/^[A-Za-z]{3}$/),
+        v.transform((input) => input.toUpperCase()),
+      ),
+    ),
+  ),
+  budgetAlertAtPercent: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1), v.maxValue(100))),
 });
 
 export const createTaskInputSchema = v.object({
@@ -168,6 +180,10 @@ export const projectDtoSchema = v.object({
   status: v.picklist(['active', 'archived']),
   billable: v.boolean(),
   notes: v.nullable(v.string()),
+  budgetMinutes: v.nullable(v.number()),
+  budgetAmountMinor: v.nullable(v.number()),
+  budgetCurrency: v.nullable(v.string()),
+  budgetAlertAtPercent: v.number(),
   createdAt: v.string(),
   updatedAt: v.string(),
 });

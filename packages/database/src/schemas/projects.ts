@@ -1,5 +1,14 @@
 import { sql } from 'drizzle-orm';
-import { boolean, index, integer, pgTable, text, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  check,
+  index,
+  integer,
+  pgTable,
+  text,
+  uniqueIndex,
+  varchar,
+} from 'drizzle-orm/pg-core';
 import { generateEntityId, generateTimestamps } from './_helpers.ts';
 import { organizations } from './auth.ts';
 
@@ -39,6 +48,10 @@ export const projects = pgTable(
     status: text('status').$type<ProjectStatus>().notNull().default('active'),
     billable: boolean('billable').notNull().default(true),
     notes: text('notes'),
+    budgetMinutes: integer('budget_minutes'),
+    budgetAmountMinor: integer('budget_amount_minor'),
+    budgetCurrency: varchar('budget_currency', { length: 3 }),
+    budgetAlertAtPercent: integer('budget_alert_at_percent').notNull().default(80),
     ...generateTimestamps(),
   },
   (table) => [
@@ -48,6 +61,22 @@ export const projects = pgTable(
     uniqueIndex('projects_workspace_id_code_unique')
       .on(table.workspaceId, table.code)
       .where(sql`${table.deletedAt} is null and ${table.code} is not null`),
+    check(
+      'projects_budget_minutes_nonnegative_check',
+      sql`${table.budgetMinutes} is null or ${table.budgetMinutes} > 0`,
+    ),
+    check(
+      'projects_budget_amount_nonnegative_check',
+      sql`${table.budgetAmountMinor} is null or ${table.budgetAmountMinor} >= 0`,
+    ),
+    check(
+      'projects_budget_currency_with_amount_check',
+      sql`(${table.budgetAmountMinor} is null and ${table.budgetCurrency} is null) or (${table.budgetAmountMinor} is not null and ${table.budgetCurrency} is not null)`,
+    ),
+    check(
+      'projects_budget_alert_percent_check',
+      sql`${table.budgetAlertAtPercent} > 0 and ${table.budgetAlertAtPercent} <= 100`,
+    ),
   ],
 );
 

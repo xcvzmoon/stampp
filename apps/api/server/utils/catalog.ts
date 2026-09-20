@@ -144,6 +144,10 @@ export function toProjectDto(row: Project): ProjectDto {
     status: row.status,
     billable: row.billable,
     notes: row.notes,
+    budgetMinutes: row.budgetMinutes,
+    budgetAmountMinor: row.budgetAmountMinor,
+    budgetCurrency: row.budgetCurrency,
+    budgetAlertAtPercent: row.budgetAlertAtPercent,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
   };
