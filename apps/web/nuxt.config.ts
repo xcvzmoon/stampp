@@ -64,6 +64,10 @@ export default defineNuxtConfig({
       apiUrl: process.env.PUBLIC_API_URL ?? 'http://localhost:3001',
       authBaseURL: process.env.NUXT_PUBLIC_AUTH_BASE_URL ?? 'http://localhost:3001/api/auth',
       apiBaseURL: process.env.NUXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3001/api/v1',
+      authProviders: {
+        google: Boolean(process.env.NUXT_PUBLIC_GOOGLE_CLIENT_ID),
+        github: Boolean(process.env.NUXT_PUBLIC_GITHUB_CLIENT_ID),
+      },
     },
   },
   evlog: {
