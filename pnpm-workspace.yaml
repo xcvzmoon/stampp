@@ -23,6 +23,8 @@ catalogs:
     postgres: 3.4.9
   mail:
     unemail: 0.7.0
+  docs:
+    pdf-lib: 1.17.1
   observability:
     evlog: 2.29.0
   platform:

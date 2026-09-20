@@ -22,6 +22,7 @@
     "drizzle-orm": "catalog:db",
     "evlog": "catalog:observability",
     "ioredis": "catalog:platform",
+    "pdf-lib": "catalog:docs",
     "postgres": "catalog:db",
     "uuid": "catalog:platform",
     "valibot": "catalog:platform"
