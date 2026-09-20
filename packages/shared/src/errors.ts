@@ -16,6 +16,9 @@ export const ERROR_CODES = {
   RATE_INVALID_TARGET: 'rate.invalid_target',
   RATE_CURRENCY_MISMATCH: 'rate.currency_mismatch',
   RATE_NOT_REVOCABLE: 'rate.not_revocable',
+  TIMESHEET_INVALID_TRANSITION: 'timesheet.invalid_transition',
+  TIMESHEET_EMPTY: 'timesheet.empty',
+  TIMESHEET_FROZEN: 'timesheet.frozen',
 } as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
