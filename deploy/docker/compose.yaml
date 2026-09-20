@@ -51,6 +51,26 @@ services:
       retries: 10
       start_period: 5s
 
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    profiles: ['storage']
+    command: ['server', '/data', '--console-address', ':9001']
+    environment:
+      MINIO_ROOT_USER: ${STORAGE_ACCESS_KEY:-stampp}
+      MINIO_ROOT_PASSWORD: ${STORAGE_SECRET_KEY:-stampp-secret}
+    ports:
+      - '127.0.0.1:9000:9000'
+      - '127.0.0.1:9001:9001'
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ['CMD', 'mc', 'ready', 'local']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
   api:
     image: ghcr.io/xcvzmoon/stampp-api:local
     build:
@@ -74,6 +94,10 @@ services:
       SMTP_HOST: ${SMTP_HOST:-mailpit}
       SMTP_PORT: ${SMTP_PORT:-1025}
       VALKEY_URL: redis://valkey:6379
+      STORAGE_ENDPOINT: ${STORAGE_ENDPOINT:-}
+      STORAGE_ACCESS_KEY: ${STORAGE_ACCESS_KEY:-}
+      STORAGE_SECRET_KEY: ${STORAGE_SECRET_KEY:-}
+      STORAGE_BUCKET: ${STORAGE_BUCKET:-stampp}
     ports:
       - '3001:3001'
     healthcheck:
@@ -141,3 +165,4 @@ services:
 volumes:
   postgres-data:
   valkey-data:
+  minio-data:

@@ -2,6 +2,7 @@ import type { AuthorizedContext } from '@stampp/access';
 import {
   auditEvents,
   clients,
+  expenses,
   invitations,
   members,
   organizations,
@@ -29,6 +30,7 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     entryTagRows,
     rateRows,
     timesheetRows,
+    expenseRows,
     auditRows,
   ] = await Promise.all([
     ctx.db.client
@@ -98,6 +100,11 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
       .orderBy(asc(timesheets.id)),
     ctx.db.client
       .select()
+      .from(expenses)
+      .where(eq(expenses.workspaceId, ctx.workspaceId))
+      .orderBy(asc(expenses.id)),
+    ctx.db.client
+      .select()
       .from(auditEvents)
       .where(eq(auditEvents.workspaceId, ctx.workspaceId))
       .orderBy(asc(auditEvents.createdAt), asc(auditEvents.id)),
@@ -118,6 +125,7 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     timeEntryTags: entryTagRows,
     rates: rateRows,
     timesheets: timesheetRows,
+    expenses: expenseRows,
     auditEvents: auditRows,
   };
 }

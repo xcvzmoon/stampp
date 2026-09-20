@@ -26,6 +26,9 @@ export function mapErrorCodeToStatus(code: string): number {
   if (code === ERROR_CODES.TIME_ENTRY_LOCKED || code === ERROR_CODES.TIMESHEET_FROZEN) {
     return 423;
   }
+  if (code === ERROR_CODES.STORAGE_NOT_CONFIGURED) {
+    return 503;
+  }
   if (code === ERROR_CODES.VALIDATION_FAILED) return 400;
   if (code === ERROR_CODES.BAD_REQUEST) return 400;
   if (code === ERROR_CODES.RATE_LIMITED) return 429;
