@@ -1001,18 +1001,20 @@ Approvals, invoices, expenses, leave, kiosk, scheduling, SSO, mobile, auto-track
 
 ### M2 / v0.2 — Business
 
-- Timesheet submit/withdraw + manager approve/reject + lock
-- Rates: org / user / project / task billable rates; labor cost rates; rate history
-- Budgets + alerts (hours + money)
-- Expenses (receipt upload to S3)
-- Invoicing (from time/expenses, PDF, status machine, partial payments)
-- Advanced reports + profitability + utilization
-- 2FA, OAuth providers, personal access tokens
-- Email notifications
-- Prometheus metrics
-- RLS on workspace tables
+- [x] Timesheet submit/withdraw + manager approve/reject + lock
+- [x] Rates: org / user / project / task billable rates; labor cost rates; rate history
+- [x] Budgets + alerts (hours + money)
+- [x] Expenses (receipt upload to S3; optional storage config)
+- [x] Invoicing (from time/expenses, PDF, status machine, partial payments)
+- [x] Advanced reports + profitability + utilization
+- [x] 2FA, OAuth providers, personal access tokens
+- [x] Email notifications (timesheet + invoice events via MailDispatch)
+- [x] Prometheus metrics (`/metrics`)
+- [x] RLS on workspace tables (defense in depth; app filters remain)
 
 **Exit criteria:** invoice generated from tracked time, PDF downloadable, cost reports correct against fixture data.
+
+**M2 follow-ups (not blocking v0.2 features):** deeper service-level / mock-db flow tests (in-progress), optional node-caged runtime experiment, fixture-based cost-report golden tests.
 
 ---
 
