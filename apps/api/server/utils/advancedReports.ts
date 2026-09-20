@@ -11,6 +11,7 @@ import { expenses, projects, rates, timeEntries, users } from '@stampp/database'
 import {
   computeMargin,
   computeUtilization,
+  filterRateCandidatesAsOf,
   hoursFromMinutes,
   resolveEffectiveRates,
   revenueFromHours,
@@ -42,10 +43,8 @@ function rowMinutes(row: ReportRow): number {
 
 function toCandidates(rows: Rate[], kind: 'billable' | 'cost', at: Date): RateCandidate[] {
   const candidates: RateCandidate[] = [];
-  for (const row of rows) {
+  for (const row of filterRateCandidatesAsOf(rows, at)) {
     if (row.kind !== kind) continue;
-    if (row.effectiveFrom > at) continue;
-    if (row.effectiveTo && row.effectiveTo <= at) continue;
     candidates.push({
       scope: row.scope,
       amountMinor: row.amountMinor,

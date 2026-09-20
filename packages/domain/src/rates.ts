@@ -120,3 +120,29 @@ export function resolveEffectiveRates(
     source: pickSource(billable.scope, cost.scope),
   };
 }
+
+export type RateWindow = {
+  effectiveFrom: Date;
+  effectiveTo: Date | null;
+};
+
+/** Historical integrity: closed windows stay valid only for times in their half-open interval. */
+export function rateWindowIncludes(window: RateWindow, at: Date): boolean {
+  if (window.effectiveFrom > at) {
+    return false;
+  }
+  if (window.effectiveTo && window.effectiveTo <= at) {
+    return false;
+  }
+  return true;
+}
+
+export function filterRateCandidatesAsOf<T extends RateWindow>(rows: readonly T[], at: Date): T[] {
+  const active: T[] = [];
+  for (const row of rows) {
+    if (rateWindowIncludes(row, at)) {
+      active.push(row);
+    }
+  }
+  return active;
+}
