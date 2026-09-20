@@ -37,6 +37,8 @@ const productOperations = [
   'get /api/v1/workspaces/{workspaceId}/reports/summary',
   'get /api/v1/workspaces/{workspaceId}/reports/detailed',
   'get /api/v1/workspaces/{workspaceId}/reports/weekly',
+  'get /api/v1/workspaces/{workspaceId}/reports/profitability',
+  'get /api/v1/workspaces/{workspaceId}/reports/utilization',
   'get /api/v1/workspaces/{workspaceId}/rates',
   'post /api/v1/workspaces/{workspaceId}/rates',
   'delete /api/v1/workspaces/{workspaceId}/rates/{rateId}',
@@ -102,7 +104,7 @@ describe('v0.1 openapi contract', () => {
     expect(productOperations).toContain('get /api/v1/workspaces/{workspaceId}/tags');
     expect(productOperations).toContain('post /api/v1/workspaces/{workspaceId}/timer/start');
     expect(productOperations).toContain('get /api/v1/workspaces/{workspaceId}/export');
-    expect(productOperations.length).toBe(59);
+    expect(productOperations.length).toBe(61);
   });
 
   it('keeps product routes workspace-scoped', () => {
@@ -128,6 +130,8 @@ describe('v0.1 openapi contract', () => {
     expect(spec.components?.schemas?.ProjectBudgetUsage).toBeDefined();
     expect(spec.components?.schemas?.ExpenseDto).toBeDefined();
     expect(spec.components?.schemas?.InvoiceDto).toBeDefined();
+    expect(spec.components?.schemas?.ProfitabilityReport).toBeDefined();
+    expect(spec.components?.schemas?.UtilizationReport).toBeDefined();
 
     const available = new Set<string>();
     for (const [path, methods] of Object.entries(spec.paths)) {
