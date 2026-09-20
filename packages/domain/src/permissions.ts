@@ -21,6 +21,8 @@ export type Permission =
   | 'expense:read:any'
   | 'expense:write:own'
   | 'expense:manage'
+  | 'invoice:read:any'
+  | 'invoice:manage'
   | 'reports:view'
   | 'reports:view:cost'
   | 'settings:manage'
@@ -44,6 +46,8 @@ const ownerAdminPermissions: Permission[] = [
   'expense:read:any',
   'expense:write:own',
   'expense:manage',
+  'invoice:read:any',
+  'invoice:manage',
   'reports:view',
   'reports:view:cost',
   'settings:manage',
@@ -69,6 +73,8 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'expense:read:any',
     'expense:write:own',
     'expense:manage',
+    'invoice:read:any',
+    'invoice:manage',
     'reports:view',
   ]),
   member: new Set<Permission>([

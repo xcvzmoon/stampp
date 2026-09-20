@@ -21,6 +21,8 @@ const allPermissions: Permission[] = [
   'expense:read:any',
   'expense:write:own',
   'expense:manage',
+  'invoice:read:any',
+  'invoice:manage',
   'reports:view',
   'reports:view:cost',
   'settings:manage',
@@ -56,6 +58,8 @@ describe('hasPermission', () => {
     expect(hasPermission('manager', 'reports:view:cost')).toBe(false);
     expect(hasPermission('manager', 'expense:read:any')).toBe(true);
     expect(hasPermission('manager', 'expense:manage')).toBe(true);
+    expect(hasPermission('manager', 'invoice:manage')).toBe(true);
+    expect(hasPermission('member', 'invoice:manage')).toBe(false);
   });
 
   it('lets members write only their own expenses', () => {
