@@ -32,6 +32,11 @@
       active: route.path.startsWith(`/w/${workspaceId.value}/kiosk`),
     },
     {
+      label: 'Webhooks',
+      to: `/w/${workspaceId.value}/webhooks`,
+      active: route.path.startsWith(`/w/${workspaceId.value}/webhooks`),
+    },
+    {
       label: 'Approvals',
       to: `/w/${workspaceId.value}/approvals`,
       active: route.path.startsWith(`/w/${workspaceId.value}/approvals`),
