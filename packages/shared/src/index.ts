@@ -14,6 +14,7 @@ export * from './reports.ts';
 export * from './roles.ts';
 export * from './schemas.ts';
 export * from './scheduling.ts';
+export * from './sso.ts';
 export * from './time.ts';
 export * from './timesheets.ts';
 export * from './timeOff.ts';
