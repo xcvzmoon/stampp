@@ -1060,6 +1060,7 @@ Approvals, invoices, expenses, leave, kiosk, scheduling, SSO, mobile, auto-track
 2. **Webhooks + signing + retries** (`feat/webhooks`): subscription CRUD + secret, HMAC signature headers, BullMQ delivery worker with retries/dead-letter, event catalog (time entry, timesheet, invoice, …), settings UI.
    - Landed on `feat/webhooks`: `webhook_subscriptions` / `webhook_deliveries` + RLS; HMAC `X-Stampp-Signature` (`t=…,v1=…`) over `timestamp.body`; BullMQ `webhooks` queue with 5 attempts and dead-letter; event catalog for time entries, timesheets, invoices, attendance, time off, expenses; workspace Webhooks settings UI.
 3. **Custom RBAC roles** (`feat/custom-roles`): workspace role definitions over the existing permission vocabulary (no second vocabulary), assign roles to members, WorkspaceAccess resolves custom role permissions.
+   - Landed on `feat/custom-roles`: `custom_roles` + `members.custom_role_id` with RLS; role CRUD and member assignment APIs; WorkspaceAccess resolves built-in or custom grants into `ctx.permissions`; workspace Roles UI.
 4. **SSO & directory (free)** (`feat/sso`): OIDC providers first, then SAML, then SCIM provisioning; LDAP if it still fits after OIDC/SAML.
 5. **Import pipeline** (`feat/import`): BullMQ `import` jobs; CSV first (generic), then Clockify, Toggl, Harvest adapters with dry-run/map preview.
 6. **Audit UI + retention** (`feat/audit-ui`): browse/filter/export `audit_events` in workspace UI (writes already exist); retention policy config + purge job behind AuditTrail.
