@@ -21,6 +21,11 @@ const allPermissions: Permission[] = [
   'expense:read:any',
   'expense:write:own',
   'expense:manage',
+  'attendance:read:own',
+  'attendance:read:team',
+  'attendance:read:any',
+  'attendance:write:own',
+  'attendance:manage',
   'invoice:read:any',
   'invoice:manage',
   'reports:view',
@@ -69,6 +74,17 @@ describe('hasPermission', () => {
     expect(hasPermission('member', 'expense:manage')).toBe(false);
   });
 
+  it('scopes attendance to own punch for members and manage for managers', () => {
+    expect(hasPermission('member', 'attendance:read:own')).toBe(true);
+    expect(hasPermission('member', 'attendance:write:own')).toBe(true);
+    expect(hasPermission('member', 'attendance:read:team')).toBe(false);
+    expect(hasPermission('member', 'attendance:manage')).toBe(false);
+    expect(hasPermission('manager', 'attendance:read:team')).toBe(true);
+    expect(hasPermission('manager', 'attendance:manage')).toBe(true);
+    expect(hasPermission('guest', 'attendance:read:own')).toBe(true);
+    expect(hasPermission('guest', 'attendance:write:own')).toBe(false);
+  });
+
   it('lets members read catalog entities but not manage them', () => {
     expect(hasPermission('member', 'client:read')).toBe(true);
     expect(hasPermission('member', 'project:read')).toBe(true);
@@ -92,6 +108,7 @@ describe('hasPermission', () => {
       'project:read',
       'tag:read',
       'expense:read:own',
+      'attendance:read:own',
     ]);
     for (const permission of allPermissions) {
       expect(hasPermission('guest', permission)).toBe(guestAllowed.has(permission));
