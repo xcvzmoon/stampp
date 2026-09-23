@@ -6,7 +6,7 @@
     "description": "Workspace-scoped work-time API. Authenticate with a Better Auth session cookie or a personal access token (Authorization: Bearer stpp_…). Product routes live under /api/v1. Mutations accept an optional Idempotency-Key header; all /api/v1 calls are rate limited per credential."
   },
   "servers": [
-    { "url": "http://127.0.0.1:56698", "description": "Local Development Server", "variables": {} }
+    { "url": "http://127.0.0.1:57260", "description": "Local Development Server", "variables": {} }
   ],
   "paths": {
     "/api/v1/openapi.json": {
@@ -616,6 +616,123 @@
         "summary": "Get current attendance punch",
         "description": "Returns the caller's open attendance record, or null when clocked out.",
         "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/audit/export": {
+      "get": {
+        "tags": ["audit"],
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "CSV export",
+            "content": { "text/csv": { "schema": { "type": "string" } } }
+          },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Export workspace audit events as CSV",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/audit": {
+      "get": {
+        "tags": ["audit"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          },
+          { "in": "query", "name": "cursor", "schema": { "type": "string" } },
+          { "in": "query", "name": "action", "schema": { "type": "string" } },
+          { "in": "query", "name": "entityType", "schema": { "type": "string" } },
+          { "in": "query", "name": "entityId", "schema": { "type": "string" } },
+          { "in": "query", "name": "actorUserId", "schema": { "type": "string" } },
+          { "in": "query", "name": "from", "schema": { "type": "string", "format": "date-time" } },
+          { "in": "query", "name": "to", "schema": { "type": "string", "format": "date-time" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Audit events page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["items", "nextCursor"],
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "action": { "type": "string" },
+                          "entityType": { "type": "string" },
+                          "entityId": { "type": "string" },
+                          "createdAt": { "type": "string", "format": "date-time" }
+                        }
+                      }
+                    },
+                    "nextCursor": { "type": ["string", "null"] }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Browse workspace audit events",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/audit/retention": {
+      "get": {
+        "tags": ["audit"],
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retention policy",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/AuditRetentionDto" } }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Get audit retention policy",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      },
+      "put": {
+        "tags": ["audit"],
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retention policy",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/AuditRetentionDto" } }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidationFailed" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Get or update audit retention policy",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        }
       }
     },
     "/api/v1/workspaces/{workspaceId}/clients": {
@@ -5459,6 +5576,15 @@
             "oneOf": [{ "$ref": "#/components/schemas/AttendanceDto" }, { "type": "null" }]
           },
           "elapsedMinutes": { "type": ["integer", "null"] }
+        }
+      },
+      "AuditRetentionDto": {
+        "type": "object",
+        "required": ["workspaceId", "retentionDays", "updatedAt"],
+        "properties": {
+          "workspaceId": { "type": "string" },
+          "retentionDays": { "type": "integer" },
+          "updatedAt": { "type": "string", "format": "date-time" }
         }
       },
       "ApiError": {
