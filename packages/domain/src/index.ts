@@ -12,6 +12,7 @@ export * from './rates.ts';
 export * from './roles.ts';
 export * from './saml.ts';
 export * from './scheduling.ts';
+export * from './scim.ts';
 export * from './sso.ts';
 export * from './timesheets.ts';
 export * from './timeOff.ts';

@@ -12,6 +12,7 @@ Canonical product and architecture terms. Prefer these names in code, docs, and 
 | **Custom role**           | Workspace-defined permission set using the shared Permission vocabulary; overrides the built-in role when assigned. |
 | **SSO provider**          | Workspace OIDC configuration (issuer, client, optional email-domain allow-list) used for single sign-on.            |
 | **SAML provider**         | Workspace SAML IdP configuration (entity id, SSO URL, signing cert) used for SP-initiated single sign-on.           |
+| **SCIM token**            | Workspace bearer token for IdP-driven user/group provisioning against `/scim/v2`.                                   |
 | **Permission**            | Stable string such as `time:write:own`, `time:approve`, `reports:view:cost`.                                        |
 | **Client**                | External customer of a workspace; optional parent of projects.                                                      |
 | **Project**               | Unit of billable work; may belong to a client.                                                                      |

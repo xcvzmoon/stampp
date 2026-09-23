@@ -10,6 +10,7 @@ export * from './rates.ts';
 export * from './roles.ts';
 export * from './saml.ts';
 export * from './scheduling.ts';
+export * from './scim.ts';
 export * from './sso.ts';
 export * from './tags.ts';
 export * from './time.ts';

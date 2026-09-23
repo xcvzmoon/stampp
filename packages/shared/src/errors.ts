@@ -40,6 +40,7 @@ export const ERROR_CODES = {
   SSO_PROVIDER_ID_TAKEN: 'sso.provider_id_taken',
   SSO_EMAIL_DOMAIN_BLOCKED: 'sso.email_domain_blocked',
   SAML_ASSERTION_INVALID: 'saml.assertion_invalid',
+  SCIM_UNAUTHENTICATED: 'scim.unauthenticated',
   APPROVAL_INVALID_STEP: 'approval.invalid_step',
   APPROVAL_INVALID_CHAIN: 'approval.invalid_chain',
   APPROVAL_ALREADY_DECIDED: 'approval.already_decided',

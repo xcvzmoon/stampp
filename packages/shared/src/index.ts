@@ -15,6 +15,7 @@ export * from './roles.ts';
 export * from './schemas.ts';
 export * from './saml.ts';
 export * from './scheduling.ts';
+export * from './scim.ts';
 export * from './sso.ts';
 export * from './time.ts';
 export * from './timesheets.ts';

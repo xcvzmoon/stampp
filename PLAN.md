@@ -1064,6 +1064,7 @@ Approvals, invoices, expenses, leave, kiosk, scheduling, SSO, mobile, auto-track
 4. **SSO & directory (free)** (`feat/sso`): OIDC providers first, then SAML, then SCIM provisioning; LDAP if it still fits after OIDC/SAML.
    - Landed OIDC (`feat/sso`): workspace `sso_providers` + RLS, issuer/client CRUD, Better Auth `genericOAuth` with discovery + PKCE, email-domain allow-list, workspace SSO settings UI.
    - Landed SAML (`feat/saml`): workspace `saml_providers` + RLS, SP metadata / login / ACS (`@node-saml/node-saml`), signed assertion validation, session issue, workspace SAML UI. SCIM remains on this track.
+   - Landed SCIM (`feat/scim`): SCIM 2.0 `/scim/v2` Users/Groups + ServiceProviderConfig with workspace SCIM tokens; member sync via roster; workspace SCIM settings UI. LDAP still optional after this.
 5. **Import pipeline** (`feat/import`): BullMQ `import` jobs; CSV first (generic), then Clockify, Toggl, Harvest adapters with dry-run/map preview.
 6. **Audit UI + retention** (`feat/audit-ui`): browse/filter/export `audit_events` in workspace UI (writes already exist); retention policy config + purge job behind AuditTrail.
 7. **Mobile PWA** (`feat/pwa`): responsive PWA shell, installable, mobile timer/timesheet paths (native mobile later).
