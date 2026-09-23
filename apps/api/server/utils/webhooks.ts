@@ -20,9 +20,10 @@ import {
   WEBHOOK_SIGNATURE_HEADER,
   WEBHOOK_TIMESTAMP_HEADER,
 } from '@stampp/domain';
-import { DEFAULT_LIST_LIMIT, ERROR_CODES } from '@stampp/shared';
+import { DEFAULT_LIST_LIMIT, ERROR_CODES, webhookEventTypeSchema } from '@stampp/shared';
 import { and, eq, gt, isNull } from 'drizzle-orm';
 import { createHmac, randomBytes } from 'node:crypto';
+import * as v from 'valibot';
 import { toApiError } from '~/server/middleware/request-id.ts';
 import { recordAudit } from '~/server/utils/audit.ts';
 
@@ -81,6 +82,16 @@ export function buildWebhookEnvelope(
   };
 }
 
+function parseWebhookEvents(values: string[]): WebhookSubscriptionDto['events'] {
+  const parsed = v.safeParse(v.array(webhookEventTypeSchema), values);
+  return parsed.success ? parsed.output : [];
+}
+
+function parseWebhookEvent(value: string): WebhookEventType {
+  const parsed = v.safeParse(webhookEventTypeSchema, value);
+  return parsed.success ? parsed.output : 'time_entry.created';
+}
+
 export function toWebhookSubscriptionDto(row: WebhookSubscription): WebhookSubscriptionDto {
   // SAFETY: events are validated on write through webhookEventTypeSchema.
   return {
@@ -88,7 +99,7 @@ export function toWebhookSubscriptionDto(row: WebhookSubscription): WebhookSubsc
     workspaceId: row.workspaceId,
     url: row.url,
     description: row.description,
-    events: row.events as WebhookSubscriptionDto['events'],
+    events: parseWebhookEvents(row.events),
     status: row.status,
     secretPrefix: row.secretPrefix,
     lastDeliveryAt: row.lastDeliveryAt?.toISOString() ?? null,
@@ -98,12 +109,11 @@ export function toWebhookSubscriptionDto(row: WebhookSubscription): WebhookSubsc
 }
 
 export function toWebhookDeliveryDto(row: WebhookDelivery): WebhookDeliveryDto {
-  // SAFETY: delivery.event is written only from the WebhookEventType catalog.
   return {
     id: row.id,
     workspaceId: row.workspaceId,
     webhookId: row.webhookId,
-    event: row.event as WebhookEventType,
+    event: parseWebhookEvent(row.event),
     eventId: row.eventId,
     status: row.status,
     attemptCount: row.attemptCount,
@@ -371,24 +381,28 @@ export async function enqueueMatchingWebhookDeliveries(
   const timestamp = Math.floor(Date.now() / 1000);
   const jobs: WebhookDeliveryJob[] = [];
 
-  for (const subscription of subscriptions) {
-    if (!subscription.events.includes(event)) {
-      continue;
-    }
-    const inserted = await ctx.db.client
-      .insert(webhookDeliveries)
-      .values({
-        workspaceId: ctx.workspaceId,
-        webhookId: subscription.id,
-        event,
-        eventId,
-        payload: envelope,
-        status: 'pending',
-        attemptCount: 0,
-      })
-      .returning();
+  const matching = subscriptions.filter((subscription) => subscription.events.includes(event));
+  const insertedRows = await Promise.all(
+    matching.map((subscription) =>
+      ctx.db.client
+        .insert(webhookDeliveries)
+        .values({
+          workspaceId: ctx.workspaceId,
+          webhookId: subscription.id,
+          event,
+          eventId,
+          payload: envelope,
+          status: 'pending',
+          attemptCount: 0,
+        })
+        .returning(),
+    ),
+  );
+
+  for (const [index, inserted] of insertedRows.entries()) {
+    const subscription = matching[index];
     const delivery = inserted[0];
-    if (!delivery) {
+    if (!delivery || !subscription) {
       continue;
     }
     jobs.push({

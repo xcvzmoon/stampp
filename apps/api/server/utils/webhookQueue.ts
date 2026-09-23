@@ -1,4 +1,5 @@
 import type { JobsOptions } from 'bullmq';
+import type { Redis } from 'ioredis';
 import type { WebhookDeliveryJob } from '~/server/utils/webhooks.ts';
 import { webhookDeliveries, webhookSubscriptions } from '@stampp/database';
 import {
@@ -9,7 +10,6 @@ import {
   WEBHOOK_SIGNATURE_HEADER,
   WEBHOOK_TIMESTAMP_HEADER,
 } from '@stampp/domain';
-import { createValkeyConnection } from '@stampp/mailer';
 import { Queue, UnrecoverableError, Worker } from 'bullmq';
 import { and, eq, isNull } from 'drizzle-orm';
 import { getDb } from '~/server/utils/db.ts';
@@ -31,9 +31,7 @@ export type WebhookQueue = {
   close: () => Promise<void>;
 };
 
-export function createWebhookQueue(
-  connection: ReturnType<typeof createValkeyConnection>,
-): WebhookQueue {
+export function createWebhookQueue(connection: Redis): WebhookQueue {
   const queue = new Queue<WebhookDeliveryJob>(WEBHOOK_QUEUE_NAME, {
     connection,
     defaultJobOptions: webhookJobOptions,
@@ -117,9 +115,7 @@ async function readErrorSnippet(response: Response): Promise<string> {
   }
 }
 
-export function createWebhookWorker(
-  connection: ReturnType<typeof createValkeyConnection>,
-): Worker<WebhookDeliveryJob> {
+export function createWebhookWorker(connection: Redis): Worker<WebhookDeliveryJob> {
   return new Worker<WebhookDeliveryJob>(
     WEBHOOK_QUEUE_NAME,
     async (job) => {
