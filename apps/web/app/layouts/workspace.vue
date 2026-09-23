@@ -47,6 +47,11 @@
       active: route.path.startsWith(`/w/${workspaceId.value}/sso`),
     },
     {
+      label: 'SAML',
+      to: `/w/${workspaceId.value}/saml`,
+      active: route.path.startsWith(`/w/${workspaceId.value}/saml`),
+    },
+    {
       label: 'Approvals',
       to: `/w/${workspaceId.value}/approvals`,
       active: route.path.startsWith(`/w/${workspaceId.value}/approvals`),

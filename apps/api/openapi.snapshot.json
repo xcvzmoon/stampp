@@ -6,7 +6,7 @@
     "description": "Workspace-scoped work-time API. Authenticate with a Better Auth session cookie or a personal access token (Authorization: Bearer stpp_…). Product routes live under /api/v1. Mutations accept an optional Idempotency-Key header; all /api/v1 calls are rate limited per credential."
   },
   "servers": [
-    { "url": "http://127.0.0.1:54213", "description": "Local Development Server", "variables": {} }
+    { "url": "http://127.0.0.1:55266", "description": "Local Development Server", "variables": {} }
   ],
   "paths": {
     "/api/v1/openapi.json": {
@@ -2545,6 +2545,111 @@
         }
       }
     },
+    "/api/v1/workspaces/{workspaceId}/saml/providers": {
+      "get": {
+        "tags": ["saml"],
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "SAML providers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["items"],
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/SamlProviderDto" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "List workspace SAML providers",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      },
+      "post": {
+        "tags": ["saml"],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": { "type": "string", "minLength": 1, "maxLength": 255 }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created SAML provider",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/SamlProviderDto" } }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidationFailed" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Create workspace SAML provider",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        }
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/saml/providers/{providerId}": {
+      "delete": {
+        "tags": ["saml"],
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "providerId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "204": { "description": "Deleted" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Delete workspace SAML provider",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      },
+      "patch": {
+        "tags": ["saml"],
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "providerId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated SAML provider",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/SamlProviderDto" } }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidationFailed" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Update workspace SAML provider",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        }
+      }
+    },
     "/api/v1/workspaces/{workspaceId}/schedules/assignments": {
       "get": {
         "tags": ["scheduling"],
@@ -4793,6 +4898,71 @@
         }
       }
     },
+    "/auth/saml/{providerId}/acs": {
+      "post": {
+        "tags": ["saml"],
+        "parameters": [
+          { "name": "providerId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "302": { "description": "Redirect into the workspace after sign-in" },
+          "403": {
+            "description": "Invalid assertion or blocked email domain",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ApiError" } }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        },
+        "summary": "SAML assertion consumer service",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "SAMLResponse": { "type": "string" },
+                  "RelayState": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/saml/{providerId}/login": {
+      "get": {
+        "tags": ["saml"],
+        "parameters": [
+          { "name": "providerId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "302": { "description": "Redirect to IdP SSO URL" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        },
+        "summary": "Start SAML SP-initiated login",
+        "security": []
+      }
+    },
+    "/auth/saml/{providerId}/metadata": {
+      "get": {
+        "tags": ["saml"],
+        "parameters": [
+          { "name": "providerId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "SP metadata XML",
+            "content": { "application/xml": { "schema": { "type": "string" } } }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        },
+        "summary": "SAML service-provider metadata",
+        "security": []
+      }
+    },
     "/healthz": {
       "get": {
         "tags": ["health"],
@@ -5587,6 +5757,35 @@
           "role": { "type": "string" },
           "customRoleId": { "type": ["string", "null"] },
           "customRoleName": { "type": ["string", "null"] }
+        }
+      },
+      "SamlProviderDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "workspaceId",
+          "name",
+          "entityId",
+          "entryPoint",
+          "emailAttribute",
+          "allowedEmailDomains",
+          "status",
+          "metadataUrl",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "workspaceId": { "type": "string" },
+          "name": { "type": "string" },
+          "entityId": { "type": "string" },
+          "entryPoint": { "type": "string" },
+          "emailAttribute": { "type": "string" },
+          "allowedEmailDomains": { "type": "array", "items": { "type": "string" } },
+          "status": { "type": "string", "enum": ["enabled", "disabled"] },
+          "metadataUrl": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
         }
       },
       "CapacityDto": {

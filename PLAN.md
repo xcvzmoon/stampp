@@ -1062,7 +1062,8 @@ Approvals, invoices, expenses, leave, kiosk, scheduling, SSO, mobile, auto-track
 3. **Custom RBAC roles** (`feat/custom-roles`): workspace role definitions over the existing permission vocabulary (no second vocabulary), assign roles to members, WorkspaceAccess resolves custom role permissions.
    - Landed on `feat/custom-roles`: `custom_roles` + `members.custom_role_id` with RLS; role CRUD and member assignment APIs; WorkspaceAccess resolves built-in or custom grants into `ctx.permissions`; workspace Roles UI.
 4. **SSO & directory (free)** (`feat/sso`): OIDC providers first, then SAML, then SCIM provisioning; LDAP if it still fits after OIDC/SAML.
-   - Landed on `feat/sso` (OIDC first): workspace `sso_providers` + RLS, issuer/client CRUD, Better Auth `genericOAuth` with discovery + PKCE, email-domain allow-list, workspace SSO settings UI. SAML and SCIM remain on this track after OIDC.
+   - Landed OIDC (`feat/sso`): workspace `sso_providers` + RLS, issuer/client CRUD, Better Auth `genericOAuth` with discovery + PKCE, email-domain allow-list, workspace SSO settings UI.
+   - Landed SAML (`feat/saml`): workspace `saml_providers` + RLS, SP metadata / login / ACS (`@node-saml/node-saml`), signed assertion validation, session issue, workspace SAML UI. SCIM remains on this track.
 5. **Import pipeline** (`feat/import`): BullMQ `import` jobs; CSV first (generic), then Clockify, Toggl, Harvest adapters with dry-run/map preview.
 6. **Audit UI + retention** (`feat/audit-ui`): browse/filter/export `audit_events` in workspace UI (writes already exist); retention policy config + purge job behind AuditTrail.
 7. **Mobile PWA** (`feat/pwa`): responsive PWA shell, installable, mobile timer/timesheet paths (native mobile later).

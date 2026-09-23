@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@better-auth/drizzle-adapter": "catalog:auth",
+    "@node-saml/node-saml": "catalog:",
     "@stampp/access": "workspace:*",
     "@stampp/database": "workspace:*",
     "@stampp/domain": "workspace:*",
