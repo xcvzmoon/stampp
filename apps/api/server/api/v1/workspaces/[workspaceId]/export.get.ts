@@ -27,6 +27,7 @@ defineRouteMeta({
                 tags: { type: 'array' },
                 timeEntries: { type: 'array' },
                 timeEntryTags: { type: 'array' },
+                attendanceRecords: { type: 'array' },
                 auditEvents: { type: 'array' },
               },
             },

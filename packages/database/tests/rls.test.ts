@@ -16,6 +16,7 @@ describe('workspace rls sql', () => {
   it('covers core workspace-scoped product tables', () => {
     expect(WORKSPACE_RLS_TABLES).toContain('clients');
     expect(WORKSPACE_RLS_TABLES).toContain('time_entries');
+    expect(WORKSPACE_RLS_TABLES).toContain('attendance_records');
     expect(WORKSPACE_RLS_TABLES).toContain('expenses');
     expect(WORKSPACE_RLS_TABLES).toContain('invoices');
     expect(WORKSPACE_RLS_TABLES).not.toContain('personal_access_tokens');

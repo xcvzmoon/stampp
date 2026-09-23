@@ -12,6 +12,11 @@
       active: route.path.startsWith(`/w/${workspaceId.value}/time`),
     },
     {
+      label: 'Attendance',
+      to: `/w/${workspaceId.value}/attendance`,
+      active: route.path.startsWith(`/w/${workspaceId.value}/attendance`),
+    },
+    {
       label: 'Approvals',
       to: `/w/${workspaceId.value}/approvals`,
       active: route.path.startsWith(`/w/${workspaceId.value}/approvals`),
