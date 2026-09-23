@@ -12,8 +12,9 @@ import {
 } from 'drizzle-orm/pg-core';
 import { TIMESTAMP_CONFIG, generateEntityId, generateTimestamps } from './_helpers.ts';
 import { organizations, users } from './auth.ts';
+import { kioskDevices } from './kiosk.ts';
 
-export type AttendanceSource = 'clock' | 'manual';
+export type AttendanceSource = 'clock' | 'manual' | 'kiosk';
 
 /**
  * Attendance punch pair: clock-in starts a row; clock-out closes it.
@@ -37,6 +38,10 @@ export const attendanceRecords = pgTable(
     workDate: date('work_date', { mode: 'string' }).notNull(),
     timezone: varchar('timezone', { length: 100 }).notNull(),
     source: text('source').$type<AttendanceSource>().notNull().default('clock'),
+    /** Set when punched from a registered kiosk device. */
+    kioskDeviceId: text('kiosk_device_id').references(() => kioskDevices.id, {
+      onDelete: 'set null',
+    }),
     note: varchar('note', { length: 500 }),
     ...generateTimestamps(),
   },

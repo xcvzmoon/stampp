@@ -22,6 +22,8 @@ describe('workspace rls sql', () => {
     expect(WORKSPACE_RLS_TABLES).toContain('holidays');
     expect(WORKSPACE_RLS_TABLES).toContain('member_capacities');
     expect(WORKSPACE_RLS_TABLES).toContain('project_assignments');
+    expect(WORKSPACE_RLS_TABLES).toContain('kiosk_devices');
+    expect(WORKSPACE_RLS_TABLES).toContain('kiosk_member_credentials');
     expect(WORKSPACE_RLS_TABLES).toContain('expenses');
     expect(WORKSPACE_RLS_TABLES).toContain('invoices');
     expect(WORKSPACE_RLS_TABLES).not.toContain('personal_access_tokens');
