@@ -26,6 +26,11 @@ export type Permission =
   | 'attendance:read:any'
   | 'attendance:write:own'
   | 'attendance:manage'
+  | 'timeoff:read:own'
+  | 'timeoff:read:team'
+  | 'timeoff:write:own'
+  | 'timeoff:approve'
+  | 'timeoff:manage'
   | 'invoice:read:any'
   | 'invoice:manage'
   | 'reports:view'
@@ -56,6 +61,11 @@ const ownerAdminPermissions: Permission[] = [
   'attendance:read:any',
   'attendance:write:own',
   'attendance:manage',
+  'timeoff:read:own',
+  'timeoff:read:team',
+  'timeoff:write:own',
+  'timeoff:approve',
+  'timeoff:manage',
   'invoice:read:any',
   'invoice:manage',
   'reports:view',
@@ -88,6 +98,11 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'attendance:read:any',
     'attendance:write:own',
     'attendance:manage',
+    'timeoff:read:own',
+    'timeoff:read:team',
+    'timeoff:write:own',
+    'timeoff:approve',
+    'timeoff:manage',
     'invoice:read:any',
     'invoice:manage',
     'reports:view',
@@ -102,6 +117,8 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'expense:write:own',
     'attendance:read:own',
     'attendance:write:own',
+    'timeoff:read:own',
+    'timeoff:write:own',
     'reports:view',
   ]),
   guest: new Set<Permission>([
@@ -111,6 +128,7 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'tag:read',
     'expense:read:own',
     'attendance:read:own',
+    'timeoff:read:own',
   ]),
 };
 

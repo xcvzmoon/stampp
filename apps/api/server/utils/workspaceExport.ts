@@ -4,6 +4,7 @@ import {
   auditEvents,
   clients,
   expenses,
+  holidays,
   invoiceLines,
   invoicePayments,
   invoices,
@@ -16,6 +17,8 @@ import {
   tasks,
   timeEntries,
   timeEntryTags,
+  timeOffRequests,
+  timeOffTypes,
   timesheets,
   users,
 } from '@stampp/database';
@@ -35,6 +38,9 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     rateRows,
     timesheetRows,
     attendanceRows,
+    timeOffTypeRows,
+    holidayRows,
+    timeOffRequestRows,
     expenseRows,
     invoiceRows,
     invoiceLineRows,
@@ -113,6 +119,21 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
       .orderBy(asc(attendanceRecords.id)),
     ctx.db.client
       .select()
+      .from(timeOffTypes)
+      .where(eq(timeOffTypes.workspaceId, ctx.workspaceId))
+      .orderBy(asc(timeOffTypes.id)),
+    ctx.db.client
+      .select()
+      .from(holidays)
+      .where(eq(holidays.workspaceId, ctx.workspaceId))
+      .orderBy(asc(holidays.date), asc(holidays.id)),
+    ctx.db.client
+      .select()
+      .from(timeOffRequests)
+      .where(eq(timeOffRequests.workspaceId, ctx.workspaceId))
+      .orderBy(asc(timeOffRequests.id)),
+    ctx.db.client
+      .select()
       .from(expenses)
       .where(eq(expenses.workspaceId, ctx.workspaceId))
       .orderBy(asc(expenses.id)),
@@ -154,6 +175,9 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     rates: rateRows,
     timesheets: timesheetRows,
     attendanceRecords: attendanceRows,
+    timeOffTypes: timeOffTypeRows,
+    holidays: holidayRows,
+    timeOffRequests: timeOffRequestRows,
     expenses: expenseRows,
     invoices: invoiceRows,
     invoiceLines: invoiceLineRows,

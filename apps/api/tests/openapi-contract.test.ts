@@ -75,6 +75,21 @@ const productOperations = [
   'post /api/v1/workspaces/{workspaceId}/attendance/clock-out',
   'patch /api/v1/workspaces/{workspaceId}/attendance/{recordId}',
   'delete /api/v1/workspaces/{workspaceId}/attendance/{recordId}',
+  'get /api/v1/workspaces/{workspaceId}/time-off/types',
+  'post /api/v1/workspaces/{workspaceId}/time-off/types',
+  'patch /api/v1/workspaces/{workspaceId}/time-off/types/{typeId}',
+  'delete /api/v1/workspaces/{workspaceId}/time-off/types/{typeId}',
+  'get /api/v1/workspaces/{workspaceId}/time-off/holidays',
+  'post /api/v1/workspaces/{workspaceId}/time-off/holidays',
+  'delete /api/v1/workspaces/{workspaceId}/time-off/holidays/{holidayId}',
+  'get /api/v1/workspaces/{workspaceId}/time-off/requests',
+  'post /api/v1/workspaces/{workspaceId}/time-off/requests',
+  'get /api/v1/workspaces/{workspaceId}/time-off/requests/pending',
+  'post /api/v1/workspaces/{workspaceId}/time-off/requests/{requestId}/approve',
+  'post /api/v1/workspaces/{workspaceId}/time-off/requests/{requestId}/reject',
+  'post /api/v1/workspaces/{workspaceId}/time-off/requests/{requestId}/withdraw',
+  'get /api/v1/workspaces/{workspaceId}/time-off/balances',
+  'get /api/v1/workspaces/{workspaceId}/time-off/calendar',
 ];
 
 const openApiDocumentSchema = v.object({
@@ -114,7 +129,7 @@ describe('v0.1 openapi contract', () => {
     expect(productOperations).toContain('get /api/v1/workspaces/{workspaceId}/tags');
     expect(productOperations).toContain('post /api/v1/workspaces/{workspaceId}/timer/start');
     expect(productOperations).toContain('get /api/v1/workspaces/{workspaceId}/export');
-    expect(productOperations.length).toBe(71);
+    expect(productOperations.length).toBe(86);
   });
 
   it('keeps product routes workspace-scoped', () => {
@@ -140,6 +155,11 @@ describe('v0.1 openapi contract', () => {
     expect(spec.components?.schemas?.AttendanceDto).toBeDefined();
     expect(spec.components?.schemas?.CurrentAttendance).toBeDefined();
     expect(spec.components?.schemas?.AttendanceList).toBeDefined();
+    expect(spec.components?.schemas?.TimeOffTypeDto).toBeDefined();
+    expect(spec.components?.schemas?.TimeOffRequestDto).toBeDefined();
+    expect(spec.components?.schemas?.TimeOffBalanceList).toBeDefined();
+    expect(spec.components?.schemas?.HolidayDto).toBeDefined();
+    expect(spec.components?.schemas?.TimeOffCalendarResult).toBeDefined();
     expect(spec.components?.schemas?.ProjectBudgetUsage).toBeDefined();
     expect(spec.components?.schemas?.ExpenseDto).toBeDefined();
     expect(spec.components?.schemas?.InvoiceDto).toBeDefined();

@@ -12,6 +12,7 @@ export const WORKSPACE_RLS_TABLES = [
   'audit_events',
   'clients',
   'expenses',
+  'holidays',
   'invoice_lines',
   'invoice_payments',
   'invoices',
@@ -21,6 +22,8 @@ export const WORKSPACE_RLS_TABLES = [
   'tasks',
   'time_entries',
   'time_entry_tags',
+  'time_off_requests',
+  'time_off_types',
   'timesheets',
 ] as const;
 

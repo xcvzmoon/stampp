@@ -6,6 +6,7 @@ import {
   clients,
   createTestDb,
   expenses,
+  holidays,
   invoiceLines,
   invoices,
   organizations,
@@ -16,9 +17,11 @@ import {
   tasks,
   timeEntries,
   timeEntryTags,
+  timeOffRequests,
+  timeOffTypes,
   timesheets,
 } from '@stampp/database';
-import { and, asc, eq, gt, isNull, lte, or } from 'drizzle-orm';
+import { and, asc, eq, gt, gte, isNull, lte, or } from 'drizzle-orm';
 import { describe, expect, it } from 'vite-plus/test';
 import { reportScope } from '~/server/utils/reports.ts';
 import { weeklyTimeScope } from '~/server/utils/timeTracking.ts';
@@ -133,6 +136,32 @@ describe('catalog tenant isolation', () => {
     expect(open.params[0]).toBe(workspaceA);
     expect(list.params[0]).toBe(workspaceB);
     expect(list.params).not.toContain(workspaceA);
+  });
+
+  it('binds workspace_id on time-off types, holidays, and requests', () => {
+    const db = createTestDb();
+    const types = db
+      .select()
+      .from(timeOffTypes)
+      .where(eq(timeOffTypes.workspaceId, workspaceA))
+      .toSQL();
+    const holiday = db
+      .select()
+      .from(holidays)
+      .where(and(eq(holidays.workspaceId, workspaceB), gte(holidays.date, '2026-01-01')))
+      .toSQL();
+    const request = db
+      .select()
+      .from(timeOffRequests)
+      .where(
+        and(eq(timeOffRequests.workspaceId, workspaceA), eq(timeOffRequests.status, 'pending')),
+      )
+      .toSQL();
+
+    expect(types.sql).toContain('"workspace_id" = $1');
+    expect(types.params[0]).toBe(workspaceA);
+    expect(holiday.params[0]).toBe(workspaceB);
+    expect(request.params[0]).toBe(workspaceA);
   });
 
   it('puts workspace_id first in the weekly timesheet scope', () => {
