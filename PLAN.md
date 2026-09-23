@@ -1023,7 +1023,7 @@ Approvals, invoices, expenses, leave, kiosk, scheduling, SSO, mobile, auto-track
 - [x] Attendance (clock in/out separate from project time)
 - [x] Time off foundations (types, balances, requests, approvals, holidays, team calendar)
 - [x] Scheduling & capacity (assignments, scheduled vs tracked)
-- Kiosk mode (PIN/QR; device registration)
+- [x] Kiosk mode (PIN/QR; device registration)
 - Multi-stage approval chains
 
 **Exit criteria:** leave balance + holiday calendar drive expected hours; kiosk clocks attendance only.
@@ -1033,7 +1033,7 @@ Approvals, invoices, expenses, leave, kiosk, scheduling, SSO, mobile, auto-track
 1. Attendance vertical: domain rules, `attendance_records` + RLS, clock-in/out + list + manual correct API, workspace UI, export + OpenAPI. Done on `feat/attendance`.
 2. Time off foundations: types, balances, requests, approvals, holidays, team calendar. Done on `feat/time-off`.
 3. Scheduling & capacity: member capacity, project assignments, scheduled vs tracked workload. Done on `feat/scheduling`.
-4. Kiosk attendance devices.
+4. Kiosk devices: register/rotate/revoke, member PIN/QR, attendance-only punch. Done on `feat/kiosk`.
 5. Multi-stage approval chains.
 
 ---
