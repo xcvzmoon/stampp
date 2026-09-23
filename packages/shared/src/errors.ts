@@ -35,6 +35,8 @@ export const ERROR_CODES = {
   KIOSK_DEVICE_REVOKED: 'kiosk.device_revoked',
   WEBHOOK_INVALID_URL: 'webhook.invalid_url',
   WEBHOOK_DELIVERY_FAILED: 'webhook.delivery_failed',
+  ROLE_IN_USE: 'role.in_use',
+  ROLE_INVALID_PERMISSIONS: 'role.invalid_permissions',
   APPROVAL_INVALID_STEP: 'approval.invalid_step',
   APPROVAL_INVALID_CHAIN: 'approval.invalid_chain',
   APPROVAL_ALREADY_DECIDED: 'approval.already_decided',
