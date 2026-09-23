@@ -5,6 +5,7 @@ export * from './expenses.ts';
 export * from './invoices.ts';
 export * from './projects.ts';
 export * from './rates.ts';
+export * from './scheduling.ts';
 export * from './tags.ts';
 export * from './time.ts';
 export * from './timesheets.ts';
