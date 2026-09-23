@@ -107,6 +107,8 @@ export const members = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
     role: text('role').notNull().default('member'),
+    /** Overrides the built-in role when set; null keeps the ladder role. */
+    customRoleId: text('custom_role_id'),
     createdAt: timestamp('created_at', TIMESTAMP_CONFIG).notNull().defaultNow(),
   },
   (table) => [
