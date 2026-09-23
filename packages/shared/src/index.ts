@@ -1,4 +1,5 @@
 export * from './advancedReports.ts';
+export * from './approvalChains.ts';
 export * from './attendance.ts';
 export * from './budgets.ts';
 export * from './catalog.ts';
