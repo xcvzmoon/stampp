@@ -1014,7 +1014,7 @@ Approvals, invoices, expenses, leave, kiosk, scheduling, SSO, mobile, auto-track
 
 **Exit criteria:** invoice generated from tracked time, PDF downloadable, cost reports correct against fixture data.
 
-**M2 follow-ups (not blocking v0.2 features):** deeper service-level / mock-db flow tests (in-progress), optional node-caged runtime experiment, fixture-based cost-report golden tests.
+**M2 follow-ups (not blocking v0.2 features):** deeper service-level / mock-db flow tests (done — `serviceFlows.test.ts` + scripted Db), fixture-based cost-report golden tests (done — `costReportGolden.test.ts`), optional node-caged runtime experiment (still optional).
 
 ---
 
