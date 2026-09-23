@@ -47,6 +47,50 @@ export type Permission =
   | 'webhook:read'
   | 'webhook:manage';
 
+export const ALL_PERMISSIONS = [
+  'time:read:own',
+  'time:read:team',
+  'time:read:any',
+  'time:write:own',
+  'time:write:other',
+  'time:approve',
+  'project:read',
+  'project:manage',
+  'client:read',
+  'client:manage',
+  'tag:read',
+  'tag:manage',
+  'expense:read:own',
+  'expense:read:any',
+  'expense:write:own',
+  'expense:manage',
+  'attendance:read:own',
+  'attendance:read:team',
+  'attendance:read:any',
+  'attendance:write:own',
+  'attendance:manage',
+  'timeoff:read:own',
+  'timeoff:read:team',
+  'timeoff:write:own',
+  'timeoff:approve',
+  'timeoff:manage',
+  'schedule:read:own',
+  'schedule:read:team',
+  'schedule:manage',
+  'kiosk:manage',
+  'approval:read',
+  'approval:manage',
+  'invoice:read:any',
+  'invoice:manage',
+  'reports:view',
+  'reports:view:cost',
+  'settings:manage',
+  'members:manage',
+  'export:workspace',
+  'webhook:read',
+  'webhook:manage',
+] as const satisfies readonly Permission[];
+
 const ownerAdminPermissions: Permission[] = [
   'time:read:own',
   'time:read:team',
@@ -160,6 +204,20 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
   ]),
 };
 
-export function hasPermission(role: StamppRole, permission: Permission): boolean {
-  return rolePermissions[role].has(permission);
+export function hasPermission(
+  role: StamppRole | ReadonlySet<Permission>,
+  permission: Permission,
+): boolean {
+  if (
+    role === 'owner' ||
+    role === 'admin' ||
+    role === 'manager' ||
+    role === 'member' ||
+    role === 'guest'
+  ) {
+    return rolePermissions[role].has(permission);
+  }
+  return role.has(permission);
 }
+
+export { rolePermissions };
