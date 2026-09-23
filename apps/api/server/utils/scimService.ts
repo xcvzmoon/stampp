@@ -251,17 +251,19 @@ export async function scimCreateGroup(workspaceId: string, input: ScimGroupInput
     return scimJson(404, scimError(404, null, 'Workspace not found'));
   }
   if (input.members?.length) {
-    for (const member of input.members) {
-      await db
-        .insert(members)
-        .values({
-          id: `member_${randomBytes(12).toString('hex')}`,
-          organizationId: workspaceId,
-          userId: member.value,
-          role: 'member',
-        })
-        .onConflictDoNothing();
-    }
+    await Promise.all(
+      input.members.map((member) =>
+        db
+          .insert(members)
+          .values({
+            id: `member_${randomBytes(12).toString('hex')}`,
+            organizationId: workspaceId,
+            userId: member.value,
+            role: 'member',
+          })
+          .onConflictDoNothing(),
+      ),
+    );
   }
   return scimJson(
     201,

@@ -53,11 +53,11 @@ export function toGenericOAuthConfigs(entries: LoadedSsoConfig[]): GenericOAuthC
     scopes: entry.scopes,
     pkce: true,
     mapProfileToUser(profile) {
-      const email = String(profile.email ?? '');
+      const email = profile.email ?? '';
       if (!emailMatchesAllowedDomains(email, entry.allowedEmailDomains)) {
         throw new Error('sso.email_domain_blocked');
       }
-      const name = String(profile.name ?? email);
+      const name = profile.name ?? email;
       return {
         email,
         name,

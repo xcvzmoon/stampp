@@ -37,6 +37,11 @@ function notFound(requestId: string) {
   return toApiError(ERROR_CODES.NOT_FOUND, 'SAML provider not found', requestId);
 }
 
+function pickEmailAttribute(value: string | undefined, fallback: string): string {
+  const trimmed = value?.trim();
+  return trimmed === undefined || trimmed === '' ? fallback : trimmed;
+}
+
 function parseAllowedDomains(raw: string | undefined): string[] {
   if (!raw) return [];
   return raw
@@ -69,7 +74,7 @@ export async function createSamlProvider(
       entityId: input.entityId.trim(),
       entryPoint: input.entryPoint.replace(/\/$/, ''),
       certificate: normalizePemCertificate(input.certificate),
-      emailAttribute: input.emailAttribute?.trim() || 'email',
+      emailAttribute: pickEmailAttribute(input.emailAttribute, 'email'),
       allowedEmailDomains: parseAllowedDomains(input.allowedEmailDomains),
       status: 'enabled',
     })
@@ -124,7 +129,7 @@ export async function updateSamlProvider(
       certificate: input.certificate
         ? normalizePemCertificate(input.certificate)
         : before.certificate,
-      emailAttribute: input.emailAttribute?.trim() || before.emailAttribute,
+      emailAttribute: pickEmailAttribute(input.emailAttribute, before.emailAttribute),
       allowedEmailDomains:
         input.allowedEmailDomains === undefined
           ? before.allowedEmailDomains
