@@ -1021,7 +1021,7 @@ Approvals, invoices, expenses, leave, kiosk, scheduling, SSO, mobile, auto-track
 ### M3 / v0.3 — Workforce
 
 - [x] Attendance (clock in/out separate from project time)
-- Time off: types, policies, accrual, balances, holidays, approvals, team calendar
+- [x] Time off foundations (types, balances, requests, approvals, holidays, team calendar)
 - Scheduling & capacity (assignments, scheduled vs tracked)
 - Kiosk mode (PIN/QR; device registration)
 - Multi-stage approval chains
@@ -1031,7 +1031,7 @@ Approvals, invoices, expenses, leave, kiosk, scheduling, SSO, mobile, auto-track
 **M3 slices (execution order):**
 
 1. Attendance vertical: domain rules, `attendance_records` + RLS, clock-in/out + list + manual correct API, workspace UI, export + OpenAPI. Done on `feat/attendance`.
-2. Time off foundations (types, balances, requests, approvals, holidays).
+2. Time off foundations: types, balances, requests, approvals, holidays, team calendar. Done on `feat/time-off`.
 3. Scheduling & capacity.
 4. Kiosk attendance devices.
 5. Multi-stage approval chains.
