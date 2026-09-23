@@ -8,3 +8,4 @@ export * from './rates.ts';
 export * from './tags.ts';
 export * from './time.ts';
 export * from './timesheets.ts';
+export * from './timeOff.ts';
