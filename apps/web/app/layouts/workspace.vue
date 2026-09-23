@@ -42,6 +42,11 @@
       active: route.path.startsWith(`/w/${workspaceId.value}/roles`),
     },
     {
+      label: 'SSO',
+      to: `/w/${workspaceId.value}/sso`,
+      active: route.path.startsWith(`/w/${workspaceId.value}/sso`),
+    },
+    {
       label: 'Approvals',
       to: `/w/${workspaceId.value}/approvals`,
       active: route.path.startsWith(`/w/${workspaceId.value}/approvals`),
