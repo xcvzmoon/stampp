@@ -62,6 +62,11 @@
       active: route.path.startsWith(`/w/${workspaceId.value}/import`),
     },
     {
+      label: 'Audit',
+      to: `/w/${workspaceId.value}/audit`,
+      active: route.path.startsWith(`/w/${workspaceId.value}/audit`),
+    },
+    {
       label: 'Approvals',
       to: `/w/${workspaceId.value}/approvals`,
       active: route.path.startsWith(`/w/${workspaceId.value}/approvals`),
