@@ -1,5 +1,5 @@
 import type { Db, ScopedDb } from '@stampp/database';
-import type { Permission, StamppRole } from '@stampp/domain';
+import type { ActorRole, Permission } from '@stampp/domain';
 import { createScopedDb } from '@stampp/database';
 import { hasPermission } from '@stampp/domain';
 
@@ -10,13 +10,18 @@ import { hasPermission } from '@stampp/domain';
 export type AuthorizedContext = {
   userId: string;
   workspaceId: string;
-  role: StamppRole;
+  role: ActorRole;
+  /** Resolved from the built-in ladder or the assigned custom role. */
+  permissions: ReadonlySet<Permission>;
   db: ScopedDb;
 };
 
 export type WorkspaceAccessDeps = {
   getSessionUserId: () => Promise<string | null>;
-  getMemberRole: (userId: string, workspaceId: string) => Promise<StamppRole | null>;
+  getActorGrant: (
+    userId: string,
+    workspaceId: string,
+  ) => Promise<{ role: ActorRole; permissions: ReadonlySet<Permission> } | null>;
   db: Db;
 };
 
@@ -39,19 +44,20 @@ export async function enterWorkspace(
     throw new WorkspaceAccessError('unauthenticated', 'Authentication required');
   }
 
-  const role = await deps.getMemberRole(userId, input.workspaceId);
-  if (!role) {
+  const grant = await deps.getActorGrant(userId, input.workspaceId);
+  if (!grant) {
     throw new WorkspaceAccessError('forbidden', 'Not a member of this workspace');
   }
 
-  if (!hasPermission(role, input.permission)) {
+  if (!hasPermission(grant.permissions, input.permission)) {
     throw new WorkspaceAccessError('forbidden', `Missing permission: ${input.permission}`);
   }
 
   return {
     userId,
     workspaceId: input.workspaceId,
-    role,
+    role: grant.role,
+    permissions: grant.permissions,
     db: createScopedDb(deps.db, input.workspaceId),
   };
 }
