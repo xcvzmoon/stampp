@@ -5,6 +5,7 @@
   "scripts": {
     "build": "varlock run -- nitro build",
     "dev": "varlock run -- nitro dev",
+    "openapi:snapshot": "node ./scripts/update-openapi-snapshot.mjs",
     "preview": "varlock run -- nitro preview",
     "start": "varlock run -- node .output/server/index.mjs",
     "typecheck": "tsc",
