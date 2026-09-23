@@ -35,6 +35,8 @@ const allPermissions: Permission[] = [
   'schedule:read:team',
   'schedule:manage',
   'kiosk:manage',
+  'approval:read',
+  'approval:manage',
   'invoice:read:any',
   'invoice:manage',
   'reports:view',
@@ -122,6 +124,14 @@ describe('hasPermission', () => {
     expect(hasPermission('guest', 'kiosk:manage')).toBe(false);
   });
 
+  it('scopes approval chain configuration to managers and above', () => {
+    expect(hasPermission('manager', 'approval:manage')).toBe(true);
+    expect(hasPermission('manager', 'approval:read')).toBe(true);
+    expect(hasPermission('member', 'approval:manage')).toBe(false);
+    expect(hasPermission('member', 'approval:read')).toBe(true);
+    expect(hasPermission('guest', 'approval:manage')).toBe(false);
+  });
+
   it('lets members read catalog entities but not manage them', () => {
     expect(hasPermission('member', 'client:read')).toBe(true);
     expect(hasPermission('member', 'project:read')).toBe(true);
@@ -148,6 +158,7 @@ describe('hasPermission', () => {
       'attendance:read:own',
       'timeoff:read:own',
       'schedule:read:own',
+      'approval:read',
     ]);
     for (const permission of allPermissions) {
       expect(hasPermission('guest', permission)).toBe(guestAllowed.has(permission));

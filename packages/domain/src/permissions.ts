@@ -35,6 +35,8 @@ export type Permission =
   | 'schedule:read:team'
   | 'schedule:manage'
   | 'kiosk:manage'
+  | 'approval:read'
+  | 'approval:manage'
   | 'invoice:read:any'
   | 'invoice:manage'
   | 'reports:view'
@@ -74,6 +76,8 @@ const ownerAdminPermissions: Permission[] = [
   'schedule:read:team',
   'schedule:manage',
   'kiosk:manage',
+  'approval:read',
+  'approval:manage',
   'invoice:read:any',
   'invoice:manage',
   'reports:view',
@@ -115,6 +119,8 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'schedule:read:team',
     'schedule:manage',
     'kiosk:manage',
+    'approval:read',
+    'approval:manage',
     'invoice:read:any',
     'invoice:manage',
     'reports:view',
@@ -132,6 +138,7 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'timeoff:read:own',
     'timeoff:write:own',
     'schedule:read:own',
+    'approval:read',
     'reports:view',
   ]),
   guest: new Set<Permission>([
@@ -143,6 +150,7 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'attendance:read:own',
     'timeoff:read:own',
     'schedule:read:own',
+    'approval:read',
   ]),
 };
 
