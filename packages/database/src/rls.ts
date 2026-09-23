@@ -27,6 +27,7 @@ export const WORKSPACE_RLS_TABLES = [
   'projects',
   'rates',
   'saml_providers',
+  'scim_tokens',
   'sso_providers',
   'tags',
   'tasks',
