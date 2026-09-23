@@ -9,6 +9,7 @@ export * from './projects.ts';
 export * from './rates.ts';
 export * from './roles.ts';
 export * from './scheduling.ts';
+export * from './sso.ts';
 export * from './tags.ts';
 export * from './time.ts';
 export * from './timesheets.ts';
