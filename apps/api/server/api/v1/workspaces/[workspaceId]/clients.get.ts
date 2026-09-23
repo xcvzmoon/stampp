@@ -40,6 +40,13 @@ defineRouteMeta({
             name: 'better-auth.session_token',
             description: 'Better Auth session cookie. Obtain via /api/auth/*.',
           },
+          kioskDeviceKey: {
+            type: 'apiKey',
+            in: 'header',
+            name: 'x-kiosk-device-key',
+            description:
+              'Registered kiosk device key returned once at device registration. Combined with member PIN or QR for attendance punches.',
+          },
         },
         schemas: {
           ApiError: {

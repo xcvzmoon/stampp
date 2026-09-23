@@ -9,6 +9,8 @@ import {
   invoicePayments,
   invoices,
   invitations,
+  kioskDevices,
+  kioskMemberCredentials,
   memberCapacities,
   members,
   organizations,
@@ -24,7 +26,7 @@ import {
   timesheets,
   users,
 } from '@stampp/database';
-import { asc, eq } from 'drizzle-orm';
+import { asc, eq, isNotNull } from 'drizzle-orm';
 
 export async function exportWorkspace(ctx: AuthorizedContext) {
   const [
@@ -45,6 +47,8 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     timeOffRequestRows,
     capacityRows,
     assignmentRows,
+    kioskDeviceRows,
+    kioskCredentialRows,
     expenseRows,
     invoiceRows,
     invoiceLineRows,
@@ -147,6 +151,33 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
       .where(eq(projectAssignments.workspaceId, ctx.workspaceId))
       .orderBy(asc(projectAssignments.id)),
     ctx.db.client
+      .select({
+        id: kioskDevices.id,
+        workspaceId: kioskDevices.workspaceId,
+        name: kioskDevices.name,
+        keyPrefix: kioskDevices.keyPrefix,
+        status: kioskDevices.status,
+        lastUsedAt: kioskDevices.lastUsedAt,
+        createdAt: kioskDevices.createdAt,
+        updatedAt: kioskDevices.updatedAt,
+      })
+      .from(kioskDevices)
+      .where(eq(kioskDevices.workspaceId, ctx.workspaceId))
+      .orderBy(asc(kioskDevices.id)),
+    ctx.db.client
+      .select({
+        id: kioskMemberCredentials.id,
+        workspaceId: kioskMemberCredentials.workspaceId,
+        userId: kioskMemberCredentials.userId,
+        hasPin: isNotNull(kioskMemberCredentials.pinHash),
+        hasQrToken: isNotNull(kioskMemberCredentials.qrTokenHash),
+        createdAt: kioskMemberCredentials.createdAt,
+        updatedAt: kioskMemberCredentials.updatedAt,
+      })
+      .from(kioskMemberCredentials)
+      .where(eq(kioskMemberCredentials.workspaceId, ctx.workspaceId))
+      .orderBy(asc(kioskMemberCredentials.id)),
+    ctx.db.client
       .select()
       .from(expenses)
       .where(eq(expenses.workspaceId, ctx.workspaceId))
@@ -194,6 +225,8 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     timeOffRequests: timeOffRequestRows,
     memberCapacities: capacityRows,
     projectAssignments: assignmentRows,
+    kioskDevices: kioskDeviceRows,
+    kioskCredentials: kioskCredentialRows,
     expenses: expenseRows,
     invoices: invoiceRows,
     invoiceLines: invoiceLineRows,

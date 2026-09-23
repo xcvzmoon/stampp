@@ -33,6 +33,8 @@ defineRouteMeta({
                 timeOffRequests: { type: 'array' },
                 memberCapacities: { type: 'array' },
                 projectAssignments: { type: 'array' },
+                kioskDevices: { type: 'array' },
+                kioskCredentials: { type: 'array' },
                 auditEvents: { type: 'array' },
               },
             },

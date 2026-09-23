@@ -3,7 +3,13 @@ import { ERROR_CODES } from '@stampp/shared';
 
 export function mapErrorCodeToStatus(code: string): number {
   if (code === ERROR_CODES.UNAUTHENTICATED) return 401;
-  if (code === ERROR_CODES.FORBIDDEN) return 403;
+  if (
+    code === ERROR_CODES.FORBIDDEN ||
+    code === ERROR_CODES.KIOSK_DEVICE_REVOKED ||
+    code === ERROR_CODES.KIOSK_AUTH_FAILED
+  ) {
+    return code === ERROR_CODES.KIOSK_AUTH_FAILED ? 401 : 403;
+  }
   if (code === ERROR_CODES.NOT_FOUND) return 404;
   if (
     code === ERROR_CODES.CONFLICT ||

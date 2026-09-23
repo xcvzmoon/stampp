@@ -59,6 +59,7 @@ export function toAttendanceDto(row: AttendanceRecord, now: Date = new Date()): 
     workDate: row.workDate,
     timezone: row.timezone,
     source: row.source,
+    kioskDeviceId: row.kioskDeviceId,
     note: row.note,
     state,
     createdAt: row.createdAt.toISOString(),
