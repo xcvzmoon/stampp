@@ -47,7 +47,8 @@ export function mapErrorCodeToStatus(code: string): number {
     code === ERROR_CODES.SCHEDULE_INVALID_RANGE ||
     code === ERROR_CODES.APPROVAL_INVALID_STEP ||
     code === ERROR_CODES.APPROVAL_INVALID_CHAIN ||
-    code === ERROR_CODES.ROLE_INVALID_PERMISSIONS
+    code === ERROR_CODES.ROLE_INVALID_PERMISSIONS ||
+    code === ERROR_CODES.SAML_ASSERTION_INVALID
   ) {
     return 422;
   }
