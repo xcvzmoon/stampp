@@ -14,6 +14,7 @@ Canonical product and architecture terms. Prefer these names in code, docs, and 
 | **SAML provider**         | Workspace SAML IdP configuration (entity id, SSO URL, signing cert) used for SP-initiated single sign-on.           |
 | **SCIM token**            | Workspace bearer token for IdP-driven user/group provisioning against `/scim/v2`.                                   |
 | **Import job**            | Workspace import run (CSV or vendor CSV) with dry-run preview and row counters.                                     |
+| **Audit retention**       | Workspace policy for how long `audit_events` rows are kept before purge.                                            |
 | **Permission**            | Stable string such as `time:write:own`, `time:approve`, `reports:view:cost`.                                        |
 | **Client**                | External customer of a workspace; optional parent of projects.                                                      |
 | **Project**               | Unit of billable work; may belong to a client.                                                                      |
