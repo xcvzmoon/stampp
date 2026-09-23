@@ -6,7 +6,7 @@
     "description": "Workspace-scoped work-time API. Authenticate with a Better Auth session cookie or a personal access token (Authorization: Bearer stpp_…). Product routes live under /api/v1. Mutations accept an optional Idempotency-Key header; all /api/v1 calls are rate limited per credential."
   },
   "servers": [
-    { "url": "http://127.0.0.1:55266", "description": "Local Development Server", "variables": {} }
+    { "url": "http://127.0.0.1:55941", "description": "Local Development Server", "variables": {} }
   ],
   "paths": {
     "/api/v1/openapi.json": {
@@ -2930,6 +2930,89 @@
         "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
       }
     },
+    "/api/v1/workspaces/{workspaceId}/scim/tokens": {
+      "get": {
+        "tags": ["scim"],
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "SCIM tokens",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["items"],
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ScimTokenDto" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "List SCIM tokens",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      },
+      "post": {
+        "tags": ["scim"],
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created SCIM token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["token", "tokenDto"],
+                  "properties": {
+                    "token": { "type": "string" },
+                    "tokenDto": { "$ref": "#/components/schemas/ScimTokenDto" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidationFailed" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Create SCIM token (returned once)",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        }
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/scim/tokens/{tokenId}": {
+      "delete": {
+        "tags": ["scim"],
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "tokenId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "204": { "description": "Revoked" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Revoke SCIM token",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      }
+    },
     "/api/v1/workspaces/{workspaceId}/sso/providers": {
       "get": {
         "tags": ["sso"],
@@ -5019,6 +5102,144 @@
         "description": "Reports PostgreSQL and Valkey reachability."
       }
     },
+    "/scim/v2/Groups": {
+      "get": {
+        "tags": ["scim"],
+        "parameters": [],
+        "responses": {
+          "200": { "description": "ListResponse / Group" },
+          "401": { "description": "Invalid SCIM token" }
+        },
+        "summary": "SCIM 2.0 Groups collection",
+        "security": [{ "scimToken": [] }]
+      },
+      "post": {
+        "tags": ["scim"],
+        "parameters": [],
+        "responses": {
+          "201": { "description": "Group" },
+          "401": { "description": "Invalid SCIM token" }
+        },
+        "summary": "SCIM 2.0 create/replace group members",
+        "security": [{ "scimToken": [] }]
+      }
+    },
+    "/scim/v2/Groups/{groupId}": {
+      "get": {
+        "tags": ["scim"],
+        "parameters": [
+          { "name": "groupId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Group" },
+          "401": { "description": "Invalid SCIM token" }
+        },
+        "summary": "SCIM 2.0 group by id",
+        "security": [{ "scimToken": [] }]
+      },
+      "put": {
+        "tags": ["scim"],
+        "parameters": [
+          { "name": "groupId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Group" },
+          "401": { "description": "Invalid SCIM token" }
+        },
+        "summary": "SCIM 2.0 replace group",
+        "security": [{ "scimToken": [] }]
+      }
+    },
+    "/scim/v2/ServiceProviderConfig": {
+      "get": {
+        "tags": ["scim"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "ServiceProviderConfig",
+            "content": { "application/scim+json": { "schema": { "type": "object" } } }
+          },
+          "401": { "description": "Invalid SCIM token" }
+        },
+        "summary": "SCIM 2.0 service provider configuration",
+        "security": [{ "scimToken": [] }]
+      }
+    },
+    "/scim/v2/Users": {
+      "get": {
+        "tags": ["scim"],
+        "parameters": [],
+        "responses": {
+          "200": { "description": "ListResponse / User" },
+          "401": { "description": "Invalid SCIM token" }
+        },
+        "summary": "SCIM 2.0 Users collection",
+        "security": [{ "scimToken": [] }]
+      },
+      "post": {
+        "tags": ["scim"],
+        "parameters": [],
+        "responses": {
+          "201": { "description": "Created User" },
+          "401": { "description": "Invalid SCIM token" }
+        },
+        "summary": "SCIM 2.0 create user",
+        "security": [{ "scimToken": [] }]
+      }
+    },
+    "/scim/v2/Users/{userId}": {
+      "delete": {
+        "tags": ["scim"],
+        "parameters": [
+          { "name": "userId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "204": { "description": "Deleted" },
+          "401": { "description": "Invalid SCIM token" }
+        },
+        "summary": "SCIM 2.0 delete user membership",
+        "security": [{ "scimToken": [] }]
+      },
+      "get": {
+        "tags": ["scim"],
+        "parameters": [
+          { "name": "userId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "User" },
+          "401": { "description": "Invalid SCIM token" },
+          "404": { "description": "Not found" }
+        },
+        "summary": "SCIM 2.0 user by id",
+        "security": [{ "scimToken": [] }]
+      },
+      "patch": {
+        "tags": ["scim"],
+        "parameters": [
+          { "name": "userId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "User" },
+          "401": { "description": "Invalid SCIM token" },
+          "404": { "description": "Not found" }
+        },
+        "summary": "SCIM 2.0 patch user",
+        "security": [{ "scimToken": [] }]
+      },
+      "put": {
+        "tags": ["scim"],
+        "parameters": [
+          { "name": "userId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "User" },
+          "401": { "description": "Invalid SCIM token" },
+          "404": { "description": "Not found" }
+        },
+        "summary": "SCIM 2.0 replace user",
+        "security": [{ "scimToken": [] }]
+      }
+    },
     "/{*param1}": {
       "get": {
         "tags": ["App Routes"],
@@ -5863,6 +6084,19 @@
           "members": { "type": "array", "items": { "type": "object" } }
         }
       },
+      "ScimTokenDto": {
+        "type": "object",
+        "required": ["id", "workspaceId", "name", "prefix", "lastUsedAt", "revokedAt", "createdAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "workspaceId": { "type": "string" },
+          "name": { "type": "string" },
+          "prefix": { "type": "string" },
+          "lastUsedAt": { "type": ["string", "null"], "format": "date-time" },
+          "revokedAt": { "type": ["string", "null"], "format": "date-time" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
       "SsoProviderDto": {
         "type": "object",
         "required": [
@@ -6231,6 +6465,12 @@
         "in": "header",
         "name": "x-kiosk-device-key",
         "description": "Registered kiosk device key returned once at device registration. Combined with member PIN or QR for attendance punches."
+      },
+      "scimToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "scim_",
+        "description": "Workspace SCIM token minted in settings."
       }
     },
     "responses": {

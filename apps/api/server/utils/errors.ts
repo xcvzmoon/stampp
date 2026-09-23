@@ -63,6 +63,7 @@ export function mapErrorCodeToStatus(code: string): number {
   if (code === ERROR_CODES.SSO_PROVIDER_ID_TAKEN || code === ERROR_CODES.SSO_EMAIL_DOMAIN_BLOCKED) {
     return code === ERROR_CODES.SSO_PROVIDER_ID_TAKEN ? 409 : 403;
   }
+  if (code === ERROR_CODES.SCIM_UNAUTHENTICATED) return 401;
   if (code === ERROR_CODES.RATE_LIMITED) return 429;
   return 500;
 }
