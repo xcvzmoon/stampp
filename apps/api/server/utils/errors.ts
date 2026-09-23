@@ -10,7 +10,8 @@ export function mapErrorCodeToStatus(code: string): number {
     code === ERROR_CODES.TIME_ENTRY_OVERLAP ||
     code === ERROR_CODES.TIMER_ALREADY_RUNNING ||
     code === ERROR_CODES.ATTENDANCE_ALREADY_OPEN ||
-    code === ERROR_CODES.ATTENDANCE_NOT_OPEN
+    code === ERROR_CODES.ATTENDANCE_NOT_OPEN ||
+    code === ERROR_CODES.TIME_OFF_OVERLAP
   ) {
     return 409;
   }
@@ -26,7 +27,11 @@ export function mapErrorCodeToStatus(code: string): number {
     code === ERROR_CODES.INVOICE_EMPTY ||
     code === ERROR_CODES.INVOICE_OVERPAYMENT ||
     code === ERROR_CODES.INVOICE_NOT_DRAFT ||
-    code === ERROR_CODES.ATTENDANCE_INVALID_INTERVAL
+    code === ERROR_CODES.ATTENDANCE_INVALID_INTERVAL ||
+    code === ERROR_CODES.TIME_OFF_INVALID_TRANSITION ||
+    code === ERROR_CODES.TIME_OFF_INVALID_RANGE ||
+    code === ERROR_CODES.TIME_OFF_INSUFFICIENT_BALANCE ||
+    code === ERROR_CODES.TIME_OFF_TYPE_INACTIVE
   ) {
     return 422;
   }
