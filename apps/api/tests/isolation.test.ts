@@ -1,6 +1,9 @@
 import type { WorkspaceAccessDeps } from '@stampp/access';
 import { enterWorkspace } from '@stampp/access';
 import {
+  approvalChains,
+  approvalDecisions,
+  approvalRuns,
   attendanceRecords,
   auditEvents,
   clients,
@@ -210,6 +213,30 @@ describe('catalog tenant isolation', () => {
     expect(device.params[0]).toBe(workspaceA);
     expect(credential.params[0]).toBe(workspaceB);
     expect(credential.params).not.toContain(workspaceA);
+  });
+
+  it('binds workspace_id on approval chain and run queries', () => {
+    const db = createTestDb();
+    const chain = db
+      .select()
+      .from(approvalChains)
+      .where(eq(approvalChains.workspaceId, workspaceA))
+      .toSQL();
+    const run = db
+      .select()
+      .from(approvalRuns)
+      .where(and(eq(approvalRuns.workspaceId, workspaceB), eq(approvalRuns.status, 'pending')))
+      .toSQL();
+    const decision = db
+      .select()
+      .from(approvalDecisions)
+      .where(eq(approvalDecisions.workspaceId, workspaceA))
+      .toSQL();
+
+    expect(chain.sql).toContain('"workspace_id" = $1');
+    expect(chain.params[0]).toBe(workspaceA);
+    expect(run.params[0]).toBe(workspaceB);
+    expect(decision.params[0]).toBe(workspaceA);
   });
 
   it('puts workspace_id first in the weekly timesheet scope', () => {

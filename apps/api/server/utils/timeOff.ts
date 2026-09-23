@@ -33,6 +33,12 @@ import { DEFAULT_LIST_LIMIT, ERROR_CODES, timeOffListQuerySchema } from '@stampp
 import { and, asc, desc, eq, gt, gte, inArray, lte, type SQL } from 'drizzle-orm';
 import * as v from 'valibot';
 import { toApiError } from '~/server/middleware/request-id.ts';
+import {
+  cancelApprovalRun,
+  decideApprovalRun,
+  getPendingRunForEntity,
+  startApprovalRun,
+} from '~/server/utils/approvalChains.ts';
 import { recordAudit } from '~/server/utils/audit.ts';
 import { isUniqueViolation } from '~/server/utils/catalog.ts';
 
@@ -465,6 +471,7 @@ export async function createTimeOffRequest(
       entityId: row.id,
       after: row,
     });
+    await startApprovalRun(ctx, 'time_off_request', row.id, ctx.userId, requestId);
     return toTimeOffRequestDto(row);
   } catch (error) {
     if (isUniqueViolation(error)) {
@@ -511,6 +518,26 @@ async function decideTimeOff(
       'You cannot approve your own time-off request',
       requestId,
     );
+  }
+
+  const pendingRun = await getPendingRunForEntity(ctx, 'time_off_request', before.id);
+  if (pendingRun) {
+    const { isFinalStep } = await decideApprovalRun(
+      ctx,
+      pendingRun.id,
+      { action, note: input.note },
+      requestId,
+    );
+    if (action === 'approve' && !isFinalStep) {
+      await recordAudit(ctx, requestId, {
+        action: 'time_off_request.chain_step',
+        entityType: 'time_off_request',
+        entityId: before.id,
+        before,
+        after: { approvalRunId: pendingRun.id, currentStepPending: true },
+      });
+      return toTimeOffRequestDto(before);
+    }
   }
 
   const now = new Date();
@@ -585,6 +612,7 @@ export async function withdrawTimeOffRequest(
   if (!row) {
     throw toApiError(ERROR_CODES.CONFLICT, 'Time-off request changed concurrently', requestId);
   }
+  await cancelApprovalRun(ctx, 'time_off_request', before.id, requestId, 'withdrawn');
   await recordAudit(ctx, requestId, {
     action: 'time_off_request.withdrawn',
     entityType: 'time_off_request',

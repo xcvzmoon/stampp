@@ -14,6 +14,12 @@ import { canTransition, isTimesheetFrozen, nextStatus } from '@stampp/domain';
 import { ERROR_CODES } from '@stampp/shared';
 import { and, asc, desc, eq, gt, gte, isNull, lte, type SQL } from 'drizzle-orm';
 import { toApiError } from '~/server/middleware/request-id.ts';
+import {
+  cancelApprovalRun,
+  decideApprovalRun,
+  getPendingRunForEntity,
+  startApprovalRun,
+} from '~/server/utils/approvalChains.ts';
 import { recordAudit } from '~/server/utils/audit.ts';
 import {
   notifyTimesheetDecision,
@@ -181,6 +187,7 @@ export async function submitTimesheet(
     entityId: row.id,
     after: row,
   });
+  await startApprovalRun(ctx, 'timesheet', row.id, ctx.userId, requestId);
   await notifyTimesheetSubmitted(ctx, {
     memberUserId: ctx.userId,
     weekStart: row.weekStart,
@@ -202,6 +209,7 @@ export async function withdrawTimesheet(
   }
 
   await ctx.db.client.delete(timesheets).where(eq(timesheets.id, existing.id));
+  await cancelApprovalRun(ctx, 'timesheet', existing.id, requestId, 'withdrawn');
   await recordAudit(ctx, requestId, {
     action: 'timesheet.withdrawn',
     entityType: 'timesheet',
@@ -226,6 +234,27 @@ async function decide(
   }
   if (before.userId === ctx.userId && action === 'approve') {
     throw toApiError(ERROR_CODES.FORBIDDEN, 'You cannot approve your own timesheet', requestId);
+  }
+
+  const pendingRun = await getPendingRunForEntity(ctx, 'timesheet', before.id);
+  if (pendingRun) {
+    const { isFinalStep } = await decideApprovalRun(
+      ctx,
+      pendingRun.id,
+      { action, note: input.note },
+      requestId,
+    );
+    if (action === 'approve' && !isFinalStep) {
+      await recordAudit(ctx, requestId, {
+        action: 'timesheet.chain_step',
+        entityType: 'timesheet',
+        entityId: before.id,
+        before,
+        after: { approvalRunId: pendingRun.id, currentStepPending: true },
+      });
+      return toTimesheetDto(before);
+    }
+    // fall through to finalize reject, or final-step approve
   }
 
   const now = new Date();

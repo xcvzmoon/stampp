@@ -1,5 +1,8 @@
 import type { AuthorizedContext } from '@stampp/access';
 import {
+  approvalChains,
+  approvalDecisions,
+  approvalRuns,
   attendanceRecords,
   auditEvents,
   clients,
@@ -49,6 +52,9 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     assignmentRows,
     kioskDeviceRows,
     kioskCredentialRows,
+    approvalChainRows,
+    approvalRunRows,
+    approvalDecisionRows,
     expenseRows,
     invoiceRows,
     invoiceLineRows,
@@ -179,6 +185,21 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
       .orderBy(asc(kioskMemberCredentials.id)),
     ctx.db.client
       .select()
+      .from(approvalChains)
+      .where(eq(approvalChains.workspaceId, ctx.workspaceId))
+      .orderBy(asc(approvalChains.id)),
+    ctx.db.client
+      .select()
+      .from(approvalRuns)
+      .where(eq(approvalRuns.workspaceId, ctx.workspaceId))
+      .orderBy(asc(approvalRuns.id)),
+    ctx.db.client
+      .select()
+      .from(approvalDecisions)
+      .where(eq(approvalDecisions.workspaceId, ctx.workspaceId))
+      .orderBy(asc(approvalDecisions.id)),
+    ctx.db.client
+      .select()
       .from(expenses)
       .where(eq(expenses.workspaceId, ctx.workspaceId))
       .orderBy(asc(expenses.id)),
@@ -227,6 +248,9 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     projectAssignments: assignmentRows,
     kioskDevices: kioskDeviceRows,
     kioskCredentials: kioskCredentialRows,
+    approvalChains: approvalChainRows,
+    approvalRuns: approvalRunRows,
+    approvalDecisions: approvalDecisionRows,
     expenses: expenseRows,
     invoices: invoiceRows,
     invoiceLines: invoiceLineRows,
