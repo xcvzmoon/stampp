@@ -23,6 +23,8 @@ Canonical product and architecture terms. Prefer these names in code, docs, and 
 | **Project assignment**    | Member hours per week on a project for an inclusive date range.                                              |
 | **Kiosk device**          | Registered shared clock device authorized by a one-time device key; punches attendance only.                 |
 | **Kiosk credential**      | Member PIN and/or QR token (hashes only) used to punch from a kiosk.                                         |
+| **Approval chain**        | Ordered multi-stage approver list for timesheets or time-off requests (1–5 stages).                          |
+| **Approval run**          | Active instance of a chain for one submission; advances until final approve or reject.                       |
 | **Billable rate**         | Revenue rate applied to billable hours.                                                                      |
 | **Labor cost rate**       | Internal cost rate applied to tracked hours.                                                                 |
 | **Effective rate**        | Resolved rate for a user/project/task at a point in time (see Rates module).                                 |
@@ -43,6 +45,7 @@ Canonical product and architecture terms. Prefer these names in code, docs, and 
 | **TimeOff**           | `request` · `withdraw` · `approve` · `balance` · `calendar`    | Status machine, weekday/holiday day counts, allowance balances    |
 | **Scheduling**        | `capacity` · `assign` · `workload`                             | Weekly capacity, scheduled vs tracked, over/under flags           |
 | **Kiosk**             | `register` · `pin` · `qr` · `punch`                            | Device key auth, attendance-only punches, no project time         |
+| **ApprovalChains**    | `configure` · `start` · `decide` · `cancel`                    | Multi-stage runs, step gating, final entity decision              |
 | **Rates**             | `resolveEffectiveRates` + as-of windows                        | Precedence task → project → user-in-project → user → org; history |
 | **Timesheets**        | `submit` · `withdraw` · `approve` · `reject`                   | Status machine, week freeze, entry locks                          |
 | **MailDispatch**      | `notify(event)` where event is invite/timesheet/invoice/…      | BullMQ enqueue, worker, UnEmail driver, templates                 |
