@@ -6,7 +6,7 @@
     "description": "Workspace-scoped work-time API. Authenticate with a Better Auth session cookie or a personal access token (Authorization: Bearer stpp_…). Product routes live under /api/v1. Mutations accept an optional Idempotency-Key header; all /api/v1 calls are rate limited per credential."
   },
   "servers": [
-    { "url": "http://127.0.0.1:52204", "description": "Local Development Server", "variables": {} }
+    { "url": "http://127.0.0.1:52561", "description": "Local Development Server", "variables": {} }
   ],
   "paths": {
     "/api/v1/openapi.json": {
@@ -1664,6 +1664,72 @@
         }
       }
     },
+    "/api/v1/workspaces/{workspaceId}/members": {
+      "get": {
+        "tags": ["members"],
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Members",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["items"],
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/WorkspaceMemberDto" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "List workspace members with role assignment",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/members/{memberId}": {
+      "patch": {
+        "tags": ["members"],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": { "type": "string", "minLength": 1, "maxLength": 255 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated member",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/WorkspaceMemberDto" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidationFailed" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Assign built-in role or custom role",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        }
+      }
+    },
     "/api/v1/workspaces/{workspaceId}/projects": {
       "get": {
         "tags": ["projects"],
@@ -2355,6 +2421,128 @@
         },
         "summary": "Weekly report",
         "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/roles": {
+      "get": {
+        "tags": ["roles"],
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Custom roles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["items"],
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/CustomRoleDto" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "List custom roles",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      },
+      "post": {
+        "tags": ["roles"],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": { "type": "string", "minLength": 1, "maxLength": 255 }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created custom role",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/CustomRoleDto" } }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidationFailed" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "422": {
+            "description": "Permission set rejected",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ApiError" } }
+            }
+          },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Create custom role",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        }
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/roles/{roleId}": {
+      "delete": {
+        "tags": ["roles"],
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "roleId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "204": { "description": "Deleted" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Delete custom role",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      },
+      "patch": {
+        "tags": ["roles"],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": { "type": "string", "minLength": 1, "maxLength": 255 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated custom role",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/CustomRoleDto" } }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidationFailed" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "422": {
+            "description": "Permission set rejected",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ApiError" } }
+            }
+          },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Update custom role",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        }
       }
     },
     "/api/v1/workspaces/{workspaceId}/schedules/assignments": {
@@ -5255,6 +5443,40 @@
           "groupBy": { "type": "string", "enum": ["user", "project"] },
           "totals": { "type": "object" },
           "groups": { "type": "array", "items": { "type": "object" } }
+        }
+      },
+      "CustomRoleDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "workspaceId",
+          "name",
+          "description",
+          "permissions",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "workspaceId": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": ["string", "null"] },
+          "permissions": { "type": "array", "items": { "type": "string" } },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "WorkspaceMemberDto": {
+        "type": "object",
+        "required": ["id", "userId", "name", "email", "role", "customRoleId", "customRoleName"],
+        "properties": {
+          "id": { "type": "string" },
+          "userId": { "type": "string" },
+          "name": { "type": ["string", "null"] },
+          "email": { "type": "string" },
+          "role": { "type": "string" },
+          "customRoleId": { "type": ["string", "null"] },
+          "customRoleName": { "type": ["string", "null"] }
         }
       },
       "CapacityDto": {

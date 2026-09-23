@@ -126,7 +126,7 @@ describe('cost-report golden fixtures', () => {
   it('matches the pinned profitability totals and groups', async () => {
     const { db } = goldenDb();
     const report = await getProfitabilityReport(
-      scriptedContext(db, workspaceId, userId, 'manager'),
+      scriptedContext(db, workspaceId, userId, { kind: 'builtin', role: 'manager' as const }),
       query,
       'req_golden',
     );
@@ -194,7 +194,7 @@ describe('cost-report golden fixtures', () => {
   it('pins profitability CSV columns and row order', async () => {
     const { db } = goldenDb();
     const report = await getProfitabilityReport(
-      scriptedContext(db, workspaceId, userId, 'manager'),
+      scriptedContext(db, workspaceId, userId, { kind: 'builtin', role: 'manager' as const }),
       query,
       'req_golden',
     );
@@ -213,7 +213,7 @@ describe('cost-report golden fixtures', () => {
   it('matches utilization totals for the same time fixture', async () => {
     const { db } = goldenDb();
     const report = await getUtilizationReport(
-      scriptedContext(db, workspaceId, userId, 'manager'),
+      scriptedContext(db, workspaceId, userId, { kind: 'builtin', role: 'manager' as const }),
       { from: query.from, to: query.to, timezone: query.timezone, groupBy: 'project' },
       'req_golden',
     );
@@ -233,7 +233,7 @@ describe('cost-report golden fixtures', () => {
     const { db, queries } = createScriptedDb(() => []);
     await expect(
       getProfitabilityReport(
-        scriptedContext(db, workspaceId, userId, 'manager'),
+        scriptedContext(db, workspaceId, userId, { kind: 'builtin', role: 'manager' as const }),
         { ...query, from: '2026-10-01', to: '2026-09-01' },
         'req_golden',
       ),

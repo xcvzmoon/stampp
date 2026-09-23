@@ -124,7 +124,7 @@ describe('budget service flow', () => {
     });
 
     const usage = await getProjectBudgetUsage(
-      scriptedContext(db, workspaceId, userId, 'manager'),
+      scriptedContext(db, workspaceId, userId, { kind: 'builtin', role: 'manager' as const }),
       projectId,
       'req_budget',
     );
@@ -159,7 +159,7 @@ describe('budget service flow', () => {
     });
 
     const usage = await getProjectBudgetUsage(
-      scriptedContext(db, workspaceId, userId, 'manager'),
+      scriptedContext(db, workspaceId, userId, { kind: 'builtin', role: 'manager' as const }),
       projectId,
       'req_budget',
     );
@@ -205,7 +205,7 @@ describe('rates resolve service flow', () => {
     });
 
     const resolved = await resolveRates(
-      scriptedContext(db, workspaceId, userId, 'manager'),
+      scriptedContext(db, workspaceId, userId, { kind: 'builtin', role: 'manager' as const }),
       {
         at: '2026-06-01T12:00:00.000Z',
         userId,

@@ -1,8 +1,13 @@
-import type { AuthorizedContext, WorkspaceAccessDeps } from '@stampp/access';
-import type { Permission, StamppRole } from '@stampp/domain';
+import type { ActorRole, Permission, StamppRole } from '@stampp/domain';
 import type { H3Event } from 'nitro';
-import { enterWorkspace, WorkspaceAccessError } from '@stampp/access';
-import { applyWorkspaceRlsContext, members } from '@stampp/database';
+import {
+  enterWorkspace,
+  WorkspaceAccessError,
+  type AuthorizedContext,
+  type WorkspaceAccessDeps,
+} from '@stampp/access';
+import { applyWorkspaceRlsContext, customRoles, members } from '@stampp/database';
+import { builtinRolePermissions, resolveActorPermissions } from '@stampp/domain';
 import { ERROR_CODES } from '@stampp/shared';
 import { and, eq } from 'drizzle-orm';
 import { useLogger } from 'evlog/nitro/v3';
@@ -38,14 +43,48 @@ export function createWorkspaceAccessDeps(headers: Headers): WorkspaceAccessDeps
       const session = await getAuth().api.getSession({ headers });
       return session?.user?.id ?? null;
     },
-    getMemberRole: async (userId, workspaceId) => {
+    getActorGrant: async (userId, workspaceId) => {
       const rows = await getDb()
-        .select({ role: members.role })
+        .select({ role: members.role, customRoleId: members.customRoleId })
         .from(members)
         .where(and(eq(members.userId, userId), eq(members.organizationId, workspaceId)))
         .limit(1);
-      const role = rows[0]?.role;
-      return role ? toStamppRole(role) : null;
+      const row = rows[0];
+      if (!row) {
+        return null;
+      }
+
+      if (row.customRoleId) {
+        const roleRows = await getDb()
+          .select()
+          .from(customRoles)
+          .where(
+            and(eq(customRoles.id, row.customRoleId), eq(customRoles.workspaceId, workspaceId)),
+          )
+          .limit(1);
+        const customRole = roleRows[0];
+        if (customRole) {
+          const actorRole: ActorRole = {
+            kind: 'custom',
+            roleId: customRole.id,
+            name: customRole.name,
+          };
+          return {
+            role: actorRole,
+            permissions: resolveActorPermissions(actorRole, customRole.permissions),
+          };
+        }
+      }
+
+      const role = toStamppRole(row.role);
+      if (!role) {
+        return null;
+      }
+      const actorRole: ActorRole = { kind: 'builtin', role };
+      return {
+        role: actorRole,
+        permissions: builtinRolePermissions(role),
+      };
     },
     db: getDb(),
   };

@@ -109,12 +109,12 @@ function assertCanEditRecord(
   requestId: string,
 ): void {
   if (row.userId === ctx.userId) {
-    if (!hasPermission(ctx.role, 'attendance:write:own')) {
+    if (!hasPermission(ctx.permissions, 'attendance:write:own')) {
       throw toApiError(ERROR_CODES.FORBIDDEN, 'You cannot edit attendance', requestId);
     }
     return;
   }
-  if (!hasPermission(ctx.role, 'attendance:manage')) {
+  if (!hasPermission(ctx.permissions, 'attendance:manage')) {
     throw toApiError(ERROR_CODES.FORBIDDEN, 'You cannot edit other members attendance', requestId);
   }
 }
@@ -242,7 +242,7 @@ export async function createAttendance(
   input: CreateAttendanceInput,
   requestId: string,
 ): Promise<AttendanceDto> {
-  if (!hasPermission(ctx.role, 'attendance:manage')) {
+  if (!hasPermission(ctx.permissions, 'attendance:manage')) {
     throw toApiError(ERROR_CODES.FORBIDDEN, 'Attendance manage permission is required', requestId);
   }
   const targetUserId = input.userId ?? ctx.userId;
@@ -365,7 +365,7 @@ export async function deleteAttendance(
   recordId: string,
   requestId: string,
 ): Promise<void> {
-  if (!hasPermission(ctx.role, 'attendance:manage')) {
+  if (!hasPermission(ctx.permissions, 'attendance:manage')) {
     throw toApiError(ERROR_CODES.FORBIDDEN, 'Attendance manage permission is required', requestId);
   }
   const before = await getRecordRow(ctx, recordId, requestId);
@@ -387,7 +387,7 @@ export async function listAttendance(
   options: ListAttendanceOptions,
 ): Promise<{ items: AttendanceDto[]; nextCursor: string | null }> {
   const conditions: SQL[] = [eq(attendanceRecords.workspaceId, ctx.workspaceId)];
-  const canReadAny = hasPermission(ctx.role, 'attendance:read:any');
+  const canReadAny = hasPermission(ctx.permissions, 'attendance:read:any');
   if (!canReadAny) {
     conditions.push(eq(attendanceRecords.userId, ctx.userId));
   } else if (options.userId) {

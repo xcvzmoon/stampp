@@ -1,5 +1,6 @@
 import type { JsonValue } from '@stampp/shared';
 import { applyWorkspaceRlsContext } from '@stampp/database';
+import { resolveActorPermissions } from '@stampp/domain';
 import { ERROR_CODES, kioskPunchInputSchema } from '@stampp/shared';
 import { useLogger } from 'evlog/nitro/v3';
 import { defineHandler, defineRouteMeta } from 'nitro';
@@ -118,10 +119,12 @@ export default defineHandler(async (event) => {
     );
   }
 
+  const role = { kind: 'builtin', role: 'member' } as const;
   const ctx = {
     userId: 'kiosk-device',
     workspaceId: device.workspaceId,
-    role: 'member' as const,
+    role,
+    permissions: resolveActorPermissions(role),
     db: { workspaceId: device.workspaceId, client: db },
   };
   const result = await kioskPunch(ctx, device, input.output, requestId);

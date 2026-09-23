@@ -82,7 +82,7 @@ export function toAssignmentDto(row: ProjectAssignment): AssignmentDto {
 }
 
 function canReadTeam(ctx: AuthorizedContext): boolean {
-  return hasPermission(ctx.role, 'schedule:read:team');
+  return hasPermission(ctx.permissions, 'schedule:read:team');
 }
 
 async function assertWorkspaceMember(
@@ -148,7 +148,7 @@ export async function upsertCapacity(
     throw invalidRange(requestId, 'weeklyHours must be between 0.5 and 168');
   }
   const targetUserId = input.userId ?? ctx.userId;
-  if (targetUserId !== ctx.userId && !hasPermission(ctx.role, 'schedule:manage')) {
+  if (targetUserId !== ctx.userId && !hasPermission(ctx.permissions, 'schedule:manage')) {
     throw toApiError(ERROR_CODES.FORBIDDEN, 'You cannot change other members capacity', requestId);
   }
   await assertWorkspaceMember(ctx, targetUserId, requestId);
@@ -282,7 +282,7 @@ export async function createAssignment(
   input: CreateAssignmentInput,
   requestId: string,
 ): Promise<AssignmentDto> {
-  if (!hasPermission(ctx.role, 'schedule:manage')) {
+  if (!hasPermission(ctx.permissions, 'schedule:manage')) {
     throw toApiError(ERROR_CODES.FORBIDDEN, 'Schedule manage permission is required', requestId);
   }
   if (!isValidScheduleRange(input.startDate, input.endDate)) {
@@ -333,7 +333,7 @@ export async function updateAssignment(
   input: UpdateAssignmentInput,
   requestId: string,
 ): Promise<AssignmentDto> {
-  if (!hasPermission(ctx.role, 'schedule:manage')) {
+  if (!hasPermission(ctx.permissions, 'schedule:manage')) {
     throw toApiError(ERROR_CODES.FORBIDDEN, 'Schedule manage permission is required', requestId);
   }
   const before = await getAssignmentRow(ctx, assignmentId, requestId);
@@ -381,7 +381,7 @@ export async function deleteAssignment(
   assignmentId: string,
   requestId: string,
 ): Promise<void> {
-  if (!hasPermission(ctx.role, 'schedule:manage')) {
+  if (!hasPermission(ctx.permissions, 'schedule:manage')) {
     throw toApiError(ERROR_CODES.FORBIDDEN, 'Schedule manage permission is required', requestId);
   }
   const before = await getAssignmentRow(ctx, assignmentId, requestId);

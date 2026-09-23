@@ -21,7 +21,8 @@ export function mapErrorCodeToStatus(code: string): number {
     code === ERROR_CODES.ATTENDANCE_NOT_OPEN ||
     code === ERROR_CODES.TIME_OFF_OVERLAP ||
     code === ERROR_CODES.SCHEDULE_OVERBOOKED ||
-    code === ERROR_CODES.APPROVAL_ALREADY_DECIDED
+    code === ERROR_CODES.APPROVAL_ALREADY_DECIDED ||
+    code === ERROR_CODES.ROLE_IN_USE
   ) {
     return 409;
   }
@@ -45,7 +46,8 @@ export function mapErrorCodeToStatus(code: string): number {
     code === ERROR_CODES.TIME_OFF_TYPE_INACTIVE ||
     code === ERROR_CODES.SCHEDULE_INVALID_RANGE ||
     code === ERROR_CODES.APPROVAL_INVALID_STEP ||
-    code === ERROR_CODES.APPROVAL_INVALID_CHAIN
+    code === ERROR_CODES.APPROVAL_INVALID_CHAIN ||
+    code === ERROR_CODES.ROLE_INVALID_PERMISSIONS
   ) {
     return 422;
   }

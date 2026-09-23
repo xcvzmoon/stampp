@@ -14,6 +14,7 @@ export const WORKSPACE_RLS_TABLES = [
   'attendance_records',
   'audit_events',
   'clients',
+  'custom_roles',
   'expenses',
   'holidays',
   'invoice_lines',

@@ -20,6 +20,7 @@ import {
   nextInvoiceStatus,
   resolveBudgetUsage,
   resolveEffectiveRates,
+  resolveActorPermissions,
 } from '@stampp/domain';
 import { ERROR_CODES } from '@stampp/shared';
 import { and, eq, gte, isNull, lte } from 'drizzle-orm';
@@ -32,10 +33,12 @@ const workspaceB = 'ws_b';
 const userId = 'user_1';
 
 function mockContext(workspaceId: string): AuthorizedContext {
+  const role = { kind: 'builtin', role: 'member' } as const;
   return {
     userId,
     workspaceId,
-    role: 'member',
+    role,
+    permissions: resolveActorPermissions(role),
     db: {
       workspaceId,
       client: createTestDb(),

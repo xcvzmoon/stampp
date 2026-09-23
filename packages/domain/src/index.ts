@@ -9,6 +9,7 @@ export * from './kiosk.ts';
 export * from './money.ts';
 export * from './permissions.ts';
 export * from './rates.ts';
+export * from './roles.ts';
 export * from './scheduling.ts';
 export * from './timesheets.ts';
 export * from './timeOff.ts';
