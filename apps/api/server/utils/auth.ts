@@ -11,10 +11,11 @@ import {
   verifications,
 } from '@stampp/database';
 import { betterAuth } from 'better-auth';
-import { bearer, organization, twoFactor } from 'better-auth/plugins';
+import { bearer, genericOAuth, organization, twoFactor } from 'better-auth/plugins';
 import { getDb } from '~/server/utils/db.ts';
 import { ENV } from '~/server/utils/env.ts';
 import { getMailDispatch } from '~/server/utils/mailer.ts';
+import { peekSsoConfigs, toGenericOAuthConfigs } from '~/server/utils/ssoStore.ts';
 
 const schema = {
   users,
@@ -74,6 +75,7 @@ export function createAuth() {
   const appUrl = ENV.PUBLIC_APP_URL ?? env.baseURL;
   const isProd = ENV.APP_ENV === 'production';
   const socialProviders = resolveSocialProviders();
+  const ssoConfigs = toGenericOAuthConfigs(peekSsoConfigs());
 
   return betterAuth({
     appName: 'Stampp',
@@ -148,6 +150,9 @@ export function createAuth() {
       }),
       twoFactor(),
       bearer(),
+      genericOAuth({
+        config: ssoConfigs,
+      }),
     ],
   });
 }
@@ -156,4 +161,9 @@ let authInstance: ReturnType<typeof createAuth> | undefined;
 
 export function getAuth() {
   return (authInstance ??= createAuth());
+}
+
+/** Drop the cached auth app so SSO provider changes take effect. */
+export function resetAuth(): void {
+  authInstance = undefined;
 }

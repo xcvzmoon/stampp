@@ -59,6 +59,9 @@ export function mapErrorCodeToStatus(code: string): number {
   }
   if (code === ERROR_CODES.VALIDATION_FAILED) return 400;
   if (code === ERROR_CODES.BAD_REQUEST) return 400;
+  if (code === ERROR_CODES.SSO_PROVIDER_ID_TAKEN || code === ERROR_CODES.SSO_EMAIL_DOMAIN_BLOCKED) {
+    return code === ERROR_CODES.SSO_PROVIDER_ID_TAKEN ? 409 : 403;
+  }
   if (code === ERROR_CODES.RATE_LIMITED) return 429;
   return 500;
 }
