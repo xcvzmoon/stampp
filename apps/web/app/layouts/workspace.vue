@@ -27,6 +27,11 @@
       active: route.path.startsWith(`/w/${workspaceId.value}/schedule`),
     },
     {
+      label: 'Kiosk',
+      to: `/w/${workspaceId.value}/kiosk`,
+      active: route.path.startsWith(`/w/${workspaceId.value}/kiosk`),
+    },
+    {
       label: 'Approvals',
       to: `/w/${workspaceId.value}/approvals`,
       active: route.path.startsWith(`/w/${workspaceId.value}/approvals`),
