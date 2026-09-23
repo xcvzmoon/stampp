@@ -6,7 +6,7 @@
     "description": "Workspace-scoped work-time API. Authenticate with a Better Auth session cookie or a personal access token (Authorization: Bearer stpp_…). Product routes live under /api/v1. Mutations accept an optional Idempotency-Key header; all /api/v1 calls are rate limited per credential."
   },
   "servers": [
-    { "url": "http://127.0.0.1:50400", "description": "Local Development Server", "variables": {} }
+    { "url": "http://127.0.0.1:52204", "description": "Local Development Server", "variables": {} }
   ],
   "paths": {
     "/api/v1/openapi.json": {
@@ -4221,6 +4221,280 @@
         "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
       }
     },
+    "/api/v1/workspaces/{workspaceId}/webhooks": {
+      "get": {
+        "tags": ["webhooks"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          },
+          { "in": "query", "name": "cursor", "schema": { "type": "string" } },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": { "type": "string", "enum": ["active", "disabled"] }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workspace webhook subscriptions",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/WebhookSubscriptionList" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "List webhook subscriptions",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      },
+      "post": {
+        "tags": ["webhooks"],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": { "type": "string", "minLength": 1, "maxLength": 255 },
+            "description": "Optional client-generated key. Replays the stored response for safe retries on mutations."
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created subscription with signing secret",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["secret", "subscription"],
+                  "properties": {
+                    "secret": { "type": "string" },
+                    "subscription": { "$ref": "#/components/schemas/WebhookSubscriptionDto" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidationFailed" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "422": {
+            "description": "Webhook URL rejected",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ApiError" } }
+            }
+          },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Create webhook subscription (secret returned once)",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url", "events"],
+                "properties": {
+                  "url": { "type": "string", "minLength": 1 },
+                  "description": { "type": "string", "maxLength": 200 },
+                  "events": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/webhooks/{webhookId}": {
+      "delete": {
+        "tags": ["webhooks"],
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "webhookId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "204": { "description": "Deleted" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Delete webhook subscription",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      },
+      "get": {
+        "tags": ["webhooks"],
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "webhookId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook subscription",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/WebhookSubscriptionDto" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Get webhook subscription",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      },
+      "patch": {
+        "tags": ["webhooks"],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": { "type": "string", "minLength": 1, "maxLength": 255 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated webhook subscription",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/WebhookSubscriptionDto" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidationFailed" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "422": {
+            "description": "Webhook URL rejected",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ApiError" } }
+            }
+          },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Get or update webhook subscription",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        }
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/webhooks/{webhookId}/deliveries": {
+      "get": {
+        "tags": ["webhooks"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          },
+          { "in": "query", "name": "cursor", "schema": { "type": "string" } },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": { "type": "string", "enum": ["pending", "success", "failed", "dead"] }
+          },
+          { "in": "query", "name": "event", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delivery log",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/WebhookDeliveryList" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "List webhook delivery attempts",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/webhooks/{webhookId}/rotate-secret": {
+      "post": {
+        "tags": ["webhooks"],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": { "type": "string", "minLength": 1, "maxLength": 255 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rotated secret",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["secret", "subscription"],
+                  "properties": {
+                    "secret": { "type": "string" },
+                    "subscription": { "$ref": "#/components/schemas/WebhookSubscriptionDto" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Rotate webhook signing secret (returned once)",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/webhooks/{webhookId}/test": {
+      "post": {
+        "tags": ["webhooks"],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": { "type": "string", "minLength": 1, "maxLength": 255 }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Queued test delivery",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/WebhookDeliveryDto" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidationFailed" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Queue a test webhook delivery",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }],
+        "requestBody": {
+          "required": false,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        }
+      }
+    },
     "/healthz": {
       "get": {
         "tags": ["health"],
@@ -5281,6 +5555,86 @@
           "expiresAt": { "type": ["string", "null"] },
           "revokedAt": { "type": ["string", "null"] },
           "createdAt": { "type": "string" }
+        }
+      },
+      "WebhookSubscriptionDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "workspaceId",
+          "url",
+          "description",
+          "events",
+          "status",
+          "secretPrefix",
+          "lastDeliveryAt",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "workspaceId": { "type": "string" },
+          "url": { "type": "string" },
+          "description": { "type": ["string", "null"] },
+          "events": { "type": "array", "items": { "type": "string" } },
+          "status": { "type": "string", "enum": ["active", "disabled"] },
+          "secretPrefix": { "type": "string" },
+          "lastDeliveryAt": { "type": ["string", "null"], "format": "date-time" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "WebhookSubscriptionList": {
+        "type": "object",
+        "required": ["items", "nextCursor"],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/WebhookSubscriptionDto" }
+          },
+          "nextCursor": { "type": ["string", "null"] }
+        }
+      },
+      "WebhookDeliveryDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "workspaceId",
+          "webhookId",
+          "event",
+          "eventId",
+          "status",
+          "attemptCount",
+          "lastStatusCode",
+          "lastError",
+          "nextAttemptAt",
+          "createdAt",
+          "completedAt"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "workspaceId": { "type": "string" },
+          "webhookId": { "type": "string" },
+          "event": { "type": "string" },
+          "eventId": { "type": "string" },
+          "status": { "type": "string", "enum": ["pending", "success", "failed", "dead"] },
+          "attemptCount": { "type": "integer" },
+          "lastStatusCode": { "type": ["integer", "null"] },
+          "lastError": { "type": ["string", "null"] },
+          "nextAttemptAt": { "type": ["string", "null"], "format": "date-time" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "completedAt": { "type": ["string", "null"], "format": "date-time" }
+        }
+      },
+      "WebhookDeliveryList": {
+        "type": "object",
+        "required": ["items", "nextCursor"],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/WebhookDeliveryDto" }
+          },
+          "nextCursor": { "type": ["string", "null"] }
         }
       },
       "Readiness": {

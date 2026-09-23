@@ -29,6 +29,7 @@ export function mapErrorCodeToStatus(code: string): number {
     code === ERROR_CODES.PROJECT_NOT_ACTIVE ||
     code === ERROR_CODES.PROJECT_ARCHIVED ||
     code === ERROR_CODES.RATE_INVALID_TARGET ||
+    code === ERROR_CODES.WEBHOOK_INVALID_URL ||
     code === ERROR_CODES.RATE_CURRENCY_MISMATCH ||
     code === ERROR_CODES.RATE_NOT_REVOCABLE ||
     code === ERROR_CODES.TIMESHEET_INVALID_TRANSITION ||
