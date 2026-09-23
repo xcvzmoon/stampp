@@ -37,6 +37,8 @@ export const ERROR_CODES = {
   WEBHOOK_DELIVERY_FAILED: 'webhook.delivery_failed',
   ROLE_IN_USE: 'role.in_use',
   ROLE_INVALID_PERMISSIONS: 'role.invalid_permissions',
+  SSO_PROVIDER_ID_TAKEN: 'sso.provider_id_taken',
+  SSO_EMAIL_DOMAIN_BLOCKED: 'sso.email_domain_blocked',
   APPROVAL_INVALID_STEP: 'approval.invalid_step',
   APPROVAL_INVALID_CHAIN: 'approval.invalid_chain',
   APPROVAL_ALREADY_DECIDED: 'approval.already_decided',

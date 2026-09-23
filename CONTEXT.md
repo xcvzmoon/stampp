@@ -10,6 +10,7 @@ Canonical product and architecture terms. Prefer these names in code, docs, and 
 | **Member**                | A user’s membership in a workspace, carrying a role.                                                                |
 | **Role**                  | `owner` \| `admin` \| `manager` \| `member` \| `guest`, or a workspace custom role over the same permissions.       |
 | **Custom role**           | Workspace-defined permission set using the shared Permission vocabulary; overrides the built-in role when assigned. |
+| **SSO provider**          | Workspace OIDC configuration (issuer, client, optional email-domain allow-list) used for single sign-on.            |
 | **Permission**            | Stable string such as `time:write:own`, `time:approve`, `reports:view:cost`.                                        |
 | **Client**                | External customer of a workspace; optional parent of projects.                                                      |
 | **Project**               | Unit of billable work; may belong to a client.                                                                      |

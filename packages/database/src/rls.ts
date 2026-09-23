@@ -26,6 +26,7 @@ export const WORKSPACE_RLS_TABLES = [
   'project_assignments',
   'projects',
   'rates',
+  'sso_providers',
   'tags',
   'tasks',
   'time_entries',
