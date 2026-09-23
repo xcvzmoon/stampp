@@ -9,6 +9,7 @@ export * from './organization.ts';
 export * from './rates.ts';
 export * from './reports.ts';
 export * from './schemas.ts';
+export * from './scheduling.ts';
 export * from './time.ts';
 export * from './timesheets.ts';
 export * from './timeOff.ts';
