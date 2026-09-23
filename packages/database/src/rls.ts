@@ -8,6 +8,9 @@ export const WORKSPACE_RLS_SETTING = 'app.workspace_id';
  * filter by `workspace_id`; RLS fails closed when the GUC is missing.
  */
 export const WORKSPACE_RLS_TABLES = [
+  'approval_chains',
+  'approval_decisions',
+  'approval_runs',
   'attendance_records',
   'audit_events',
   'clients',
