@@ -4,6 +4,7 @@ export * from './audit.ts';
 export * from './auth.ts';
 export * from './expenses.ts';
 export * from './invoices.ts';
+export * from './import.ts';
 export * from './kiosk.ts';
 export * from './projects.ts';
 export * from './rates.ts';

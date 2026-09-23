@@ -6,7 +6,7 @@
     "description": "Workspace-scoped work-time API. Authenticate with a Better Auth session cookie or a personal access token (Authorization: Bearer stpp_…). Product routes live under /api/v1. Mutations accept an optional Idempotency-Key header; all /api/v1 calls are rate limited per credential."
   },
   "servers": [
-    { "url": "http://127.0.0.1:55941", "description": "Local Development Server", "variables": {} }
+    { "url": "http://127.0.0.1:56698", "description": "Local Development Server", "variables": {} }
   ],
   "paths": {
     "/api/v1/openapi.json": {
@@ -1023,6 +1023,68 @@
         },
         "summary": "Export workspace JSON",
         "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/import": {
+      "get": {
+        "tags": ["import"],
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Import jobs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["items"],
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ImportJobDto" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "List import jobs",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }]
+      },
+      "post": {
+        "tags": ["import"],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": { "type": "string", "minLength": 1, "maxLength": 255 }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Dry-run preview" },
+          "201": {
+            "description": "Created import job",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/ImportJobDto" } }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidationFailed" },
+          "401": { "$ref": "#/components/responses/Unauthenticated" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        },
+        "summary": "Preview or start an import job",
+        "security": [{ "sessionCookie": [] }, { "personalAccessToken": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        }
       }
     },
     "/api/v1/workspaces/{workspaceId}/invoices": {
@@ -5631,6 +5693,33 @@
         "properties": {
           "items": { "type": "array", "items": { "$ref": "#/components/schemas/ExpenseDto" } },
           "nextCursor": { "type": ["string", "null"] }
+        }
+      },
+      "ImportJobDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "workspaceId",
+          "source",
+          "status",
+          "totalRows",
+          "importedRows",
+          "skippedRows",
+          "error",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "workspaceId": { "type": "string" },
+          "source": { "type": "string", "enum": ["csv", "clockify", "toggl", "harvest"] },
+          "status": { "type": "string", "enum": ["pending", "running", "completed", "failed"] },
+          "totalRows": { "type": "integer" },
+          "importedRows": { "type": "integer" },
+          "skippedRows": { "type": "integer" },
+          "error": { "type": ["string", "null"] },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
         }
       },
       "InvoiceDto": {
