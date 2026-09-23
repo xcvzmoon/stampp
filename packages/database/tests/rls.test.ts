@@ -17,6 +17,9 @@ describe('workspace rls sql', () => {
     expect(WORKSPACE_RLS_TABLES).toContain('clients');
     expect(WORKSPACE_RLS_TABLES).toContain('time_entries');
     expect(WORKSPACE_RLS_TABLES).toContain('attendance_records');
+    expect(WORKSPACE_RLS_TABLES).toContain('approval_chains');
+    expect(WORKSPACE_RLS_TABLES).toContain('approval_runs');
+    expect(WORKSPACE_RLS_TABLES).toContain('approval_decisions');
     expect(WORKSPACE_RLS_TABLES).toContain('time_off_types');
     expect(WORKSPACE_RLS_TABLES).toContain('time_off_requests');
     expect(WORKSPACE_RLS_TABLES).toContain('holidays');

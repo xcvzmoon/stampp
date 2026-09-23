@@ -107,6 +107,13 @@ const productOperations = [
   'post /api/v1/workspaces/{workspaceId}/kiosk/qr.rotate',
   'get /api/v1/workspaces/{workspaceId}/kiosk/credentials',
   'post /api/v1/workspaces/{workspaceId}/kiosk/punch',
+  'get /api/v1/workspaces/{workspaceId}/approvals/chains',
+  'post /api/v1/workspaces/{workspaceId}/approvals/chains',
+  'patch /api/v1/workspaces/{workspaceId}/approvals/chains/{chainId}',
+  'delete /api/v1/workspaces/{workspaceId}/approvals/chains/{chainId}',
+  'get /api/v1/workspaces/{workspaceId}/approvals/runs',
+  'get /api/v1/workspaces/{workspaceId}/approvals/runs/{runId}',
+  'post /api/v1/workspaces/{workspaceId}/approvals/runs/{runId}/decide',
 ];
 
 const openApiDocumentSchema = v.object({
@@ -146,7 +153,7 @@ describe('v0.1 openapi contract', () => {
     expect(productOperations).toContain('get /api/v1/workspaces/{workspaceId}/tags');
     expect(productOperations).toContain('post /api/v1/workspaces/{workspaceId}/timer/start');
     expect(productOperations).toContain('get /api/v1/workspaces/{workspaceId}/export');
-    expect(productOperations.length).toBe(103);
+    expect(productOperations.length).toBe(110);
   });
 
   it('keeps product routes workspace-scoped', () => {
@@ -184,6 +191,9 @@ describe('v0.1 openapi contract', () => {
     expect(spec.components?.schemas?.KioskDeviceDto).toBeDefined();
     expect(spec.components?.schemas?.KioskCredentialDto).toBeDefined();
     expect(spec.components?.schemas?.KioskPunchResult).toBeDefined();
+    expect(spec.components?.schemas?.ApprovalChainDto).toBeDefined();
+    expect(spec.components?.schemas?.ApprovalRunDto).toBeDefined();
+    expect(spec.components?.schemas?.ApprovalRunList).toBeDefined();
     expect(spec.components?.schemas?.ProjectBudgetUsage).toBeDefined();
     expect(spec.components?.schemas?.ExpenseDto).toBeDefined();
     expect(spec.components?.schemas?.InvoiceDto).toBeDefined();

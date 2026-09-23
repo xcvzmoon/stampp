@@ -1024,7 +1024,7 @@ Approvals, invoices, expenses, leave, kiosk, scheduling, SSO, mobile, auto-track
 - [x] Time off foundations (types, balances, requests, approvals, holidays, team calendar)
 - [x] Scheduling & capacity (assignments, scheduled vs tracked)
 - [x] Kiosk mode (PIN/QR; device registration)
-- Multi-stage approval chains
+- [x] Multi-stage approval chains
 
 **Exit criteria:** leave balance + holiday calendar drive expected hours; kiosk clocks attendance only.
 
@@ -1034,7 +1034,7 @@ Approvals, invoices, expenses, leave, kiosk, scheduling, SSO, mobile, auto-track
 2. Time off foundations: types, balances, requests, approvals, holidays, team calendar. Done on `feat/time-off`.
 3. Scheduling & capacity: member capacity, project assignments, scheduled vs tracked workload. Done on `feat/scheduling`.
 4. Kiosk devices: register/rotate/revoke, member PIN/QR, attendance-only punch. Done on `feat/kiosk`.
-5. Multi-stage approval chains.
+5. Multi-stage approval chains: configurable stages for timesheet and time-off decisions. Done on `feat/approval-chains`.
 
 ---
 
