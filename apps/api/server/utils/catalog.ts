@@ -26,6 +26,7 @@ import {
 } from '@stampp/shared';
 import * as v from 'valibot';
 import { readEventRequestId, toApiError } from '~/server/middleware/request-id.ts';
+import { readCachedBodyText } from '~/server/utils/bodyCache.ts';
 
 export type JsonValue =
   | string
@@ -99,10 +100,14 @@ export function parseListQuery(
   };
 }
 
-export async function readJsonBody(event: { req: Request }, requestId: string): Promise<JsonValue> {
+export async function readJsonBody(
+  event: Parameters<typeof readCachedBodyText>[0],
+  requestId: string,
+): Promise<JsonValue> {
   let parsed: unknown;
   try {
-    parsed = await event.req.json();
+    const text = await readCachedBodyText(event);
+    parsed = text.length === 0 ? null : JSON.parse(text);
   } catch {
     throw toApiError(ERROR_CODES.BAD_REQUEST, 'Invalid JSON body', requestId);
   }
