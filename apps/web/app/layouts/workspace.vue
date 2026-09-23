@@ -57,6 +57,11 @@
       active: route.path.startsWith(`/w/${workspaceId.value}/scim`),
     },
     {
+      label: 'Import',
+      to: `/w/${workspaceId.value}/import`,
+      active: route.path.startsWith(`/w/${workspaceId.value}/import`),
+    },
+    {
       label: 'Approvals',
       to: `/w/${workspaceId.value}/approvals`,
       active: route.path.startsWith(`/w/${workspaceId.value}/approvals`),
