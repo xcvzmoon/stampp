@@ -79,7 +79,7 @@ export async function listExpenses(
   options: ExpenseListQuery & { limit: number },
 ): Promise<{ items: ExpenseDto[]; nextCursor: string | null }> {
   const conditions = [eq(expenses.workspaceId, ctx.workspaceId)];
-  const canReadAny = hasPermission(ctx.role, 'expense:read:any');
+  const canReadAny = hasPermission(ctx.permissions, 'expense:read:any');
   if (!canReadAny) {
     conditions.push(eq(expenses.userId, ctx.userId));
   } else if (options.userId) {
@@ -165,12 +165,7 @@ export async function updateExpense(
   requestId: string,
 ): Promise<ExpenseDto> {
   const before = await getExpenseRow(ctx, expenseId, requestId);
-  if (
-    before.userId !== ctx.userId &&
-    ctx.role !== 'manager' &&
-    ctx.role !== 'admin' &&
-    ctx.role !== 'owner'
-  ) {
+  if (before.userId !== ctx.userId && !hasPermission(ctx.permissions, 'expense:manage')) {
     throw toApiError(ERROR_CODES.FORBIDDEN, 'You can only edit your own expenses', requestId);
   }
   if (input.projectId) {
@@ -190,12 +185,7 @@ export async function updateExpense(
   if (input.notes !== undefined) patch.notes = input.notes;
   if (input.billable !== undefined) patch.billable = input.billable;
   if (input.status !== undefined) {
-    if (
-      before.userId !== ctx.userId &&
-      ctx.role !== 'manager' &&
-      ctx.role !== 'admin' &&
-      ctx.role !== 'owner'
-    ) {
+    if (before.userId !== ctx.userId && !hasPermission(ctx.permissions, 'expense:manage')) {
       throw toApiError(ERROR_CODES.FORBIDDEN, 'Only managers can change expense status', requestId);
     }
     patch.status = input.status;
@@ -225,12 +215,7 @@ export async function archiveExpense(
   requestId: string,
 ): Promise<void> {
   const before = await getExpenseRow(ctx, expenseId, requestId);
-  if (
-    before.userId !== ctx.userId &&
-    ctx.role !== 'manager' &&
-    ctx.role !== 'admin' &&
-    ctx.role !== 'owner'
-  ) {
+  if (before.userId !== ctx.userId && !hasPermission(ctx.permissions, 'expense:manage')) {
     throw toApiError(ERROR_CODES.FORBIDDEN, 'You can only delete your own expenses', requestId);
   }
   const deleted = await ctx.db.client
@@ -253,12 +238,7 @@ export async function uploadExpenseReceipt(
   requestId: string,
 ): Promise<ExpenseDto> {
   const before = await getExpenseRow(ctx, expenseId, requestId);
-  if (
-    before.userId !== ctx.userId &&
-    ctx.role !== 'manager' &&
-    ctx.role !== 'admin' &&
-    ctx.role !== 'owner'
-  ) {
+  if (before.userId !== ctx.userId && !hasPermission(ctx.permissions, 'expense:manage')) {
     throw toApiError(
       ERROR_CODES.FORBIDDEN,
       'You can only upload receipts on your own expenses',
@@ -323,7 +303,7 @@ export async function downloadExpenseReceipt(
   requestId: string,
 ): Promise<{ bytes: Uint8Array; contentType: string; filename: string }> {
   const row = await getExpenseRow(ctx, expenseId, requestId);
-  if (row.userId !== ctx.userId && !hasPermission(ctx.role, 'expense:read:any')) {
+  if (row.userId !== ctx.userId && !hasPermission(ctx.permissions, 'expense:read:any')) {
     throw toApiError(ERROR_CODES.FORBIDDEN, 'You can only download your own receipts', requestId);
   }
   if (!row.receiptKey || !row.receiptContentType || !row.receiptFilename) {

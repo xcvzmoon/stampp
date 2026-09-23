@@ -8,6 +8,7 @@ import type {
   WeeklyReport,
 } from '@stampp/shared';
 import { clients, projects, timeEntries, users } from '@stampp/database';
+import { hasPermission } from '@stampp/domain';
 import { ERROR_CODES, reportQuerySchema } from '@stampp/shared';
 import { and, asc, eq, gte, isNotNull, isNull, lt, lte, or } from 'drizzle-orm';
 import * as v from 'valibot';
@@ -144,7 +145,9 @@ export function reportScope(ctx: AuthorizedContext, query: ReportQuery) {
       ),
     ),
   ];
-  if (ctx.role === 'member') conditions.push(eq(timeEntries.userId, ctx.userId));
+  if (!hasPermission(ctx.permissions, 'time:read:team')) {
+    conditions.push(eq(timeEntries.userId, ctx.userId));
+  }
   if (query.projectId) conditions.push(eq(timeEntries.projectId, query.projectId));
   if (query.clientId) conditions.push(eq(projects.clientId, query.clientId));
   if (query.userId) conditions.push(eq(timeEntries.userId, query.userId));

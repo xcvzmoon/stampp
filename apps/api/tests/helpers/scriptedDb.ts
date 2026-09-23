@@ -1,5 +1,6 @@
 import type { AuthorizedContext } from '@stampp/access';
 import type { Db } from '@stampp/database';
+import { resolveActorPermissions } from '@stampp/domain';
 import { drizzle } from 'drizzle-orm/postgres-js';
 
 export type ScriptedQuery = {
@@ -59,12 +60,14 @@ export function scriptedContext(
   db: Db,
   workspaceId: string,
   userId: string,
-  role: AuthorizedContext['role'] = 'member',
+  role: AuthorizedContext['role'] = { kind: 'builtin', role: 'member' },
 ): AuthorizedContext {
+  const permissions = resolveActorPermissions(role, role.kind === 'custom' ? [] : undefined);
   return {
     userId,
     workspaceId,
     role,
+    permissions,
     db: { workspaceId, client: db },
   };
 }

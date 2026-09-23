@@ -28,6 +28,7 @@ import {
   timeOffTypes,
   timesheets,
 } from '@stampp/database';
+import { resolveActorPermissions } from '@stampp/domain';
 import { and, asc, eq, gt, gte, isNull, lte, or } from 'drizzle-orm';
 import { describe, expect, it } from 'vite-plus/test';
 import { reportScope } from '~/server/utils/reports.ts';
@@ -43,16 +44,26 @@ function makeDeps(
 ): WorkspaceAccessDeps {
   return {
     getSessionUserId: () => Promise.resolve(userId),
-    getMemberRole: (_actor, workspaceId) => Promise.resolve(workspaceId === memberOf ? role : null),
+    getActorGrant: (_actor, workspaceId) =>
+      Promise.resolve(
+        workspaceId === memberOf && role
+          ? {
+              role: { kind: 'builtin' as const, role },
+              permissions: resolveActorPermissions({ kind: 'builtin', role }),
+            }
+          : null,
+      ),
     db: createTestDb(),
   };
 }
 
 function reportContext(role: 'admin' | 'member') {
+  const actorRole = { kind: 'builtin', role } as const;
   return {
     userId,
     workspaceId: workspaceA,
-    role,
+    role: actorRole,
+    permissions: resolveActorPermissions(actorRole),
     db: { workspaceId: workspaceA, client: createTestDb() },
   };
 }
@@ -380,9 +391,12 @@ describe('auth org boundary isolation', () => {
       enterWorkspace(
         {
           getSessionUserId: () => Promise.resolve(null),
-          getMemberRole: () => {
+          getActorGrant: () => {
             lookups += 1;
-            return Promise.resolve('admin');
+            return Promise.resolve({
+              role: { kind: 'builtin', role: 'admin' },
+              permissions: resolveActorPermissions({ kind: 'builtin', role: 'admin' }),
+            });
           },
           db: createTestDb(),
         },

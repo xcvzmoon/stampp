@@ -2,6 +2,7 @@ import type { AuthorizedContext } from '@stampp/access';
 import type { Db } from '@stampp/database';
 import type { ReportQuery } from '@stampp/shared';
 import { createScopedDb, createTestDb, timeEntries } from '@stampp/database';
+import { resolveActorPermissions } from '@stampp/domain';
 import { HTTPError } from 'nitro';
 import { describe, expect, it } from 'vite-plus/test';
 import {
@@ -22,11 +23,15 @@ const baseQuery: ReportQuery = {
   timezone: 'America/New_York',
 };
 
-function context(db: Db, role: AuthorizedContext['role'] = 'manager'): AuthorizedContext {
+function context(
+  db: Db,
+  role: AuthorizedContext['role'] = { kind: 'builtin', role: 'manager' },
+): AuthorizedContext {
   return {
     userId: 'user_actor',
     workspaceId: 'ws_target',
     role,
+    permissions: resolveActorPermissions(role),
     db: createScopedDb(db, 'ws_target'),
   };
 }
@@ -200,12 +205,12 @@ describe('report isolation', () => {
     const memberQuery = db
       .select()
       .from(timeEntries)
-      .where(reportScope(context(db, 'member'), baseQuery))
+      .where(reportScope(context(db, { kind: 'builtin', role: 'member' }), baseQuery))
       .toSQL();
     const managerQuery = db
       .select()
       .from(timeEntries)
-      .where(reportScope(context(db, 'manager'), baseQuery))
+      .where(reportScope(context(db, { kind: 'builtin', role: 'manager' }), baseQuery))
       .toSQL();
     expect(memberQuery.params).toContain('user_actor');
     expect(managerQuery.params).not.toContain('user_actor');

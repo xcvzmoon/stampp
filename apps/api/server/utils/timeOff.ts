@@ -657,7 +657,7 @@ export async function listTimeOffRequests(
 }
 
 function hasCanReadTeam(ctx: AuthorizedContext): boolean {
-  return hasPermission(ctx.role, 'timeoff:read:team');
+  return hasPermission(ctx.permissions, 'timeoff:read:team');
 }
 
 export async function listPendingTimeOffRequests(

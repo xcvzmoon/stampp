@@ -310,7 +310,7 @@ export async function setKioskPin(
   requestId: string,
 ): Promise<KioskCredentialDto> {
   const targetUserId = input.userId ?? ctx.userId;
-  if (targetUserId !== ctx.userId && !hasPermission(ctx.role, 'kiosk:manage')) {
+  if (targetUserId !== ctx.userId && !hasPermission(ctx.permissions, 'kiosk:manage')) {
     throw toApiError(ERROR_CODES.FORBIDDEN, 'Kiosk manage permission is required', requestId);
   }
   await assertWorkspaceMember(ctx.db.client, ctx.workspaceId, targetUserId, requestId);
@@ -369,7 +369,7 @@ export async function clearKioskPin(
   requestId: string,
 ): Promise<void> {
   const targetUserId = userId ?? ctx.userId;
-  if (targetUserId !== ctx.userId && !hasPermission(ctx.role, 'kiosk:manage')) {
+  if (targetUserId !== ctx.userId && !hasPermission(ctx.permissions, 'kiosk:manage')) {
     throw toApiError(ERROR_CODES.FORBIDDEN, 'Kiosk manage permission is required', requestId);
   }
   const existing = await getCredentialRow(ctx, targetUserId);
@@ -400,7 +400,7 @@ export async function rotateKioskQrToken(
   requestId: string,
 ): Promise<{ credential: KioskCredentialDto; qrToken: string }> {
   const targetUserId = userId ?? ctx.userId;
-  if (targetUserId !== ctx.userId && !hasPermission(ctx.role, 'kiosk:manage')) {
+  if (targetUserId !== ctx.userId && !hasPermission(ctx.permissions, 'kiosk:manage')) {
     throw toApiError(ERROR_CODES.FORBIDDEN, 'Kiosk manage permission is required', requestId);
   }
   await assertWorkspaceMember(ctx.db.client, ctx.workspaceId, targetUserId, requestId);

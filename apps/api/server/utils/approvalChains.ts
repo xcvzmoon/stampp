@@ -483,7 +483,7 @@ export async function decideApprovalRun(
   }
   if (
     input.action === 'approve' &&
-    !hasPermission(ctx.role, entityApprovePermission(run.entityType))
+    !hasPermission(ctx.permissions, entityApprovePermission(run.entityType))
   ) {
     throw toApiError(ERROR_CODES.FORBIDDEN, 'Approve permission is required', requestId);
   }
