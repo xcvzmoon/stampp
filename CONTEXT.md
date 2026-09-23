@@ -69,6 +69,7 @@ Canonical product and architecture terms. Prefer these names in code, docs, and 
 | **packages/access**   | WorkspaceAccess + AuthorizedContext.                                      |
 | **packages/database** | Drizzle schemas, scoped-db factory, migrations.                           |
 | **packages/mailer**   | UnEmail driver selection, templates, MailDispatch adapter implementation. |
+| **packages/sdk**      | Typed public API client over personal access tokens.                      |
 
 ## Decisions already locked
 
