@@ -36,3 +36,4 @@ dist-ssr
 
 # evlog local drain
 .evlog/
+.vitest/

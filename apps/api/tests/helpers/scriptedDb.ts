@@ -47,8 +47,11 @@ export function createScriptedDb(handler: ScriptedHandler): ScriptedDb {
     savepoint: (cb) => cb(client),
   };
 
-  // SAFETY: client implements the postgres-js surface drizzle constructs with (options/unsafe/begin/savepoint)
-  const db = drizzle({ client: client as never });
+  // Mirror `drizzle({ client })` without asserting to postgres.Sql. mock() only
+  // needs options.parsers/serializers at construct time; the session then calls
+  // unsafe/begin/savepoint on whatever client it holds.
+  const db = drizzle.mock();
+  Object.assign(db._.session, { client });
   return { db, queries };
 }
 

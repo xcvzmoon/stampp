@@ -7,7 +7,7 @@ import type {
   Comment,
   CreateRule,
   Location,
-} from "@oxlint/plugins";
+} from "vite-plus/lint/plugins";
 type ASTNode = ESTree.Node;
 type Token = SyntaxToken | Comment;
 import type { RuleOptions, SelectorOption, StatementOption } from "./padding-line-options.d.ts";

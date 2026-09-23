@@ -32,7 +32,6 @@
     "@golar/vue": "catalog:ui",
     "@iconify-json/lucide": "catalog:ui",
     "@iconify-json/lucide-lab": "catalog:ui",
-    "@oxlint/plugins": "catalog:ui",
     "@types/node": "catalog:",
     "golar": "catalog:ui",
     "typescript": "catalog:",

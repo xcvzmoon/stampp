@@ -220,27 +220,27 @@ describe('auth org boundary isolation', () => {
 
   it('denies workspace export to members and managers', async () => {
     await Promise.all(
-      (['member', 'manager'] as const).map((role) =>
-        expect(
+      (['member', 'manager'] as const).map(async (role) => {
+        await expect(
           enterWorkspace(makeDeps(role, workspaceA), {
             workspaceId: workspaceA,
             permission: 'export:workspace',
           }),
-        ).rejects.toMatchObject({ kind: 'forbidden' }),
-      ),
+        ).rejects.toMatchObject({ kind: 'forbidden' });
+      }),
     );
   });
 
   it('denies catalog manage permissions to members', async () => {
     await Promise.all(
-      (['client:manage', 'project:manage', 'tag:manage'] as const).map((permission) =>
-        expect(
+      (['client:manage', 'project:manage', 'tag:manage'] as const).map(async (permission) => {
+        await expect(
           enterWorkspace(makeDeps('member', workspaceA), {
             workspaceId: workspaceA,
             permission,
           }),
-        ).rejects.toMatchObject({ kind: 'forbidden' }),
-      ),
+        ).rejects.toMatchObject({ kind: 'forbidden' });
+      }),
     );
   });
 
