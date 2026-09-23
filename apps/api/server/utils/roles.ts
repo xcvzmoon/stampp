@@ -20,8 +20,7 @@ export function toCustomRoleDto(row: CustomRole): CustomRoleDto {
     workspaceId: row.workspaceId,
     name: row.name,
     description: row.description,
-    // SAFETY: permissions are validated on write through permissionSchema.
-    permissions: row.permissions as CustomRoleDto['permissions'],
+    permissions: normalizePermissions(row.permissions),
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
   };
