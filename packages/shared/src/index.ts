@@ -8,6 +8,7 @@ export * from './expenses.ts';
 export * from './invoices.ts';
 export * from './kiosk.ts';
 export * from './organization.ts';
+export * from './publicApi.ts';
 export * from './rates.ts';
 export * from './reports.ts';
 export * from './schemas.ts';
