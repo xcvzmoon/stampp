@@ -15,6 +15,7 @@ Canonical product and architecture terms. Prefer these names in code, docs, and 
 | **Task**                  | Optional breakdown under a project.                                                                       |
 | **Time entry**            | Recorded work: interval or duration, optional project/task, billable flag.                                |
 | **Running timer**         | The single open time entry for a user in a workspace (v0.1 policy).                                       |
+| **Attendance record**     | Clock-in/clock-out punch pair separate from project time; one open punch per member per workspace.        |
 | **Billable rate**         | Revenue rate applied to billable hours.                                                                   |
 | **Labor cost rate**       | Internal cost rate applied to tracked hours.                                                              |
 | **Effective rate**        | Resolved rate for a user/project/task at a point in time (see Rates module).                              |
@@ -31,6 +32,7 @@ Canonical product and architecture terms. Prefer these names in code, docs, and 
 | **WorkspaceAccess**   | `enterWorkspace(event, permission)` → `AuthorizedContext`      | Session, membership load, permission check, scoped db             |
 | **AuthorizedContext** | `{ userId, workspaceId, role, db }`                            | `db` already bound to workspace; cannot query other tenants       |
 | **TimeTracking**      | `start` · `stop` · `addManual` · `update` · `remove` · `range` | Overlap, single running timer, UTC/tz, duplicate/split, audit     |
+| **Attendance**        | `clockIn` · `clockOut` · `current` · manual correct            | Single open punch, duration, work date/timezone, audit            |
 | **Rates**             | `resolveEffectiveRates` + as-of windows                        | Precedence task → project → user-in-project → user → org; history |
 | **Timesheets**        | `submit` · `withdraw` · `approve` · `reject`                   | Status machine, week freeze, entry locks                          |
 | **MailDispatch**      | `notify(event)` where event is invite/timesheet/invoice/…      | BullMQ enqueue, worker, UnEmail driver, templates                 |
