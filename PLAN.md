@@ -1053,6 +1053,22 @@ Approvals, invoices, expenses, leave, kiosk, scheduling, SSO, mobile, auto-track
 
 **Exit criteria:** third-party integration built only from docs; import from Clockify of a real workspace sample.
 
+**M4 slices (execution order):**
+
+1. **Public API surface + JS SDK** (`feat/public-api`): complete OpenAPI for the product surface the UI and third parties use, contract snapshot for breaking changes, rate limit + idempotency keys on `/api/v1`, `@stampp/sdk` (typed client over PAT/Bearer), integration quickstart. Exit: integration script built only from docs + SDK.
+   - Landed on `feat/public-api`: PAT `personalAccessToken` security scheme + dual auth on product routes; `Idempotency-Key` + rate-limit headers/responses in OpenAPI; Valkey fixed-window rate limit + Stripe-style idempotency middleware; `apps/api/openapi.snapshot.json` + breaking-change gate; `@stampp/sdk`; `examples/integration-quickstart.mjs` + `packages/sdk/README.md`.
+2. **Webhooks + signing + retries** (`feat/webhooks`): subscription CRUD + secret, HMAC signature headers, BullMQ delivery worker with retries/dead-letter, event catalog (time entry, timesheet, invoice, …), settings UI.
+3. **Custom RBAC roles** (`feat/custom-roles`): workspace role definitions over the existing permission vocabulary (no second vocabulary), assign roles to members, WorkspaceAccess resolves custom role permissions.
+4. **SSO & directory (free)** (`feat/sso`): OIDC providers first, then SAML, then SCIM provisioning; LDAP if it still fits after OIDC/SAML.
+5. **Import pipeline** (`feat/import`): BullMQ `import` jobs; CSV first (generic), then Clockify, Toggl, Harvest adapters with dry-run/map preview.
+6. **Audit UI + retention** (`feat/audit-ui`): browse/filter/export `audit_events` in workspace UI (writes already exist); retention policy config + purge job behind AuditTrail.
+7. **Mobile PWA** (`feat/pwa`): responsive PWA shell, installable, mobile timer/timesheet paths (native mobile later).
+8. **Desktop (Tauri) tray timer** (`feat/desktop`): tray + global shortcuts + idle detection; activity tracking stays off and opt-in.
+9. **Auto-tracker (optional)** (`feat/auto-tracker`): workspace opt-in only, employee-visible indicators, strong privacy defaults.
+10. **Helm chart** (`feat/helm`): k8s install path beside compose (ops track; may run parallel after slice 1).
+
+TARGET.md order was `API → Webhooks → SSO → RBAC → Audit → Integrations → Import/Export → Desktop → Mobile → Auto Tracker`. This list keeps API first and moves custom RBAC ahead of SSO so directory-driven role assignment can use it; Helm is pure ops and does not block product slices.
+
 ---
 
 ## 14. Delivery slices inside M1 (execution order)
@@ -1130,6 +1146,11 @@ Each slice ends with: API tests + UI path + `vp run check && typecheck && test &
 
 ## 18. Immediate next actions (this week)
 
+**Superseded.** M0–M3 shipped through v0.4.0. Current work is **M4 slice 1: Public API surface + JS SDK** (`feat/public-api`). See §13 M4 slices.
+
+<details>
+<summary>Historical M0 checklist (completed)</summary>
+
 1. Install **Varlock** (root + apps); commit `.env.schema` files; pin version in catalog; add `varlock load` to CI and `varlock run` to start scripts.
 2. Scaffold `packages/access` + `packages/domain` + `packages/database` + `packages/shared` + `packages/mailer`.
 3. Add Drizzle + Postgres + **Valkey** to compose and CI; Mailpit profile optional.
@@ -1138,7 +1159,7 @@ Each slice ends with: API tests + UI path + `vp run check && typecheck && test &
 6. Ship slice S1 (auth + workspace) behind compose.
 7. Update README: product name, quickstart (Varlock + compose), architecture diagram.
 
-After S1 is green, proceed S2→S6 for **v0.1.0**.
+</details>
 
 ---
 
