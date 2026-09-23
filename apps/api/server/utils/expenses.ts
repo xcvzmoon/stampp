@@ -24,6 +24,7 @@ import {
   putReceiptObject,
   StorageNotConfiguredError,
 } from '~/server/utils/storage.ts';
+import { emitWebhookEvent } from '~/server/utils/webhookEvents.ts';
 
 function notFound(requestId: string) {
   return toApiError(ERROR_CODES.NOT_FOUND, 'Expense not found', requestId);
@@ -153,6 +154,7 @@ export async function createExpense(
     entityId: row.id,
     after: row,
   });
+  await emitWebhookEvent(ctx, 'expense.created', { expenseId: row.id });
   return toExpenseDto(row);
 }
 
@@ -213,6 +215,7 @@ export async function updateExpense(
     before,
     after: row,
   });
+  await emitWebhookEvent(ctx, 'expense.updated', { expenseId: row.id });
   return toExpenseDto(row);
 }
 

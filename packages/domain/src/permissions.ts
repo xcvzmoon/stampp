@@ -43,7 +43,9 @@ export type Permission =
   | 'reports:view:cost'
   | 'settings:manage'
   | 'members:manage'
-  | 'export:workspace';
+  | 'export:workspace'
+  | 'webhook:read'
+  | 'webhook:manage';
 
 const ownerAdminPermissions: Permission[] = [
   'time:read:own',
@@ -85,6 +87,8 @@ const ownerAdminPermissions: Permission[] = [
   'settings:manage',
   'members:manage',
   'export:workspace',
+  'webhook:read',
+  'webhook:manage',
 ];
 
 const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
@@ -124,6 +128,8 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'invoice:read:any',
     'invoice:manage',
     'reports:view',
+    'webhook:read',
+    'webhook:manage',
   ]),
   member: new Set<Permission>([
     'time:read:own',

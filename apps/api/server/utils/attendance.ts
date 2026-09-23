@@ -24,6 +24,7 @@ import * as v from 'valibot';
 import { toApiError } from '~/server/middleware/request-id.ts';
 import { recordAudit } from '~/server/utils/audit.ts';
 import { isUniqueViolation } from '~/server/utils/catalog.ts';
+import { emitWebhookEvent } from '~/server/utils/webhookEvents.ts';
 import { calendarDateInTimezone } from '~/server/utils/week.ts';
 
 type ListAttendanceOptions = AttendanceListQuery & { limit: number };
@@ -181,6 +182,7 @@ export async function clockIn(
       entityId: row.id,
       after: row,
     });
+    await emitWebhookEvent(ctx, 'attendance.clocked_in', { attendanceId: row.id });
     return toAttendanceDto(row, now);
   } catch (error) {
     if (isUniqueViolation(error)) throw alreadyOpen(requestId);
@@ -225,6 +227,7 @@ export async function clockOut(
       before: open,
       after: row,
     });
+    await emitWebhookEvent(ctx, 'attendance.clocked_out', { attendanceId: row.id });
     return toAttendanceDto(row, now);
   } catch (error) {
     if (error instanceof RangeError) {

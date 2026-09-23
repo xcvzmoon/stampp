@@ -41,6 +41,7 @@ import {
 } from '~/server/utils/approvalChains.ts';
 import { recordAudit } from '~/server/utils/audit.ts';
 import { isUniqueViolation } from '~/server/utils/catalog.ts';
+import { emitWebhookEvent } from '~/server/utils/webhookEvents.ts';
 
 type ListRequestOptions = TimeOffListQuery & { limit: number };
 
@@ -471,6 +472,7 @@ export async function createTimeOffRequest(
       entityId: row.id,
       after: row,
     });
+    await emitWebhookEvent(ctx, 'time_off.requested', { timeOffRequestId: row.id });
     await startApprovalRun(ctx, 'time_off_request', row.id, ctx.userId, requestId);
     return toTimeOffRequestDto(row);
   } catch (error) {

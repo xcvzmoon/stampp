@@ -31,6 +31,7 @@ import { and, asc, eq, gt, gte, inArray, lte } from 'drizzle-orm';
 import { toApiError } from '~/server/middleware/request-id.ts';
 import { recordAudit } from '~/server/utils/audit.ts';
 import { notifyInvoiceStatus } from '~/server/utils/productNotifications.ts';
+import { emitWebhookEvent } from '~/server/utils/webhookEvents.ts';
 
 function notFound(requestId: string) {
   return toApiError(ERROR_CODES.NOT_FOUND, 'Invoice not found', requestId);
@@ -270,7 +271,9 @@ export async function createInvoice(
     entityId: invoice.id,
     after: invoice,
   });
-  return getInvoice(ctx, invoice.id, requestId);
+  const createdDto = await getInvoice(ctx, invoice.id, requestId);
+  await emitWebhookEvent(ctx, 'invoice.created', { invoice: createdDto });
+  return createdDto;
 }
 
 export async function generateInvoice(
@@ -516,7 +519,12 @@ export async function transitionInvoice(
     status,
     workspaceId: ctx.workspaceId,
   }).catch(() => undefined);
-  return getInvoice(ctx, invoiceId, requestId);
+  const nextDto = await getInvoice(ctx, invoiceId, requestId);
+  await emitWebhookEvent(ctx, 'invoice.status_changed', {
+    invoice: nextDto,
+    status,
+  });
+  return nextDto;
 }
 
 export async function recordInvoicePayment(

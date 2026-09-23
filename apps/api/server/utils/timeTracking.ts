@@ -17,6 +17,7 @@ import * as v from 'valibot';
 import { toApiError } from '~/server/middleware/request-id.ts';
 import { recordAudit } from '~/server/utils/audit.ts';
 import { assertEntryWeekEditable, assertWeekEditable } from '~/server/utils/timesheets.ts';
+import { emitWebhookEvent } from '~/server/utils/webhookEvents.ts';
 import { addCalendarDays, calendarDateInTimezone } from '~/server/utils/week.ts';
 
 type ListTimeEntriesOptions = TimeEntryListQuery & { limit: number };
@@ -323,7 +324,9 @@ export async function startTimer(
       entityId: entry.id,
       after: entry,
     });
-    return toTimeEntryDto(entry, input.tagIds !== undefined ? entryTags : []);
+    const startedDto = toTimeEntryDto(entry, input.tagIds !== undefined ? entryTags : []);
+    await emitWebhookEvent(ctx, 'timer.started', { timeEntry: startedDto });
+    return startedDto;
   } catch (error) {
     return mapConstraintError(error, requestId);
   }
@@ -363,7 +366,9 @@ export async function stopTimer(
       after: entry,
     });
     const byEntry = await hydrateTagsForEntries(ctx, [entry.id]);
-    return toTimeEntryDto(entry, byEntry.get(entry.id) ?? []);
+    const stoppedDto = toTimeEntryDto(entry, byEntry.get(entry.id) ?? []);
+    await emitWebhookEvent(ctx, 'timer.stopped', { timeEntry: stoppedDto });
+    return stoppedDto;
   } catch (error) {
     return mapConstraintError(error, requestId);
   }
@@ -417,7 +422,9 @@ export async function addManualTime(
       entityId: entry.id,
       after: entry,
     });
-    return toTimeEntryDto(entry, input.tagIds !== undefined ? entryTags : []);
+    const createdDto = toTimeEntryDto(entry, input.tagIds !== undefined ? entryTags : []);
+    await emitWebhookEvent(ctx, 'time_entry.created', { timeEntry: createdDto });
+    return createdDto;
   } catch (error) {
     return mapConstraintError(error, requestId);
   }

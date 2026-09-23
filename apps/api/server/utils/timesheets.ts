@@ -25,6 +25,7 @@ import {
   notifyTimesheetDecision,
   notifyTimesheetSubmitted,
 } from '~/server/utils/productNotifications.ts';
+import { emitWebhookEvent } from '~/server/utils/webhookEvents.ts';
 import { addCalendarDays, requireMonday } from '~/server/utils/week.ts';
 
 function notFound(requestId: string) {
@@ -193,6 +194,7 @@ export async function submitTimesheet(
     weekStart: row.weekStart,
     workspaceId: ctx.workspaceId,
   }).catch(() => undefined);
+  await emitWebhookEvent(ctx, 'timesheet.submitted', { timesheet: toTimesheetDto(row) });
   return toTimesheetDto(row);
 }
 
@@ -321,6 +323,9 @@ async function decide(
     decision: action === 'approve' ? 'approved' : 'rejected',
     note: input.note,
   }).catch(() => undefined);
+  await emitWebhookEvent(ctx, action === 'approve' ? 'timesheet.approved' : 'timesheet.rejected', {
+    timesheet: toTimesheetDto(row),
+  });
   return toTimesheetDto(row);
 }
 
