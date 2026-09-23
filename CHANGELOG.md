@@ -1,5 +1,57 @@
 # Changelog
 
+## v0.4.0
+
+[compare changes](https://github.com/xcvzmoon/stampp/compare/v0.3.0...v0.4.0)
+
+### 🚀 Enhancements
+
+- **domain:** Add attendance punch rules and permissions ([67b80e5](https://github.com/xcvzmoon/stampp/commit/67b80e5))
+- **shared:** Add attendance contracts and error codes ([c29de61](https://github.com/xcvzmoon/stampp/commit/c29de61))
+- **database:** Add attendance_records schema with RLS migration ([10031c5](https://github.com/xcvzmoon/stampp/commit/10031c5))
+- **api:** Expose attendance clock-in/out and list endpoints ([83dc3e7](https://github.com/xcvzmoon/stampp/commit/83dc3e7))
+- **web:** Add attendance page and workspace nav ([caba932](https://github.com/xcvzmoon/stampp/commit/caba932))
+- **domain:** Add time-off rules and permissions ([872f456](https://github.com/xcvzmoon/stampp/commit/872f456))
+- **shared:** Add time-off contracts and error codes ([a1e351b](https://github.com/xcvzmoon/stampp/commit/a1e351b))
+- **database:** Add time-off tables with RLS migration ([469d0d6](https://github.com/xcvzmoon/stampp/commit/469d0d6))
+- **api:** Expose time-off types requests balances and calendar ([6d41ecf](https://github.com/xcvzmoon/stampp/commit/6d41ecf))
+- **web:** Add time-off page and workspace nav ([3e3fa24](https://github.com/xcvzmoon/stampp/commit/3e3fa24))
+- **domain:** Add scheduling capacity and workload rules ([467c38f](https://github.com/xcvzmoon/stampp/commit/467c38f))
+- **shared:** Add scheduling contracts and error codes ([cab48f5](https://github.com/xcvzmoon/stampp/commit/cab48f5))
+- **database:** Add capacity and assignment tables with RLS ([1ccbee1](https://github.com/xcvzmoon/stampp/commit/1ccbee1))
+- **api:** Expose capacity assignments and workload endpoints ([aee325e](https://github.com/xcvzmoon/stampp/commit/aee325e))
+- **web:** Add schedule page and workspace nav ([dd87843](https://github.com/xcvzmoon/stampp/commit/dd87843))
+- **domain:** Add kiosk credential and punch rules ([343df97](https://github.com/xcvzmoon/stampp/commit/343df97))
+- **shared:** Add kiosk contracts and attendance kiosk source ([bbd802f](https://github.com/xcvzmoon/stampp/commit/bbd802f))
+- **database:** Add kiosk devices and member credentials with RLS ([e4c8dfc](https://github.com/xcvzmoon/stampp/commit/e4c8dfc))
+- **api:** Expose kiosk devices credentials and attendance punch ([e0f69b1](https://github.com/xcvzmoon/stampp/commit/e0f69b1))
+- **web:** Add kiosk admin page and shared punch screen ([f5644e0](https://github.com/xcvzmoon/stampp/commit/f5644e0))
+- **domain:** Add multi-stage approval chain rules ([05a06d2](https://github.com/xcvzmoon/stampp/commit/05a06d2))
+- **shared:** Add approval chain contracts and error codes ([0bdbeec](https://github.com/xcvzmoon/stampp/commit/0bdbeec))
+- **database:** Add approval chain tables with RLS ([4048a67](https://github.com/xcvzmoon/stampp/commit/4048a67))
+- **api:** Expose approval chains and wire multi-stage decide ([f7c3a9c](https://github.com/xcvzmoon/stampp/commit/f7c3a9c))
+- **web:** Add approval chain config and pending steps UI ([da4c4fa](https://github.com/xcvzmoon/stampp/commit/da4c4fa))
+
+### 📖 Documentation
+
+- Record attendance slice in plan and glossary ([e3c7b67](https://github.com/xcvzmoon/stampp/commit/e3c7b67))
+- Record time-off slice in plan and glossary ([524663e](https://github.com/xcvzmoon/stampp/commit/524663e))
+- Record scheduling slice in plan and glossary ([94a99bb](https://github.com/xcvzmoon/stampp/commit/94a99bb))
+- Record kiosk slice in plan and glossary ([e94929c](https://github.com/xcvzmoon/stampp/commit/e94929c))
+- Record approval-chains slice in plan and glossary ([d537a45](https://github.com/xcvzmoon/stampp/commit/d537a45))
+
+### 🏡 Chore
+
+- Bump vite-plus to v1.0.0-rc.0 ([75a7967](https://github.com/xcvzmoon/stampp/commit/75a7967))
+
+### ✅ Tests
+
+- **api:** Cover service flows and cost-report goldens ([1385d9c](https://github.com/xcvzmoon/stampp/commit/1385d9c))
+
+### ❤️ Contributors
+
+- Mon Albert Gamil ([@xcvzmoon](https://github.com/xcvzmoon))
+
 ## v0.3.0
 
 [compare changes](https://github.com/xcvzmoon/stampp/compare/v0.2.0...v0.3.0)
