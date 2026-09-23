@@ -1,0 +1,21 @@
+{
+  "name": "@stampp/sdk",
+  "version": "0.4.0",
+  "type": "module",
+  "private": true,
+  "description": "Typed Stampp public API client over personal access tokens.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@stampp/shared": "workspace:*",
+    "valibot": "catalog:platform"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}
