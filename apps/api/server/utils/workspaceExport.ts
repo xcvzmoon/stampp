@@ -1,5 +1,6 @@
 import type { AuthorizedContext } from '@stampp/access';
 import {
+  attendanceRecords,
   auditEvents,
   clients,
   expenses,
@@ -33,6 +34,7 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     entryTagRows,
     rateRows,
     timesheetRows,
+    attendanceRows,
     expenseRows,
     invoiceRows,
     invoiceLineRows,
@@ -106,6 +108,11 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
       .orderBy(asc(timesheets.id)),
     ctx.db.client
       .select()
+      .from(attendanceRecords)
+      .where(eq(attendanceRecords.workspaceId, ctx.workspaceId))
+      .orderBy(asc(attendanceRecords.id)),
+    ctx.db.client
+      .select()
       .from(expenses)
       .where(eq(expenses.workspaceId, ctx.workspaceId))
       .orderBy(asc(expenses.id)),
@@ -146,6 +153,7 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     timeEntryTags: entryTagRows,
     rates: rateRows,
     timesheets: timesheetRows,
+    attendanceRecords: attendanceRows,
     expenses: expenseRows,
     invoices: invoiceRows,
     invoiceLines: invoiceLineRows,

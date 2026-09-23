@@ -1,6 +1,7 @@
 import type { WorkspaceAccessDeps } from '@stampp/access';
 import { enterWorkspace } from '@stampp/access';
 import {
+  attendanceRecords,
   auditEvents,
   clients,
   createTestDb,
@@ -107,6 +108,31 @@ describe('catalog tenant isolation', () => {
     expect(entryTag.sql).toContain('"workspace_id" = $1');
     expect(entry.params).toEqual([workspaceB]);
     expect(entryTag.params).toEqual([workspaceB]);
+  });
+
+  it('binds workspace_id on attendance open punch and list queries', () => {
+    const db = createTestDb();
+    const open = db
+      .select()
+      .from(attendanceRecords)
+      .where(
+        and(
+          eq(attendanceRecords.workspaceId, workspaceA),
+          eq(attendanceRecords.userId, userId),
+          isNull(attendanceRecords.clockOutAt),
+        ),
+      )
+      .toSQL();
+    const list = db
+      .select()
+      .from(attendanceRecords)
+      .where(eq(attendanceRecords.workspaceId, workspaceB))
+      .toSQL();
+
+    expect(open.sql).toContain('"workspace_id" = $1');
+    expect(open.params[0]).toBe(workspaceA);
+    expect(list.params[0]).toBe(workspaceB);
+    expect(list.params).not.toContain(workspaceA);
   });
 
   it('puts workspace_id first in the weekly timesheet scope', () => {

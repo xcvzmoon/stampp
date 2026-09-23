@@ -8,7 +8,9 @@ export function mapErrorCodeToStatus(code: string): number {
   if (
     code === ERROR_CODES.CONFLICT ||
     code === ERROR_CODES.TIME_ENTRY_OVERLAP ||
-    code === ERROR_CODES.TIMER_ALREADY_RUNNING
+    code === ERROR_CODES.TIMER_ALREADY_RUNNING ||
+    code === ERROR_CODES.ATTENDANCE_ALREADY_OPEN ||
+    code === ERROR_CODES.ATTENDANCE_NOT_OPEN
   ) {
     return 409;
   }
@@ -23,7 +25,8 @@ export function mapErrorCodeToStatus(code: string): number {
     code === ERROR_CODES.INVOICE_INVALID_TRANSITION ||
     code === ERROR_CODES.INVOICE_EMPTY ||
     code === ERROR_CODES.INVOICE_OVERPAYMENT ||
-    code === ERROR_CODES.INVOICE_NOT_DRAFT
+    code === ERROR_CODES.INVOICE_NOT_DRAFT ||
+    code === ERROR_CODES.ATTENDANCE_INVALID_INTERVAL
   ) {
     return 422;
   }
