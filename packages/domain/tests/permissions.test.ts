@@ -34,6 +34,7 @@ const allPermissions: Permission[] = [
   'schedule:read:own',
   'schedule:read:team',
   'schedule:manage',
+  'kiosk:manage',
   'invoice:read:any',
   'invoice:manage',
   'reports:view',
@@ -112,6 +113,13 @@ describe('hasPermission', () => {
     expect(hasPermission('manager', 'schedule:manage')).toBe(true);
     expect(hasPermission('guest', 'schedule:read:own')).toBe(true);
     expect(hasPermission('guest', 'schedule:manage')).toBe(false);
+  });
+
+  it('restricts kiosk device management to owners admins and managers', () => {
+    expect(hasPermission('owner', 'kiosk:manage')).toBe(true);
+    expect(hasPermission('manager', 'kiosk:manage')).toBe(true);
+    expect(hasPermission('member', 'kiosk:manage')).toBe(false);
+    expect(hasPermission('guest', 'kiosk:manage')).toBe(false);
   });
 
   it('lets members read catalog entities but not manage them', () => {
