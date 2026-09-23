@@ -154,28 +154,28 @@ export async function runImportJob(jobId: string, workspaceId: string): Promise<
     return;
   }
 
-  let imported = 0;
-  let skipped = 0;
-  for (const row of preview.rows) {
-    if (row.issues.length > 0 || !row.startDate || !row.endDate) {
-      skipped += 1;
-      continue;
-    }
-    await db.insert(timeEntries).values({
-      workspaceId,
-      userId: actorUserId,
-      projectId: null,
-      taskId: null,
-      description: row.name,
-      billable: true,
-      startAt: new Date(row.startDate),
-      endAt: new Date(row.endDate),
-      durationMinutes: row.durationMinutes,
-      workDate: row.startDate.slice(0, 10),
-      timezone: 'UTC',
-    });
-    imported += 1;
-  }
+  const validRows = preview.rows.filter(
+    (row) => row.issues.length === 0 && row.startDate && row.endDate,
+  );
+  const skipped = preview.rows.length - validRows.length;
+  await Promise.all(
+    validRows.map((row) =>
+      db.insert(timeEntries).values({
+        workspaceId,
+        userId: actorUserId,
+        projectId: null,
+        taskId: null,
+        description: row.name,
+        billable: true,
+        startAt: new Date(row.startDate ?? ''),
+        endAt: new Date(row.endDate ?? ''),
+        durationMinutes: row.durationMinutes,
+        workDate: (row.startDate ?? '').slice(0, 10),
+        timezone: 'UTC',
+      }),
+    ),
+  );
+  const imported = validRows.length;
 
   await db
     .update(importJobs)
