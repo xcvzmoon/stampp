@@ -19,6 +19,8 @@ Canonical product and architecture terms. Prefer these names in code, docs, and 
 | **Time-off type**         | Workspace leave category with optional annual allowance; paid/unpaid and approval policy.                    |
 | **Time-off request**      | Inclusive date range leave request (`pending` \| `approved` \| `rejected` \| `canceled`) with business days. |
 | **Holiday**               | Workspace non-working calendar date excluded from time-off day counts.                                       |
+| **Member capacity**       | Weekly working hours for a member; baseline for scheduling and overbooking checks.                           |
+| **Project assignment**    | Member hours per week on a project for an inclusive date range.                                              |
 | **Billable rate**         | Revenue rate applied to billable hours.                                                                      |
 | **Labor cost rate**       | Internal cost rate applied to tracked hours.                                                                 |
 | **Effective rate**        | Resolved rate for a user/project/task at a point in time (see Rates module).                                 |
@@ -37,6 +39,7 @@ Canonical product and architecture terms. Prefer these names in code, docs, and 
 | **TimeTracking**      | `start` · `stop` · `addManual` · `update` · `remove` · `range` | Overlap, single running timer, UTC/tz, duplicate/split, audit     |
 | **Attendance**        | `clockIn` · `clockOut` · `current` · manual correct            | Single open punch, duration, work date/timezone, audit            |
 | **TimeOff**           | `request` · `withdraw` · `approve` · `balance` · `calendar`    | Status machine, weekday/holiday day counts, allowance balances    |
+| **Scheduling**        | `capacity` · `assign` · `workload`                             | Weekly capacity, scheduled vs tracked, over/under flags           |
 | **Rates**             | `resolveEffectiveRates` + as-of windows                        | Precedence task → project → user-in-project → user → org; history |
 | **Timesheets**        | `submit` · `withdraw` · `approve` · `reject`                   | Status machine, week freeze, entry locks                          |
 | **MailDispatch**      | `notify(event)` where event is invite/timesheet/invoice/…      | BullMQ enqueue, worker, UnEmail driver, templates                 |
