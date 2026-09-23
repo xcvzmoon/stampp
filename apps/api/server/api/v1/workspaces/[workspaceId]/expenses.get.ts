@@ -37,7 +37,7 @@ defineRouteMeta({
   openAPI: {
     tags: ['expenses'],
     summary: 'List expenses',
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     parameters: [
       {
         in: 'query',
@@ -63,6 +63,7 @@ defineRouteMeta({
       },
       400: { $ref: '#/components/responses/ValidationFailed' },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
     },
     $global: {

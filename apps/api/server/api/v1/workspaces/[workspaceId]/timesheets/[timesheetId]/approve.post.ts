@@ -8,8 +8,18 @@ defineRouteMeta({
   openAPI: {
     tags: ['timesheets'],
     summary: 'Approve submitted timesheet and lock week entries',
-    security: [{ sessionCookie: [] }],
-    parameters: [{ in: 'path', name: 'timesheetId', required: true, schema: { type: 'string' } }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
+    parameters: [
+      {
+        in: 'header',
+        name: 'Idempotency-Key',
+        required: false,
+        schema: { type: 'string', minLength: 1, maxLength: 255 },
+        description:
+          'Optional client-generated key. Replays the stored response for safe retries on mutations.',
+      },
+      { in: 'path', name: 'timesheetId', required: true, schema: { type: 'string' } },
+    ],
     requestBody: {
       required: false,
       content: {
@@ -33,6 +43,7 @@ defineRouteMeta({
         },
       },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
       404: { $ref: '#/components/responses/NotFound' },
       422: {

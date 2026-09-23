@@ -7,7 +7,7 @@ defineRouteMeta({
   openAPI: {
     tags: ['expenses'],
     summary: 'Download expense receipt',
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     parameters: [{ in: 'path', name: 'expenseId', required: true, schema: { type: 'string' } }],
     responses: {
       200: {
@@ -17,6 +17,7 @@ defineRouteMeta({
         },
       },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
       404: { $ref: '#/components/responses/NotFound' },
       503: {

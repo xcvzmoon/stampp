@@ -19,8 +19,8 @@ export default defineConfig({
     meta: {
       title: 'Stampp API',
       description:
-        'Workspace-scoped work-time API. Session auth is Better Auth at /api/auth/*; product routes live under /api/v1.',
-      version: '0.1.0',
+        'Workspace-scoped work-time API. Authenticate with a Better Auth session cookie or a personal access token (Authorization: Bearer stpp_…). Product routes live under /api/v1. Mutations accept an optional Idempotency-Key header; all /api/v1 calls are rate limited per credential.',
+      version: '1.0.0',
     },
     route: '/api/v1/openapi.json',
     production: 'prerender',

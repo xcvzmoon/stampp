@@ -8,11 +8,12 @@ defineRouteMeta({
     tags: ['approvals'],
     summary: 'Delete approval chain',
     description: 'Hard-deletes unused chains; deactivates chains with run history.',
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     parameters: [{ in: 'path', name: 'chainId', required: true, schema: { type: 'string' } }],
     responses: {
       204: { description: 'Deleted or deactivated' },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
       404: { $ref: '#/components/responses/NotFound' },
     },

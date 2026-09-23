@@ -6,7 +6,7 @@ defineRouteMeta({
   openAPI: {
     tags: ['workspace'],
     summary: 'Export workspace JSON',
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     responses: {
       200: {
         description: 'Workspace export attachment',
@@ -45,6 +45,7 @@ defineRouteMeta({
         },
       },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
     },
   },

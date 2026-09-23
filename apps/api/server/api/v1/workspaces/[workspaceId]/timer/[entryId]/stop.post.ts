@@ -7,7 +7,7 @@ defineRouteMeta({
   openAPI: {
     tags: ['timer'],
     summary: 'Stop timer',
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     responses: {
       200: {
         description: 'Stopped timer',
@@ -18,6 +18,7 @@ defineRouteMeta({
         },
       },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
       404: { $ref: '#/components/responses/NotFound' },
       409: {

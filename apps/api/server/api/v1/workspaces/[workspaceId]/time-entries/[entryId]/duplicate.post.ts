@@ -9,7 +9,7 @@ defineRouteMeta({
     summary: 'Duplicate time entry',
     description:
       'Copies project, task, description, billable flag, tags, duration, work date, and timezone from a completed unlocked entry. Interval sources are stored as duration copies.',
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     responses: {
       200: {
         description: 'Duplicated time entry',
@@ -26,6 +26,7 @@ defineRouteMeta({
         },
       },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
       404: { $ref: '#/components/responses/NotFound' },
       409: {

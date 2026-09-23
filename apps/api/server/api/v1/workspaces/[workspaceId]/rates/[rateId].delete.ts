@@ -7,7 +7,7 @@ defineRouteMeta({
   openAPI: {
     tags: ['rates'],
     summary: 'Revoke open rate version',
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     parameters: [
       {
         in: 'path',
@@ -26,6 +26,7 @@ defineRouteMeta({
         },
       },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
       404: { $ref: '#/components/responses/NotFound' },
       422: {

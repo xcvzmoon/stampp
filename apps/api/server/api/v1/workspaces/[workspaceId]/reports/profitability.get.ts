@@ -28,7 +28,7 @@ defineRouteMeta({
   openAPI: {
     tags: ['reports'],
     summary: 'Profitability report using billable and cost rates',
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     parameters: [
       { in: 'query', name: 'from', required: true, schema: { type: 'string' } },
       { in: 'query', name: 'to', required: true, schema: { type: 'string' } },
@@ -48,6 +48,7 @@ defineRouteMeta({
       },
       400: { $ref: '#/components/responses/ValidationFailed' },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
     },
     $global: {
