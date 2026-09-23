@@ -16,6 +16,8 @@ export const WORKSPACE_RLS_TABLES = [
   'invoice_lines',
   'invoice_payments',
   'invoices',
+  'member_capacities',
+  'project_assignments',
   'projects',
   'rates',
   'tags',

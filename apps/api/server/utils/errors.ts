@@ -11,7 +11,8 @@ export function mapErrorCodeToStatus(code: string): number {
     code === ERROR_CODES.TIMER_ALREADY_RUNNING ||
     code === ERROR_CODES.ATTENDANCE_ALREADY_OPEN ||
     code === ERROR_CODES.ATTENDANCE_NOT_OPEN ||
-    code === ERROR_CODES.TIME_OFF_OVERLAP
+    code === ERROR_CODES.TIME_OFF_OVERLAP ||
+    code === ERROR_CODES.SCHEDULE_OVERBOOKED
   ) {
     return 409;
   }
@@ -31,7 +32,8 @@ export function mapErrorCodeToStatus(code: string): number {
     code === ERROR_CODES.TIME_OFF_INVALID_TRANSITION ||
     code === ERROR_CODES.TIME_OFF_INVALID_RANGE ||
     code === ERROR_CODES.TIME_OFF_INSUFFICIENT_BALANCE ||
-    code === ERROR_CODES.TIME_OFF_TYPE_INACTIVE
+    code === ERROR_CODES.TIME_OFF_TYPE_INACTIVE ||
+    code === ERROR_CODES.SCHEDULE_INVALID_RANGE
   ) {
     return 422;
   }

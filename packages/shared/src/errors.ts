@@ -27,6 +27,8 @@ export const ERROR_CODES = {
   TIME_OFF_INSUFFICIENT_BALANCE: 'time_off.insufficient_balance',
   TIME_OFF_TYPE_INACTIVE: 'time_off.type_inactive',
   TIME_OFF_OVERLAP: 'time_off.overlap',
+  SCHEDULE_INVALID_RANGE: 'schedule.invalid_range',
+  SCHEDULE_OVERBOOKED: 'schedule.overbooked',
   STORAGE_NOT_CONFIGURED: 'storage.not_configured',
   INVOICE_INVALID_TRANSITION: 'invoice.invalid_transition',
   INVOICE_EMPTY: 'invoice.empty',

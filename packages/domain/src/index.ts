@@ -7,5 +7,6 @@ export * from './invoices.ts';
 export * from './money.ts';
 export * from './permissions.ts';
 export * from './rates.ts';
+export * from './scheduling.ts';
 export * from './timesheets.ts';
 export * from './timeOff.ts';
