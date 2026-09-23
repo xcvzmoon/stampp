@@ -9,6 +9,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@stampp/domain": "workspace:*",
     "valibot": "catalog:platform"
   },
   "devDependencies": {

@@ -33,6 +33,8 @@ export const ERROR_CODES = {
   SCHEDULE_OVERBOOKED: 'schedule.overbooked',
   KIOSK_AUTH_FAILED: 'kiosk.auth_failed',
   KIOSK_DEVICE_REVOKED: 'kiosk.device_revoked',
+  WEBHOOK_INVALID_URL: 'webhook.invalid_url',
+  WEBHOOK_DELIVERY_FAILED: 'webhook.delivery_failed',
   APPROVAL_INVALID_STEP: 'approval.invalid_step',
   APPROVAL_INVALID_CHAIN: 'approval.invalid_chain',
   APPROVAL_ALREADY_DECIDED: 'approval.already_decided',

@@ -528,6 +528,9 @@ importers:
 
   packages/shared:
     dependencies:
+      '@stampp/domain':
+        specifier: workspace:*
+        version: link:../domain
       valibot:
         specifier: catalog:platform
         version: 1.5.0(typescript@6.0.3)
