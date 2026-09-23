@@ -32,6 +32,8 @@ export const WORKSPACE_RLS_TABLES = [
   'time_off_requests',
   'time_off_types',
   'timesheets',
+  'webhook_deliveries',
+  'webhook_subscriptions',
 ] as const;
 
 export function buildWorkspaceRlsPolicySql(tableName: string): string {
