@@ -9,8 +9,10 @@ import {
   holidays,
   invoiceLines,
   invoices,
+  memberCapacities,
   organizations,
   personalAccessTokens,
+  projectAssignments,
   projects,
   rates,
   tags,
@@ -162,6 +164,31 @@ describe('catalog tenant isolation', () => {
     expect(types.params[0]).toBe(workspaceA);
     expect(holiday.params[0]).toBe(workspaceB);
     expect(request.params[0]).toBe(workspaceA);
+  });
+
+  it('binds workspace_id on member capacity and assignment queries', () => {
+    const db = createTestDb();
+    const capacity = db
+      .select()
+      .from(memberCapacities)
+      .where(eq(memberCapacities.workspaceId, workspaceA))
+      .toSQL();
+    const assignment = db
+      .select()
+      .from(projectAssignments)
+      .where(
+        and(
+          eq(projectAssignments.workspaceId, workspaceB),
+          eq(projectAssignments.active, true),
+          gte(projectAssignments.startDate, '2026-01-01'),
+        ),
+      )
+      .toSQL();
+
+    expect(capacity.sql).toContain('"workspace_id" = $1');
+    expect(capacity.params[0]).toBe(workspaceA);
+    expect(assignment.params[0]).toBe(workspaceB);
+    expect(assignment.params).not.toContain(workspaceA);
   });
 
   it('puts workspace_id first in the weekly timesheet scope', () => {

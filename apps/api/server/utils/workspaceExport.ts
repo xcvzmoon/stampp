@@ -9,8 +9,10 @@ import {
   invoicePayments,
   invoices,
   invitations,
+  memberCapacities,
   members,
   organizations,
+  projectAssignments,
   projects,
   rates,
   tags,
@@ -41,6 +43,8 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     timeOffTypeRows,
     holidayRows,
     timeOffRequestRows,
+    capacityRows,
+    assignmentRows,
     expenseRows,
     invoiceRows,
     invoiceLineRows,
@@ -134,6 +138,16 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
       .orderBy(asc(timeOffRequests.id)),
     ctx.db.client
       .select()
+      .from(memberCapacities)
+      .where(eq(memberCapacities.workspaceId, ctx.workspaceId))
+      .orderBy(asc(memberCapacities.id)),
+    ctx.db.client
+      .select()
+      .from(projectAssignments)
+      .where(eq(projectAssignments.workspaceId, ctx.workspaceId))
+      .orderBy(asc(projectAssignments.id)),
+    ctx.db.client
+      .select()
       .from(expenses)
       .where(eq(expenses.workspaceId, ctx.workspaceId))
       .orderBy(asc(expenses.id)),
@@ -178,6 +192,8 @@ export async function exportWorkspace(ctx: AuthorizedContext) {
     timeOffTypes: timeOffTypeRows,
     holidays: holidayRows,
     timeOffRequests: timeOffRequestRows,
+    memberCapacities: capacityRows,
+    projectAssignments: assignmentRows,
     expenses: expenseRows,
     invoices: invoiceRows,
     invoiceLines: invoiceLineRows,

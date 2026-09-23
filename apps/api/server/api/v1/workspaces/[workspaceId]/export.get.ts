@@ -31,6 +31,8 @@ defineRouteMeta({
                 timeOffTypes: { type: 'array' },
                 holidays: { type: 'array' },
                 timeOffRequests: { type: 'array' },
+                memberCapacities: { type: 'array' },
+                projectAssignments: { type: 'array' },
                 auditEvents: { type: 'array' },
               },
             },
