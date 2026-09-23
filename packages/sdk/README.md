@@ -10,6 +10,8 @@ This package is a workspace package (`@stampp/sdk`). From another app in the mon
 import { createStamppClient } from '@stampp/sdk';
 ```
 
+It is not published to a public registry yet. Outside the monorepo, vendor the package or wait for a release.
+
 ## Quickstart
 
 ```ts
@@ -37,9 +39,18 @@ const entry = await client.time.createEntry({
 });
 ```
 
+A runnable sample: [`examples/integration-quickstart.mjs`](../../examples/integration-quickstart.mjs).
+
+```bash
+STAMPP_BASE_URL=https://stampp.example \
+STAMPP_WORKSPACE_ID=ws_… \
+STAMPP_TOKEN=stpp_… \
+node examples/integration-quickstart.mjs
+```
+
 ## Auth
 
-Send the token as `Authorization: Bearer stpp_…`. Create tokens in the workspace UI under tokens, or with `client.tokens.create({ name })` while authenticated another way.
+Send the token as `Authorization: Bearer stpp_…`. Create tokens in the workspace UI under security/tokens, or with `client.tokens.create({ name })` while authenticated another way. Tokens are workspace-scoped.
 
 ## Retries and idempotency
 
@@ -47,7 +58,7 @@ Mutations send an `Idempotency-Key` by default so a network retry cannot double-
 
 `429` and `503` responses are retried (default 3 attempts) using `Retry-After`.
 
-Errors throw `StamppApiError` with `code`, `status`, `requestId`, and `retryAfterSeconds`.
+Errors throw `StamppApiError` with `code`, `status`, `requestId`, and `retryAfterSeconds`. Use `isStamppApiError` to narrow.
 
 ## Surface
 
@@ -67,3 +78,22 @@ Full contract: `GET /api/v1/openapi.json` (Scalar UI at `/api/v1/docs`).
 ## Rate limits
 
 Each credential has a per-minute budget. Responses include `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset`. When limited, the API returns `429` with code `rate_limited` and `Retry-After`.
+
+## Layout
+
+| Path             | Purpose                                     |
+| ---------------- | ------------------------------------------- |
+| `src/client.ts`  | `createStamppClient` and resource groups    |
+| `src/http.ts`    | Fetch wrapper, retries, idempotency headers |
+| `src/errors.ts`  | `StamppApiError`, `isStamppApiError`        |
+| `src/schemas.ts` | Response validation (Valibot)               |
+| `src/resources/` | Per-group methods                           |
+
+## Develop
+
+```bash
+vp run typecheck
+vp run test
+```
+
+Keep resource methods aligned with `@stampp/shared` schemas and the OpenAPI snapshot in `apps/api`.
