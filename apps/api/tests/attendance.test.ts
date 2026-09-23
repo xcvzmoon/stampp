@@ -17,6 +17,7 @@ function makeRecord(partial: Partial<AttendanceRecord> = {}): AttendanceRecord {
     workDate: '2026-01-01',
     timezone: 'UTC',
     source: 'clock',
+    kioskDeviceId: null,
     note: null,
     createdAt: clockInAt,
     updatedAt: clockInAt,

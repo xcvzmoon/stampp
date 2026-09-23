@@ -34,6 +34,7 @@ export type Permission =
   | 'schedule:read:own'
   | 'schedule:read:team'
   | 'schedule:manage'
+  | 'kiosk:manage'
   | 'invoice:read:any'
   | 'invoice:manage'
   | 'reports:view'
@@ -72,6 +73,7 @@ const ownerAdminPermissions: Permission[] = [
   'schedule:read:own',
   'schedule:read:team',
   'schedule:manage',
+  'kiosk:manage',
   'invoice:read:any',
   'invoice:manage',
   'reports:view',
@@ -112,6 +114,7 @@ const rolePermissions: Record<StamppRole, ReadonlySet<Permission>> = {
     'schedule:read:own',
     'schedule:read:team',
     'schedule:manage',
+    'kiosk:manage',
     'invoice:read:any',
     'invoice:manage',
     'reports:view',

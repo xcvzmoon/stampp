@@ -97,6 +97,16 @@ const productOperations = [
   'patch /api/v1/workspaces/{workspaceId}/schedules/assignments/{assignmentId}',
   'delete /api/v1/workspaces/{workspaceId}/schedules/assignments/{assignmentId}',
   'get /api/v1/workspaces/{workspaceId}/schedules/workload',
+  'get /api/v1/workspaces/{workspaceId}/kiosk/devices',
+  'post /api/v1/workspaces/{workspaceId}/kiosk/devices',
+  'patch /api/v1/workspaces/{workspaceId}/kiosk/devices/{deviceId}',
+  'delete /api/v1/workspaces/{workspaceId}/kiosk/devices/{deviceId}',
+  'post /api/v1/workspaces/{workspaceId}/kiosk/devices/{deviceId}/rotate-key',
+  'put /api/v1/workspaces/{workspaceId}/kiosk/pin',
+  'delete /api/v1/workspaces/{workspaceId}/kiosk/pin',
+  'post /api/v1/workspaces/{workspaceId}/kiosk/qr.rotate',
+  'get /api/v1/workspaces/{workspaceId}/kiosk/credentials',
+  'post /api/v1/workspaces/{workspaceId}/kiosk/punch',
 ];
 
 const openApiDocumentSchema = v.object({
@@ -136,7 +146,7 @@ describe('v0.1 openapi contract', () => {
     expect(productOperations).toContain('get /api/v1/workspaces/{workspaceId}/tags');
     expect(productOperations).toContain('post /api/v1/workspaces/{workspaceId}/timer/start');
     expect(productOperations).toContain('get /api/v1/workspaces/{workspaceId}/export');
-    expect(productOperations.length).toBe(93);
+    expect(productOperations.length).toBe(103);
   });
 
   it('keeps product routes workspace-scoped', () => {
@@ -153,6 +163,7 @@ describe('v0.1 openapi contract', () => {
     expect(spec.openapi).toBe('3.1.0');
     expect(spec.info.title).toBe('Stampp API');
     expect(spec.components?.securitySchemes?.sessionCookie).toBeDefined();
+    expect(spec.components?.securitySchemes?.kioskDeviceKey).toBeDefined();
     expect(spec.components?.schemas?.TimeEntryDto).toBeDefined();
     expect(spec.components?.schemas?.TagDto).toBeDefined();
     expect(spec.components?.schemas?.RateDto).toBeDefined();
@@ -170,6 +181,9 @@ describe('v0.1 openapi contract', () => {
     expect(spec.components?.schemas?.CapacityDto).toBeDefined();
     expect(spec.components?.schemas?.AssignmentDto).toBeDefined();
     expect(spec.components?.schemas?.WorkloadResult).toBeDefined();
+    expect(spec.components?.schemas?.KioskDeviceDto).toBeDefined();
+    expect(spec.components?.schemas?.KioskCredentialDto).toBeDefined();
+    expect(spec.components?.schemas?.KioskPunchResult).toBeDefined();
     expect(spec.components?.schemas?.ProjectBudgetUsage).toBeDefined();
     expect(spec.components?.schemas?.ExpenseDto).toBeDefined();
     expect(spec.components?.schemas?.InvoiceDto).toBeDefined();

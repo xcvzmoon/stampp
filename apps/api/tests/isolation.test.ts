@@ -9,6 +9,8 @@ import {
   holidays,
   invoiceLines,
   invoices,
+  kioskDevices,
+  kioskMemberCredentials,
   memberCapacities,
   organizations,
   personalAccessTokens,
@@ -189,6 +191,25 @@ describe('catalog tenant isolation', () => {
     expect(capacity.params[0]).toBe(workspaceA);
     expect(assignment.params[0]).toBe(workspaceB);
     expect(assignment.params).not.toContain(workspaceA);
+  });
+
+  it('binds workspace_id on kiosk device and credential queries', () => {
+    const db = createTestDb();
+    const device = db
+      .select()
+      .from(kioskDevices)
+      .where(eq(kioskDevices.workspaceId, workspaceA))
+      .toSQL();
+    const credential = db
+      .select()
+      .from(kioskMemberCredentials)
+      .where(eq(kioskMemberCredentials.workspaceId, workspaceB))
+      .toSQL();
+
+    expect(device.sql).toContain('"workspace_id" = $1');
+    expect(device.params[0]).toBe(workspaceA);
+    expect(credential.params[0]).toBe(workspaceB);
+    expect(credential.params).not.toContain(workspaceA);
   });
 
   it('puts workspace_id first in the weekly timesheet scope', () => {

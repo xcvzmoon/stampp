@@ -1,7 +1,7 @@
 import * as v from 'valibot';
 import { calendarDateSchema, idSchema, isoDateSchema } from './schemas.ts';
 
-export const attendanceSourceSchema = v.picklist(['clock', 'manual']);
+export const attendanceSourceSchema = v.picklist(['clock', 'manual', 'kiosk']);
 
 export const timezoneSchema = v.pipe(
   v.string(),
@@ -70,6 +70,7 @@ export const attendanceDtoSchema = v.object({
   workDate: calendarDateSchema,
   timezone: v.string(),
   source: attendanceSourceSchema,
+  kioskDeviceId: v.nullable(v.string()),
   note: v.nullable(v.string()),
   state: v.picklist(['open', 'closed']),
   createdAt: v.string(),
