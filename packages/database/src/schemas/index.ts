@@ -1,6 +1,7 @@
 export * from './approvalChains.ts';
 export * from './attendance.ts';
 export * from './audit.ts';
+export * from './auditRetention.ts';
 export * from './auth.ts';
 export * from './expenses.ts';
 export * from './invoices.ts';

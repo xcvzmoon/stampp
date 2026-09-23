@@ -1,6 +1,7 @@
 export * from './advancedReports.ts';
 export * from './approvalChains.ts';
 export * from './attendance.ts';
+export * from './auditRetention.ts';
 export * from './budgets.ts';
 export * from './duration.ts';
 export * from './import.ts';

@@ -1068,6 +1068,7 @@ Approvals, invoices, expenses, leave, kiosk, scheduling, SSO, mobile, auto-track
 5. **Import pipeline** (`feat/import`): BullMQ `import` jobs; CSV first (generic), then Clockify, Toggl, Harvest adapters with dry-run/map preview.
    - Landed on `feat/import`: CSV dry-run preview + start-job API, `import_jobs` + RLS, generic Clockify/Toggl/Harvest CSV mapping, workspace Import UI. Full BullMQ worker stays with the ops track.
 6. **Audit UI + retention** (`feat/audit-ui`): browse/filter/export `audit_events` in workspace UI (writes already exist); retention policy config + purge job behind AuditTrail.
+   - Landed on `feat/audit-ui`: audit browse/filter, CSV export, workspace retention policy (7–3650 days) with purge on save.
 7. **Mobile PWA** (`feat/pwa`): responsive PWA shell, installable, mobile timer/timesheet paths (native mobile later).
 8. **Desktop (Tauri) tray timer** (`feat/desktop`): tray + global shortcuts + idle detection; activity tracking stays off and opt-in.
 9. **Auto-tracker (optional)** (`feat/auto-tracker`): workspace opt-in only, employee-visible indicators, strong privacy defaults.
