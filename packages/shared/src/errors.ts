@@ -29,6 +29,8 @@ export const ERROR_CODES = {
   TIME_OFF_OVERLAP: 'time_off.overlap',
   SCHEDULE_INVALID_RANGE: 'schedule.invalid_range',
   SCHEDULE_OVERBOOKED: 'schedule.overbooked',
+  KIOSK_AUTH_FAILED: 'kiosk.auth_failed',
+  KIOSK_DEVICE_REVOKED: 'kiosk.device_revoked',
   STORAGE_NOT_CONFIGURED: 'storage.not_configured',
   INVOICE_INVALID_TRANSITION: 'invoice.invalid_transition',
   INVOICE_EMPTY: 'invoice.empty',
