@@ -13,6 +13,7 @@ export const WORKSPACE_RLS_TABLES = [
   'approval_runs',
   'attendance_records',
   'audit_events',
+  'audit_retention_policies',
   'clients',
   'custom_roles',
   'expenses',
