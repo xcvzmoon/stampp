@@ -1,5 +1,76 @@
 # Changelog
 
+## v0.5.0
+
+[compare changes](https://github.com/xcvzmoon/stampp/compare/v0.4.0...v0.5.0)
+
+### 🚀 Enhancements
+
+- **shared:** Add public API platform contracts ([631111e](https://github.com/xcvzmoon/stampp/commit/631111e))
+- **api:** Rate limit and idempotency on /api/v1 ([78e88a1](https://github.com/xcvzmoon/stampp/commit/78e88a1))
+- **api:** Document PAT auth and platform headers ([971daab](https://github.com/xcvzmoon/stampp/commit/971daab))
+- **api:** Add OpenAPI contract snapshot and breaking-change gate ([3de43bd](https://github.com/xcvzmoon/stampp/commit/3de43bd))
+- **sdk:** Add typed @stampp/sdk client ([65fa81b](https://github.com/xcvzmoon/stampp/commit/65fa81b))
+- **domain:** Add webhook event catalog and signing rules ([879f0fd](https://github.com/xcvzmoon/stampp/commit/879f0fd))
+- **shared:** Add webhook contracts and error codes ([64640c8](https://github.com/xcvzmoon/stampp/commit/64640c8))
+- **database:** Add webhook subscriptions and deliveries with RLS ([c926d8d](https://github.com/xcvzmoon/stampp/commit/c926d8d))
+- **api:** Expose webhooks with HMAC signing and delivery worker ([14878a5](https://github.com/xcvzmoon/stampp/commit/14878a5))
+- **web:** Add workspace webhook settings UI ([a59cd61](https://github.com/xcvzmoon/stampp/commit/a59cd61))
+- **domain:** Add custom role permission grants ([a344c75](https://github.com/xcvzmoon/stampp/commit/a344c75))
+- **shared:** Add custom role and member assignment contracts ([01b1712](https://github.com/xcvzmoon/stampp/commit/01b1712))
+- **access:** Resolve built-in and custom role grants ([bb0d12f](https://github.com/xcvzmoon/stampp/commit/bb0d12f))
+- **database:** Add custom roles table and member assignment ([62d58a6](https://github.com/xcvzmoon/stampp/commit/62d58a6))
+- **api:** Expose custom roles and member assignment ([3f49103](https://github.com/xcvzmoon/stampp/commit/3f49103))
+- **web:** Add custom roles settings UI ([b5ff72a](https://github.com/xcvzmoon/stampp/commit/b5ff72a))
+- **domain:** Add OIDC provider and email domain rules ([3c34468](https://github.com/xcvzmoon/stampp/commit/3c34468))
+- **shared:** Add workspace OIDC provider contracts ([f94f0c9](https://github.com/xcvzmoon/stampp/commit/f94f0c9))
+- **database:** Add sso providers table with RLS ([ae2889d](https://github.com/xcvzmoon/stampp/commit/ae2889d))
+- **api:** Wire workspace OIDC providers into auth ([18989f0](https://github.com/xcvzmoon/stampp/commit/18989f0))
+- **web:** Add workspace SSO settings UI ([290b576](https://github.com/xcvzmoon/stampp/commit/290b576))
+- **domain:** Add SAML service-provider rules ([0831cc9](https://github.com/xcvzmoon/stampp/commit/0831cc9))
+- **shared:** Add SAML provider contracts ([2231813](https://github.com/xcvzmoon/stampp/commit/2231813))
+- **database:** Add saml providers table with RLS ([ca482a1](https://github.com/xcvzmoon/stampp/commit/ca482a1))
+- **api:** Add SAML SP metadata login and ACS ([162ff2d](https://github.com/xcvzmoon/stampp/commit/162ff2d))
+- **web:** Add workspace SAML settings UI ([78788b4](https://github.com/xcvzmoon/stampp/commit/78788b4))
+- **domain:** Add SCIM 2.0 wire helpers ([ce0b6c0](https://github.com/xcvzmoon/stampp/commit/ce0b6c0))
+- **shared:** Add SCIM user and token contracts ([b6e5103](https://github.com/xcvzmoon/stampp/commit/b6e5103))
+- **database:** Add scim tokens table with RLS ([a9b4fa4](https://github.com/xcvzmoon/stampp/commit/a9b4fa4))
+- **api:** Add SCIM 2.0 users groups and token admin ([620b5df](https://github.com/xcvzmoon/stampp/commit/620b5df))
+- **web:** Add workspace SCIM settings UI ([d36f15c](https://github.com/xcvzmoon/stampp/commit/d36f15c))
+- **domain:** Add CSV import mapping and dry-run preview ([f0d52bc](https://github.com/xcvzmoon/stampp/commit/f0d52bc))
+- **shared:** Add import job and preview contracts ([e19710b](https://github.com/xcvzmoon/stampp/commit/e19710b))
+- **database:** Add import jobs table with RLS ([a11f91e](https://github.com/xcvzmoon/stampp/commit/a11f91e))
+- **api:** Add import preview and job start endpoints ([86b1e3a](https://github.com/xcvzmoon/stampp/commit/86b1e3a))
+- **web:** Add workspace import UI ([73de501](https://github.com/xcvzmoon/stampp/commit/73de501))
+- **domain:** Add audit retention rules ([65daefc](https://github.com/xcvzmoon/stampp/commit/65daefc))
+- **shared:** Add audit browse and retention contracts ([61c86d3](https://github.com/xcvzmoon/stampp/commit/61c86d3))
+- **database:** Add audit retention policies with RLS ([fc57f15](https://github.com/xcvzmoon/stampp/commit/fc57f15))
+- **api:** Add audit browse export and retention endpoints ([f55e079](https://github.com/xcvzmoon/stampp/commit/f55e079))
+- **web:** Add workspace audit log UI ([9b378c3](https://github.com/xcvzmoon/stampp/commit/9b378c3))
+
+### 🩹 Fixes
+
+- **api:** Insert imported time entries in parallel ([d1682a3](https://github.com/xcvzmoon/stampp/commit/d1682a3))
+
+### 📖 Documentation
+
+- Public API quickstart and slice notes ([d51f93b](https://github.com/xcvzmoon/stampp/commit/d51f93b))
+- Record webhooks slice in plan and glossary ([14442d3](https://github.com/xcvzmoon/stampp/commit/14442d3))
+- Record custom roles slice in plan and glossary ([0bde1ba](https://github.com/xcvzmoon/stampp/commit/0bde1ba))
+- Record OIDC sso slice in plan and glossary ([6e3ef4a](https://github.com/xcvzmoon/stampp/commit/6e3ef4a))
+- Record SAML slice in plan and glossary ([31fdd76](https://github.com/xcvzmoon/stampp/commit/31fdd76))
+- Record SCIM slice in plan and glossary ([a871254](https://github.com/xcvzmoon/stampp/commit/a871254))
+- Record import pipeline slice in plan and glossary ([6de653c](https://github.com/xcvzmoon/stampp/commit/6de653c))
+- Record audit ui and retention in plan and glossary ([3d4b57b](https://github.com/xcvzmoon/stampp/commit/3d4b57b))
+
+### 🏡 Chore
+
+- Clear remaining lint warnings ([87e4fa9](https://github.com/xcvzmoon/stampp/commit/87e4fa9))
+
+### ❤️ Contributors
+
+- Mon Albert Gamil ([@xcvzmoon](https://github.com/xcvzmoon))
+
 ## v0.4.0
 
 [compare changes](https://github.com/xcvzmoon/stampp/compare/v0.3.0...v0.4.0)
