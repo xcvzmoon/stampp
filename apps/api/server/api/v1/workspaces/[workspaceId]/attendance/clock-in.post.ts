@@ -7,11 +7,21 @@ import { requireWorkspace } from '~/server/utils/workspaceAccess.ts';
 
 defineRouteMeta({
   openAPI: {
+    parameters: [
+      {
+        in: 'header',
+        name: 'Idempotency-Key',
+        required: false,
+        schema: { type: 'string', minLength: 1, maxLength: 255 },
+        description:
+          'Optional client-generated key. Replays the stored response for safe retries on mutations.',
+      },
+    ],
     tags: ['attendance'],
     summary: 'Clock in',
     description:
       "Starts the caller's open attendance punch. One open punch per user per workspace.",
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     requestBody: {
       required: true,
       content: {
@@ -38,6 +48,7 @@ defineRouteMeta({
       },
       400: { $ref: '#/components/responses/ValidationFailed' },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
       409: {
         description: 'Already clocked in',

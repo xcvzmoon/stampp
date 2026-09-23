@@ -127,6 +127,7 @@ const openApiDocumentSchema = v.object({
     v.object({
       schemas: v.optional(v.record(v.string(), v.unknown())),
       securitySchemes: v.optional(v.record(v.string(), v.unknown())),
+      responses: v.optional(v.record(v.string(), v.unknown())),
     }),
   ),
 });
@@ -170,7 +171,9 @@ describe('v0.1 openapi contract', () => {
     expect(spec.openapi).toBe('3.1.0');
     expect(spec.info.title).toBe('Stampp API');
     expect(spec.components?.securitySchemes?.sessionCookie).toBeDefined();
+    expect(spec.components?.securitySchemes?.personalAccessToken).toBeDefined();
     expect(spec.components?.securitySchemes?.kioskDeviceKey).toBeDefined();
+    expect(spec.components?.responses?.RateLimited).toBeDefined();
     expect(spec.components?.schemas?.TimeEntryDto).toBeDefined();
     expect(spec.components?.schemas?.TagDto).toBeDefined();
     expect(spec.components?.schemas?.RateDto).toBeDefined();

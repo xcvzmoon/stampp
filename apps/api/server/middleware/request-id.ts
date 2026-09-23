@@ -13,6 +13,18 @@ export function readEventRequestId(event: H3Event): string {
   return requestIds.get(event) ?? 'unknown';
 }
 
+/** Idempotent request-id attach. Platform middleware may run before `request-id`. */
+export function ensureRequestId(event: H3Event): string {
+  const existing = requestIds.get(event);
+  if (existing) {
+    return existing;
+  }
+  const requestId = resolveRequestId(event.req.headers);
+  requestIds.set(event, requestId);
+  event.res.headers.set('x-request-id', requestId);
+  return requestId;
+}
+
 export function toApiError(
   code: string,
   message: string,

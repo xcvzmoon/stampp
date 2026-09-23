@@ -7,11 +7,12 @@ defineRouteMeta({
   openAPI: {
     tags: ['tokens'],
     summary: 'Revoke personal access token',
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     parameters: [{ in: 'path', name: 'tokenId', required: true, schema: { type: 'string' } }],
     responses: {
       204: { description: 'Revoked' },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
       404: { $ref: '#/components/responses/NotFound' },
     },

@@ -28,7 +28,7 @@ defineRouteMeta({
   openAPI: {
     tags: ['rates'],
     summary: 'Resolve effective rates as of a point in time',
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     parameters: [
       {
         in: 'query',
@@ -51,6 +51,7 @@ defineRouteMeta({
       },
       400: { $ref: '#/components/responses/ValidationFailed' },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
       422: {
         description: 'Invalid target or currency mismatch',

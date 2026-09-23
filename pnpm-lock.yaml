@@ -510,6 +510,22 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
 
+  packages/sdk:
+    dependencies:
+      '@stampp/shared':
+        specifier: workspace:*
+        version: link:../shared
+      valibot:
+        specifier: catalog:platform
+        version: 1.5.0(typescript@6.0.3)
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.2
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
   packages/shared:
     dependencies:
       valibot:

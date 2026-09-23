@@ -7,7 +7,7 @@ defineRouteMeta({
     tags: ['attendance'],
     summary: 'Get current attendance punch',
     description: "Returns the caller's open attendance record, or null when clocked out.",
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     responses: {
       200: {
         description: 'Current attendance state',
@@ -18,6 +18,7 @@ defineRouteMeta({
         },
       },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
     },
   },

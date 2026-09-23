@@ -35,7 +35,13 @@ export default defineConfig({
     vueIndentScriptAndStyle: true,
     sortPackageJson: false,
     singleQuote: true,
-    ignorePatterns: ['CHANGELOG.md', '**/env.ts', '.agents/**', 'tools/oxlint/anti-slop/**'],
+    ignorePatterns: [
+      'CHANGELOG.md',
+      '**/env.ts',
+      '.agents/**',
+      'examples/**',
+      'tools/oxlint/anti-slop/**',
+    ],
   },
   lint: {
     plugins: ['typescript', 'unicorn', 'import', 'vue', 'oxc'],
@@ -194,7 +200,13 @@ export default defineConfig({
       typeAware: true,
       typeCheck: true,
     },
-    ignorePatterns: ['**/*.d.ts', '**/env.ts', '.agents/**', 'tools/oxlint/anti-slop/**'],
+    ignorePatterns: [
+      '**/*.d.ts',
+      '**/env.ts',
+      '.agents/**',
+      'examples/**',
+      'tools/oxlint/anti-slop/**',
+    ],
   },
   test: {
     clearMocks: false,

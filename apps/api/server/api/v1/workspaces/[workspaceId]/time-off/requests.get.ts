@@ -7,7 +7,7 @@ defineRouteMeta({
   openAPI: {
     tags: ['time-off'],
     summary: 'List time-off requests',
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     parameters: [
       {
         in: 'query',
@@ -39,6 +39,7 @@ defineRouteMeta({
       },
       400: { $ref: '#/components/responses/ValidationFailed' },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
     },
   },

@@ -7,7 +7,7 @@ defineRouteMeta({
   openAPI: {
     tags: ['clients'],
     summary: 'List clients',
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     parameters: [
       {
         in: 'query',
@@ -39,6 +39,13 @@ defineRouteMeta({
             in: 'cookie',
             name: 'better-auth.session_token',
             description: 'Better Auth session cookie. Obtain via /api/auth/*.',
+          },
+          personalAccessToken: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'stpp_',
+            description:
+              'Workspace-scoped personal access token. Send Authorization: Bearer stpp_… (created under workspace tokens).',
           },
           kioskDeviceKey: {
             type: 'apiKey',
@@ -253,7 +260,7 @@ defineRouteMeta({
         },
         responses: {
           Unauthenticated: {
-            description: 'Missing or invalid session',
+            description: 'Missing or invalid session or personal access token',
             content: {
               'application/json': {
                 schema: { $ref: '#/components/schemas/ApiError' },
@@ -285,7 +292,28 @@ defineRouteMeta({
             },
           },
           Conflict: {
-            description: 'Unique constraint or state conflict',
+            description:
+              'Unique constraint, illegal state transition, or Idempotency-Key conflict (payload mismatch or concurrent use of the same key).',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ApiError' },
+              },
+            },
+          },
+          RateLimited: {
+            description: 'Per-credential rate limit exceeded. Honor Retry-After.',
+            headers: {
+              'Retry-After': {
+                schema: { type: 'integer', minimum: 1 },
+                description: 'Seconds until the rate-limit window resets',
+              },
+              'X-RateLimit-Limit': { schema: { type: 'integer' } },
+              'X-RateLimit-Remaining': { schema: { type: 'integer' } },
+              'X-RateLimit-Reset': {
+                schema: { type: 'integer' },
+                description: 'Unix seconds when the window resets',
+              },
+            },
             content: {
               'application/json': {
                 schema: { $ref: '#/components/schemas/ApiError' },

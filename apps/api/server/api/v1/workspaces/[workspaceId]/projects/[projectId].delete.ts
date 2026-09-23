@@ -7,10 +7,11 @@ defineRouteMeta({
   openAPI: {
     tags: ['projects'],
     summary: 'Archive project',
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     responses: {
       204: { description: 'Project archived' },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
       404: { $ref: '#/components/responses/NotFound' },
     },

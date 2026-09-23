@@ -8,11 +8,12 @@ defineRouteMeta({
     tags: ['time-off'],
     summary: 'Delete time-off type',
     description: 'Hard-deletes unused types; deactivates types with request history.',
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     parameters: [{ in: 'path', name: 'typeId', required: true, schema: { type: 'string' } }],
     responses: {
       204: { description: 'Deleted or deactivated' },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
       404: { $ref: '#/components/responses/NotFound' },
     },

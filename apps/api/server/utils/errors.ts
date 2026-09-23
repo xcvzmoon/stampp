@@ -13,6 +13,8 @@ export function mapErrorCodeToStatus(code: string): number {
   if (code === ERROR_CODES.NOT_FOUND) return 404;
   if (
     code === ERROR_CODES.CONFLICT ||
+    code === ERROR_CODES.IDEMPOTENCY_KEY_CONFLICT ||
+    code === ERROR_CODES.IDEMPOTENCY_IN_PROGRESS ||
     code === ERROR_CODES.TIME_ENTRY_OVERLAP ||
     code === ERROR_CODES.TIMER_ALREADY_RUNNING ||
     code === ERROR_CODES.ATTENDANCE_ALREADY_OPEN ||

@@ -21,6 +21,14 @@ defineRouteMeta({
       'Authenticates with a registered device key and member PIN or QR token, then toggles attendance clock-in/out.',
     security: [{ kioskDeviceKey: [] }],
     parameters: [
+      {
+        in: 'header',
+        name: 'Idempotency-Key',
+        required: false,
+        schema: { type: 'string', minLength: 1, maxLength: 255 },
+        description:
+          'Optional client-generated key. Replays the stored response for safe retries on mutations.',
+      },
       { in: 'path', name: 'workspaceId', required: true, schema: { type: 'string' } },
       {
         in: 'header',

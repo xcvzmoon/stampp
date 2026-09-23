@@ -6,7 +6,7 @@ defineRouteMeta({
   openAPI: {
     tags: ['tokens'],
     summary: 'List own personal access tokens',
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     responses: {
       200: {
         description: 'Personal access tokens',
@@ -26,6 +26,7 @@ defineRouteMeta({
         },
       },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
     },
     $global: {

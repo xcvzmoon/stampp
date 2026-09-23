@@ -8,7 +8,7 @@ defineRouteMeta({
   openAPI: {
     tags: ['invoices'],
     summary: 'Download invoice PDF',
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     parameters: [{ in: 'path', name: 'invoiceId', required: true, schema: { type: 'string' } }],
     responses: {
       200: {
@@ -18,6 +18,7 @@ defineRouteMeta({
         },
       },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
       404: { $ref: '#/components/responses/NotFound' },
     },

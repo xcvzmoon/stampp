@@ -8,11 +8,12 @@ defineRouteMeta({
     tags: ['attendance'],
     summary: 'Delete attendance record',
     description: 'Removes a manual or open attendance punch (manager only).',
-    security: [{ sessionCookie: [] }],
+    security: [{ sessionCookie: [] }, { personalAccessToken: [] }],
     parameters: [{ in: 'path', name: 'recordId', required: true, schema: { type: 'string' } }],
     responses: {
       204: { description: 'Deleted' },
       401: { $ref: '#/components/responses/Unauthenticated' },
+      429: { $ref: '#/components/responses/RateLimited' },
       403: { $ref: '#/components/responses/Forbidden' },
       404: { $ref: '#/components/responses/NotFound' },
     },

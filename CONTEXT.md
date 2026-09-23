@@ -33,6 +33,7 @@ Canonical product and architecture terms. Prefer these names in code, docs, and 
 | **Invoice**               | Client billing document generated from billable time/expenses; status machine + payments.                    |
 | **Project budget**        | Hours and/or money ceiling with threshold alerts (`warning` / `exceeded`).                                   |
 | **Personal access token** | Workspace-scoped API credential (`stpp_…`); Bearer auth for product routes.                                  |
+| **Idempotency-Key**       | Optional client key on `/api/v1` mutations; replays the stored response for safe retries.                    |
 
 ## Architecture modules (deep modules)
 

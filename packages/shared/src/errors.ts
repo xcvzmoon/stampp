@@ -7,6 +7,8 @@ export const ERROR_CODES = {
   NOT_FOUND: 'not_found',
   CONFLICT: 'conflict',
   RATE_LIMITED: 'rate_limited',
+  IDEMPOTENCY_KEY_CONFLICT: 'idempotency.key_conflict',
+  IDEMPOTENCY_IN_PROGRESS: 'idempotency.in_progress',
   INTERNAL: 'internal',
   TIME_ENTRY_OVERLAP: 'time_entry.overlap',
   TIME_ENTRY_LOCKED: 'time_entry.locked',
