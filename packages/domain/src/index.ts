@@ -3,6 +3,7 @@ export * from './approvalChains.ts';
 export * from './attendance.ts';
 export * from './budgets.ts';
 export * from './duration.ts';
+export * from './import.ts';
 export * from './expenses.ts';
 export * from './invoices.ts';
 export * from './kiosk.ts';
