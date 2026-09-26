@@ -6,6 +6,7 @@
     projectDtoSchema,
     taskDtoSchema,
   } from '@stampp/shared';
+  import WorkspaceLoadingState from '~/components/workspace/WorkspaceLoadingState.vue';
   import { formatRateAmount } from '~/utils/rates';
   import { formatMinutes } from '~/utils/week';
 
@@ -203,7 +204,7 @@
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="workspace-page space-y-6">
     <p class="text-sm">
       <ULink
         :to="`/w/${workspaceId}/projects`"
@@ -213,12 +214,10 @@
       </ULink>
     </p>
 
-    <p
+    <WorkspaceLoadingState
       v-if="loading"
-      class="text-sm text-muted"
-    >
-      Loading project…
-    </p>
+      label="Loading project"
+    />
 
     <UAlert
       v-else-if="errorMessage && !project"
@@ -231,7 +230,9 @@
       <header class="flex flex-wrap items-start justify-between gap-4">
         <div class="space-y-2">
           <div class="flex flex-wrap items-center gap-2">
-            <h1 class="text-2xl font-semibold text-highlighted">{{ project.name }}</h1>
+            <h1 class="text-3xl font-semibold tracking-tight text-highlighted">
+              {{ project.name }}
+            </h1>
             <UBadge
               v-if="project.code"
               color="neutral"

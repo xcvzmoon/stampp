@@ -7,6 +7,8 @@
     memberListSchema,
   } from '@stampp/shared';
   import * as v from 'valibot';
+  import WorkspaceEmptyState from '~/components/workspace/WorkspaceEmptyState.vue';
+  import WorkspaceLoadingState from '~/components/workspace/WorkspaceLoadingState.vue';
   import { formatMinutes } from '~/utils/week';
 
   definePageMeta({ layout: 'workspace' });
@@ -223,10 +225,10 @@
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="workspace-page space-y-6">
     <header class="flex flex-wrap items-start justify-between gap-4">
       <div class="space-y-1">
-        <h1 class="text-2xl font-semibold text-highlighted">Attendance</h1>
+        <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Attendance</h1>
         <p class="text-sm text-muted">
           Clock in and out for presence. This stays separate from project time tracking.
         </p>
@@ -379,19 +381,17 @@
       </UFormField>
     </div>
 
-    <p
+    <WorkspaceLoadingState
       v-if="loading"
-      class="text-sm text-muted"
-    >
-      Loading attendance…
-    </p>
+      label="Loading attendance"
+    />
 
-    <p
+    <WorkspaceEmptyState
       v-else-if="records.length === 0 && !errorMessage"
-      class="text-sm text-muted"
-    >
-      No attendance records yet. Clock in to start your first punch.
-    </p>
+      title="No attendance records"
+      description="Clock in to start your first attendance record."
+      icon="i-lucide-calendar-check"
+    />
 
     <ul
       v-else

@@ -20,6 +20,7 @@
     createTimeOffTypeInputSchema,
   } from '@stampp/shared';
   import * as v from 'valibot';
+  import WorkspaceLoadingState from '~/components/workspace/WorkspaceLoadingState.vue';
 
   definePageMeta({ layout: 'workspace' });
 
@@ -332,10 +333,10 @@
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="workspace-page space-y-6">
     <header class="flex flex-wrap items-start justify-between gap-4">
       <div class="space-y-1">
-        <h1 class="text-2xl font-semibold text-highlighted">Time off</h1>
+        <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Time off</h1>
         <p class="text-sm text-muted">
           Leave types, balances, holidays, requests, and a team calendar. Weekdays only count
           against allowance; holidays are excluded.
@@ -554,12 +555,11 @@
         </ul>
       </UCard>
 
-      <p
+      <WorkspaceLoadingState
         v-if="loading"
-        class="text-sm text-muted"
-      >
-        Loading balances…
-      </p>
+        :rows="2"
+        label="Loading balances"
+      />
       <ul
         v-else-if="balances?.items.length"
         class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"

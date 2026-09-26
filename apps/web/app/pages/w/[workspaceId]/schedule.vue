@@ -18,6 +18,7 @@
     workloadResultSchema,
   } from '@stampp/shared';
   import * as v from 'valibot';
+  import WorkspaceLoadingState from '~/components/workspace/WorkspaceLoadingState.vue';
 
   definePageMeta({ layout: 'workspace' });
 
@@ -226,10 +227,10 @@
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="workspace-page space-y-6">
     <header class="flex flex-wrap items-start justify-between gap-4">
       <div class="space-y-1">
-        <h1 class="text-2xl font-semibold text-highlighted">Schedule</h1>
+        <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Schedule</h1>
         <p class="text-sm text-muted">
           Weekly capacity, project assignments, and scheduled vs tracked workload for the selected
           range.
@@ -427,12 +428,10 @@
             </div>
           </div>
         </template>
-        <p
+        <WorkspaceLoadingState
           v-if="loading"
-          class="text-sm text-muted"
-        >
-          Loading workload…
-        </p>
+          label="Loading workload"
+        />
         <ul
           v-else-if="workload?.members.length"
           class="space-y-3"

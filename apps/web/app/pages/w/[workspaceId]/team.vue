@@ -149,9 +149,9 @@
 </script>
 
 <template>
-  <div class="space-y-8">
+  <div class="workspace-page space-y-8">
     <header class="space-y-2">
-      <h1 class="text-2xl font-semibold text-highlighted">Team</h1>
+      <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Team</h1>
       <p class="text-sm text-muted">Workspace members and pending invitations.</p>
     </header>
 

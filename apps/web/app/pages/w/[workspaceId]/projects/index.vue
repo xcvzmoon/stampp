@@ -1,6 +1,8 @@
 <script setup lang="ts">
   import type { ClientDto, ProjectDto } from '@stampp/shared';
   import { clientDtoSchema, listResultSchema, projectDtoSchema } from '@stampp/shared';
+  import WorkspaceEmptyState from '~/components/workspace/WorkspaceEmptyState.vue';
+  import WorkspaceLoadingState from '~/components/workspace/WorkspaceLoadingState.vue';
 
   definePageMeta({ layout: 'workspace' });
 
@@ -99,11 +101,13 @@
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="workspace-page space-y-6">
     <header class="flex flex-wrap items-start justify-between gap-4">
       <div class="space-y-1">
-        <h1 class="text-2xl font-semibold text-highlighted">Projects</h1>
-        <p class="text-sm text-muted">Billable work units. Tasks live under each project.</p>
+        <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Projects</h1>
+        <p class="text-sm text-muted">
+          Organize work by client and project. Add tasks to keep time entries specific.
+        </p>
       </div>
       <UButton @click="createOpen = true">New project</UButton>
     </header>
@@ -187,19 +191,17 @@
       </form>
     </UCard>
 
-    <p
+    <WorkspaceLoadingState
       v-if="loading"
-      class="text-sm text-muted"
-    >
-      Loading projects…
-    </p>
+      label="Loading projects"
+    />
 
-    <p
+    <WorkspaceEmptyState
       v-else-if="projects.length === 0 && !errorMessage"
-      class="text-sm text-muted"
-    >
-      No active projects yet.
-    </p>
+      title="No active projects"
+      description="Create a project to organize time and tasks."
+      icon="i-lucide-folders"
+    />
 
     <ul
       v-else

@@ -12,6 +12,7 @@
     kioskDeviceListResultSchema,
   } from '@stampp/shared';
   import * as v from 'valibot';
+  import WorkspaceLoadingState from '~/components/workspace/WorkspaceLoadingState.vue';
 
   definePageMeta({ layout: 'workspace' });
 
@@ -222,12 +223,11 @@
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="workspace-page space-y-6">
     <header class="space-y-1">
-      <h1 class="text-2xl font-semibold text-highlighted">Kiosk</h1>
+      <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Kiosk</h1>
       <p class="text-sm text-muted">
-        Shared-device attendance only. Register devices, set member PINs or QR tokens, then open the
-        kiosk screen with the device key.
+        Set up a shared device for team clock-ins with a PIN or QR token.
       </p>
     </header>
 
@@ -378,12 +378,10 @@
 
     <section class="space-y-3">
       <h2 class="text-lg font-medium text-highlighted">Devices</h2>
-      <p
+      <WorkspaceLoadingState
         v-if="loading"
-        class="text-sm text-muted"
-      >
-        Loading devices…
-      </p>
+        label="Loading devices"
+      />
       <p
         v-else-if="!devices.length"
         class="text-sm text-muted"

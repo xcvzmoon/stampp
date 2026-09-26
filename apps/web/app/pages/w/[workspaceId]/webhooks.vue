@@ -8,6 +8,8 @@
     webhookSubscriptionDtoSchema,
   } from '@stampp/shared';
 
+  definePageMeta({ layout: 'workspace' });
+
   const route = useRoute();
   const workspaceId = computed(() => String(route.params.workspaceId));
   const { apiFetch, apiSend } = useApi();
@@ -147,9 +149,9 @@
 </script>
 
 <template>
-  <UContainer class="space-y-6 py-8">
+  <div class="workspace-page space-y-6">
     <header class="space-y-2">
-      <h1 class="text-2xl font-semibold text-highlighted">Webhooks</h1>
+      <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Webhooks</h1>
       <p class="text-sm text-muted">
         Deliver signed product events to your HTTPS endpoints. The signing secret is shown once.
       </p>
@@ -320,5 +322,5 @@
         </li>
       </ul>
     </UCard>
-  </UContainer>
+  </div>
 </template>

@@ -8,6 +8,8 @@
     workspaceMemberListResultSchema,
   } from '@stampp/shared';
 
+  definePageMeta({ layout: 'workspace' });
+
   const route = useRoute();
   const workspaceId = computed(() => String(route.params.workspaceId));
   const { apiFetch, apiSend } = useApi();
@@ -96,12 +98,11 @@
 </script>
 
 <template>
-  <UContainer class="space-y-6 py-8">
+  <div class="workspace-page space-y-6">
     <header class="space-y-2">
-      <h1 class="text-2xl font-semibold text-highlighted">Custom roles</h1>
+      <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Custom roles</h1>
       <p class="text-sm text-muted">
-        Workspace role definitions reuse the same permission strings as built-in roles. Assigning a
-        custom role replaces the built-in permissions for that member.
+        Define permissions for your team and assign roles to workspace members.
       </p>
     </header>
 
@@ -206,15 +207,17 @@
             </p>
           </div>
           <USelect
-            :model-value="member.customRoleId ?? ''"
+            :model-value="member.customRoleId ?? 'builtin'"
             :items="[
-              { label: 'Built-in role', value: '' },
+              { label: 'Built-in role', value: 'builtin' },
               ...roles.map((role) => ({ label: role.name, value: role.id })),
             ]"
-            @update:model-value="(value) => assignCustom(member, value ? String(value) : null)"
+            @update:model-value="
+              (value) => assignCustom(member, value === 'builtin' ? null : String(value))
+            "
           />
         </li>
       </ul>
     </UCard>
-  </UContainer>
+  </div>
 </template>

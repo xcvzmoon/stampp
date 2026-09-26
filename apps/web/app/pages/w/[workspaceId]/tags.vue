@@ -1,6 +1,8 @@
 <script setup lang="ts">
   import type { TagDto } from '@stampp/shared';
   import { listResultSchema, tagDtoSchema } from '@stampp/shared';
+  import WorkspaceEmptyState from '~/components/workspace/WorkspaceEmptyState.vue';
+  import WorkspaceLoadingState from '~/components/workspace/WorkspaceLoadingState.vue';
 
   definePageMeta({ layout: 'workspace' });
 
@@ -94,10 +96,10 @@
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="workspace-page space-y-6">
     <header class="flex flex-wrap items-start justify-between gap-4">
       <div class="space-y-1">
-        <h1 class="text-2xl font-semibold text-highlighted">Tags</h1>
+        <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Tags</h1>
         <p class="text-sm text-muted">
           Shared labels you can attach to time entries in this workspace.
         </p>
@@ -152,13 +154,17 @@
       </form>
     </UCard>
 
-    <UCard v-if="loading">
-      <p class="text-sm text-muted">Loading tags…</p>
-    </UCard>
+    <WorkspaceLoadingState
+      v-if="loading"
+      label="Loading tags"
+    />
 
-    <UCard v-else-if="tagList.length === 0 && !createOpen">
-      <p class="text-sm text-muted">No tags yet. Create one to label time entries.</p>
-    </UCard>
+    <WorkspaceEmptyState
+      v-else-if="tagList.length === 0 && !createOpen"
+      title="No tags yet"
+      description="Create a tag to label time entries."
+      icon="i-lucide-tags"
+    />
 
     <div
       v-else

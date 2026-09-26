@@ -2,6 +2,8 @@
   import type { SsoProviderDto } from '@stampp/shared';
   import { ssoProviderDtoSchema, ssoProviderListResultSchema } from '@stampp/shared';
 
+  definePageMeta({ layout: 'workspace' });
+
   const route = useRoute();
   const workspaceId = computed(() => String(route.params.workspaceId));
   const { apiFetch, apiSend } = useApi();
@@ -96,12 +98,12 @@
 </script>
 
 <template>
-  <UContainer class="space-y-6 py-8">
+  <div class="workspace-page space-y-6">
     <header class="space-y-2">
-      <h1 class="text-2xl font-semibold text-highlighted">Single sign-on</h1>
+      <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Single sign-on</h1>
       <p class="text-sm text-muted">
-        Workspace OIDC providers. Clients use discovery from the issuer; secrets are stored
-        server-side and never returned after create. SAML and SCIM come next on this slice track.
+        Connect an OIDC identity provider for workspace sign-in. Provider secrets are shown only
+        when created.
       </p>
     </header>
 
@@ -232,5 +234,5 @@
         </li>
       </ul>
     </UCard>
-  </UContainer>
+  </div>
 </template>

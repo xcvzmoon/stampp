@@ -1,6 +1,8 @@
 <script setup lang="ts">
   import type { ClientDto } from '@stampp/shared';
   import { clientDtoSchema, listResultSchema } from '@stampp/shared';
+  import WorkspaceEmptyState from '~/components/workspace/WorkspaceEmptyState.vue';
+  import WorkspaceLoadingState from '~/components/workspace/WorkspaceLoadingState.vue';
 
   definePageMeta({ layout: 'workspace' });
 
@@ -79,10 +81,10 @@
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="workspace-page space-y-6">
     <header class="flex flex-wrap items-start justify-between gap-4">
       <div class="space-y-1">
-        <h1 class="text-2xl font-semibold text-highlighted">Clients</h1>
+        <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Clients</h1>
         <p class="text-sm text-muted">External customers that own projects in this workspace.</p>
       </div>
       <UButton @click="createOpen = true">New client</UButton>
@@ -156,19 +158,17 @@
       </form>
     </UCard>
 
-    <p
+    <WorkspaceLoadingState
       v-if="loading"
-      class="text-sm text-muted"
-    >
-      Loading clients…
-    </p>
+      label="Loading clients"
+    />
 
-    <p
+    <WorkspaceEmptyState
       v-else-if="clients.length === 0 && !errorMessage"
-      class="text-sm text-muted"
-    >
-      No clients yet. Create one to group related projects.
-    </p>
+      title="No clients yet"
+      description="Create a client to group the projects you do for them."
+      icon="i-lucide-building-2"
+    />
 
     <ul
       v-else

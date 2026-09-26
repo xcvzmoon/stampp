@@ -14,6 +14,8 @@
     summaryReportSchema,
     utilizationReportSchema,
   } from '@stampp/shared';
+  import ReportFilters from '~/components/reports/ReportFilters.vue';
+  import ReportSummary from '~/components/reports/ReportSummary.vue';
   import { formatRateAmount } from '~/utils/rates';
   import { addCalendarDays, calendarDateInTimezone, formatMinutes } from '~/utils/week';
 
@@ -78,11 +80,11 @@
   }
 
   const projectOptions = computed(() => [
-    { label: 'All projects', value: '' },
+    { label: 'All projects', value: 'all' },
     ...projects.value.map((project) => ({ label: project.name, value: project.id })),
   ]);
   const clientOptions = computed(() => [
-    { label: 'All clients', value: '' },
+    { label: 'All clients', value: 'all' },
     ...clients.value.map((client) => ({ label: client.name, value: client.id })),
   ]);
 
@@ -163,10 +165,10 @@
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="workspace-page space-y-6">
     <header class="flex flex-wrap items-start justify-between gap-4">
       <div class="space-y-1">
-        <h1 class="text-2xl font-semibold text-highlighted">Reports</h1>
+        <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Reports</h1>
         <p class="text-sm text-muted">Review tracked time and its billable split.</p>
       </div>
       <UButton

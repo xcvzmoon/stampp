@@ -6,6 +6,8 @@
     invoiceListResultSchema,
     listResultSchema,
   } from '@stampp/shared';
+  import WorkspaceEmptyState from '~/components/workspace/WorkspaceEmptyState.vue';
+  import WorkspaceLoadingState from '~/components/workspace/WorkspaceLoadingState.vue';
   import { formatRateAmount } from '~/utils/rates';
 
   definePageMeta({ layout: 'workspace' });
@@ -145,10 +147,10 @@
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="workspace-page space-y-6">
     <header class="flex flex-wrap items-start justify-between gap-4">
       <div class="space-y-1">
-        <h1 class="text-2xl font-semibold text-highlighted">Invoices</h1>
+        <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Invoices</h1>
         <p class="text-sm text-muted">
           Bill clients from approved expenses and billable time using project rates.
         </p>
@@ -273,19 +275,17 @@
       </form>
     </UCard>
 
-    <p
+    <WorkspaceLoadingState
       v-if="loading"
-      class="text-sm text-muted"
-    >
-      Loading invoices…
-    </p>
+      label="Loading invoices"
+    />
 
-    <p
+    <WorkspaceEmptyState
       v-else-if="invoices.length === 0 && !errorMessage && !createOpen"
-      class="text-sm text-muted"
-    >
-      No invoices yet. Generate one from a billable date range.
-    </p>
+      title="No invoices yet"
+      description="Generate an invoice from billable time or approved expenses."
+      icon="i-lucide-file-text"
+    />
 
     <ul
       v-else
