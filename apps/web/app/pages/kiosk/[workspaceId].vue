@@ -60,9 +60,19 @@
 
 <template>
   <div class="min-h-svh bg-default">
-    <main class="mx-auto flex min-h-svh w-full max-w-md flex-col justify-center gap-6 px-4 py-10">
+    <main
+      class="auth-page mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-7 px-4 py-12 sm:px-6"
+    >
+      <div class="flex items-center justify-center gap-2.5 text-highlighted">
+        <span
+          class="brand-mark"
+          aria-hidden="true"
+          >S</span
+        >
+        <span class="text-base font-semibold tracking-tight">Stampp</span>
+      </div>
       <header class="space-y-1 text-center">
-        <h1 class="text-3xl font-semibold text-highlighted">Kiosk</h1>
+        <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Clock in or out</h1>
         <p class="text-sm text-muted">
           Enter the device key once, then clock in or out with your PIN or QR token.
         </p>
@@ -82,7 +92,7 @@
       />
 
       <form
-        class="space-y-4 rounded-xl border border-default bg-elevated p-6"
+        class="space-y-4 rounded-xl border border-default bg-elevated p-6 shadow-sm"
         @submit.prevent="punch"
       >
         <UFormField

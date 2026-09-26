@@ -1,5 +1,9 @@
 export default defineNuxtRouteMiddleware(async (to) => {
-  const isPublic = to.path === '/sign-in' || to.path === '/sign-up' || to.path === '/';
+  const isPublic =
+    to.path === '/sign-in' ||
+    to.path === '/sign-up' ||
+    to.path === '/' ||
+    to.path.startsWith('/kiosk/');
   if (isPublic) {
     return;
   }
