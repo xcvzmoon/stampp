@@ -82,6 +82,7 @@ export function createAuth() {
     secret: env.secret,
     baseURL: env.baseURL,
     basePath: '/api/auth',
+    trustedOrigins: [appUrl],
     database: drizzleAdapter(getDb(), {
       provider: 'pg',
       schema,

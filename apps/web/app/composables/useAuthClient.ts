@@ -5,6 +5,10 @@ export function useAuthClient() {
   const config = useRuntimeConfig();
   return createAuthClient({
     baseURL: config.public.authBaseURL,
+    fetchOptions: {
+      credentials: 'include',
+      headers: import.meta.server ? useRequestHeaders(['cookie']) : undefined,
+    },
     plugins: [organizationClient(), twoFactorClient()],
   });
 }
