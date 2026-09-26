@@ -1,5 +1,43 @@
 # Changelog
 
+## v0.6.0
+
+[compare changes](https://github.com/xcvzmoon/stampp/compare/v0.5.0...v0.6.0)
+
+### 🚀 Enhancements
+
+- **web:** Redesign public and onboarding pages ([a81299e](https://github.com/xcvzmoon/stampp/commit/a81299e))
+- **web:** Organize workspace navigation and time tracking ([3ce9bed](https://github.com/xcvzmoon/stampp/commit/3ce9bed))
+- **web:** Polish workspace tools and empty states ([f3cd64c](https://github.com/xcvzmoon/stampp/commit/f3cd64c))
+
+### 🩹 Fixes
+
+- **auth:** Support sessions across the app origin ([1ebd8b2](https://github.com/xcvzmoon/stampp/commit/1ebd8b2))
+- **api:** Correct request logging and empty timer responses ([d9d7f65](https://github.com/xcvzmoon/stampp/commit/d9d7f65))
+
+### 📖 Documentation
+
+- Remove PLAN.md and TARGET.md ([bab349d](https://github.com/xcvzmoon/stampp/commit/bab349d))
+- Add @stampp/sdk to CONTEXT package vocabulary ([a163ec6](https://github.com/xcvzmoon/stampp/commit/a163ec6))
+- Add and expand package READMEs ([3fca0a5](https://github.com/xcvzmoon/stampp/commit/3fca0a5))
+- Expand web and api app READMEs ([96488db](https://github.com/xcvzmoon/stampp/commit/96488db))
+- Add Docker Compose stack README ([6638a66](https://github.com/xcvzmoon/stampp/commit/6638a66))
+- Rewrite root README with how-it-works and client roadmap ([6d2406f](https://github.com/xcvzmoon/stampp/commit/6d2406f))
+- **web:** Add product context for the UI redesign ([145dea6](https://github.com/xcvzmoon/stampp/commit/145dea6))
+- Add full-app UI snapshot bundle ([07bc93c](https://github.com/xcvzmoon/stampp/commit/07bc93c))
+
+### 🏡 Chore
+
+- **skills:** Add ui skills ([ce14646](https://github.com/xcvzmoon/stampp/commit/ce14646))
+
+### ✅ Tests
+
+- Disable isolation for faster test runs ([4663882](https://github.com/xcvzmoon/stampp/commit/4663882))
+
+### ❤️ Contributors
+
+- Mon Albert Gamil ([@xcvzmoon](https://github.com/xcvzmoon))
+
 ## v0.5.0
 
 [compare changes](https://github.com/xcvzmoon/stampp/compare/v0.4.0...v0.5.0)
