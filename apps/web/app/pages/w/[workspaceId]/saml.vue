@@ -2,6 +2,8 @@
   import type { SamlProviderDto } from '@stampp/shared';
   import { samlProviderDtoSchema, samlProviderListResultSchema } from '@stampp/shared';
 
+  definePageMeta({ layout: 'workspace' });
+
   const route = useRoute();
   const workspaceId = computed(() => String(route.params.workspaceId));
   const { apiFetch, apiSend } = useApi();
@@ -69,13 +71,10 @@
 </script>
 
 <template>
-  <UContainer class="space-y-6 py-8">
+  <div class="workspace-page space-y-6">
     <header class="space-y-2">
-      <h1 class="text-2xl font-semibold text-highlighted">SAML</h1>
-      <p class="text-sm text-muted">
-        Service-provider SAML for workspace single sign-on. Register the metadata URL at your IdP,
-        then start login from <code>/api/auth/saml/{id}/login</code>.
-      </p>
+      <h1 class="text-3xl font-semibold tracking-tight text-highlighted">SAML</h1>
+      <p class="text-sm text-muted">Connect a SAML identity provider for workspace sign-in.</p>
     </header>
 
     <UAlert
@@ -199,5 +198,5 @@
         </li>
       </ul>
     </UCard>
-  </UContainer>
+  </div>
 </template>

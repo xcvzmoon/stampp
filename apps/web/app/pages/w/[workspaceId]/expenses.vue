@@ -7,6 +7,8 @@
     projectDtoSchema,
   } from '@stampp/shared';
   import * as v from 'valibot';
+  import WorkspaceEmptyState from '~/components/workspace/WorkspaceEmptyState.vue';
+  import WorkspaceLoadingState from '~/components/workspace/WorkspaceLoadingState.vue';
   import { formatRateAmount } from '~/utils/rates';
 
   definePageMeta({ layout: 'workspace' });
@@ -199,14 +201,11 @@
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="workspace-page space-y-6">
     <header class="flex flex-wrap items-start justify-between gap-4">
       <div class="space-y-1">
-        <h1 class="text-2xl font-semibold text-highlighted">Expenses</h1>
-        <p class="text-sm text-muted">
-          Track reimbursable costs against projects. Attach receipts when object storage is
-          configured.
-        </p>
+        <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Expenses</h1>
+        <p class="text-sm text-muted">Record project expenses and keep receipts with each claim.</p>
       </div>
       <UButton
         @click="
@@ -340,19 +339,17 @@
       </form>
     </UCard>
 
-    <p
+    <WorkspaceLoadingState
       v-if="loading"
-      class="text-sm text-muted"
-    >
-      Loading expenses…
-    </p>
+      label="Loading expenses"
+    />
 
-    <p
+    <WorkspaceEmptyState
       v-else-if="expenses.length === 0 && !errorMessage && !createOpen"
-      class="text-sm text-muted"
-    >
-      No expenses yet.
-    </p>
+      title="No expenses yet"
+      description="Add an expense to track project costs and receipts."
+      icon="i-lucide-receipt"
+    />
 
     <ul
       v-else

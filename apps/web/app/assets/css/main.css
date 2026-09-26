@@ -6,8 +6,151 @@
   --font-mono: 'Geist Mono', monospace;
 }
 
+:root {
+  --ui-primary: #047857;
+}
+
+.dark {
+  --ui-primary: #34d399;
+}
+
 @layer base {
   body {
     @apply antialiased;
+  }
+
+  ::selection {
+    background: rgb(16 185 129 / 0.23);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ui-primary);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .brand-mark {
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    flex: none;
+    place-items: center;
+    border-radius: 0.65rem;
+    background: var(--ui-primary);
+    color: var(--ui-bg);
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: -0.06em;
+  }
+
+  .workspace-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .workspace-sidebar {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100dvh;
+    overflow-y: auto;
+    background: var(--ui-bg-elevated);
+  }
+
+  .workspace-nav-link {
+    display: flex;
+    min-height: 2.25rem;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    color: var(--ui-text-muted);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    transition:
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .workspace-nav-link:hover {
+    background: var(--ui-bg-accented);
+    color: var(--ui-text-highlighted);
+  }
+
+  .workspace-nav-link-active {
+    background: var(--ui-primary) !important;
+    color: var(--ui-bg) !important;
+    font-weight: 600;
+  }
+
+  .workspace-skip-link {
+    position: absolute;
+    z-index: 10;
+    top: -4rem;
+    left: 1rem;
+    border-radius: 0.5rem;
+    background: var(--ui-primary);
+    padding: 0.5rem 0.75rem;
+    color: var(--ui-bg);
+  }
+
+  .workspace-skip-link:focus {
+    top: 0.75rem;
+  }
+
+  .workspace-mobile-nav summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .workspace-mobile-nav[open] summary svg {
+    transform: rotate(180deg);
+  }
+
+  .workspace-page > header {
+    border-bottom: 1px solid var(--ui-border);
+    padding-bottom: 1.5rem;
+  }
+
+  .workspace-page > header p {
+    max-width: 64ch;
+    line-height: 1.6;
+  }
+
+  .landing-hero-image {
+    aspect-ratio: 4 / 3;
+    background: var(--ui-bg-elevated);
+  }
+
+  .landing-feature {
+    display: grid;
+    align-content: start;
+    gap: 0.75rem;
+  }
+
+  .landing-feature h3 {
+    color: var(--ui-text-highlighted);
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .landing-feature p {
+    max-width: 28ch;
+    color: var(--ui-text-muted);
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+}
+
+@media (min-width: 1024px) {
+  .workspace-body {
+    grid-template-columns: 14.5rem minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workspace-nav-link {
+    transition: none;
   }
 }

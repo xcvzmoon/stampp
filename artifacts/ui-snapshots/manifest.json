@@ -1,0 +1,674 @@
+[
+  {
+    "page": "sign-in",
+    "route": "/sign-in",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/sign-in-top.webp"
+  },
+  {
+    "page": "sign-up",
+    "route": "/sign-up",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/sign-up-top.webp"
+  },
+  {
+    "page": "workspaces",
+    "route": "/workspaces",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/workspaces-top.webp"
+  },
+  {
+    "page": "workspace-new",
+    "route": "/workspaces/new",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/workspace-new-top.webp"
+  },
+  {
+    "page": "invitation",
+    "route": "/workspaces/invitations/accept",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/invitation-top.webp"
+  },
+  {
+    "page": "public-kiosk",
+    "route": "/kiosk/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/public-kiosk-top.webp"
+  },
+  {
+    "page": "time",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/time",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/time-top.webp"
+  },
+  {
+    "page": "attendance",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/attendance",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/attendance-top.webp"
+  },
+  {
+    "page": "time-off",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/time-off",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/time-off-top.webp"
+  },
+  {
+    "page": "time-off",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/time-off",
+    "themeViewport": "desktop-dark",
+    "section": "bottom",
+    "file": "desktop-dark/time-off-bottom.webp"
+  },
+  {
+    "page": "schedule",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/schedule",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/schedule-top.webp"
+  },
+  {
+    "page": "approvals",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/approvals",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/approvals-top.webp"
+  },
+  {
+    "page": "projects",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/projects",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/projects-top.webp"
+  },
+  {
+    "page": "clients",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/clients",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/clients-top.webp"
+  },
+  {
+    "page": "tags",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/tags",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/tags-top.webp"
+  },
+  {
+    "page": "rates",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/rates",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/rates-top.webp"
+  },
+  {
+    "page": "expenses",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/expenses",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/expenses-top.webp"
+  },
+  {
+    "page": "invoices",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/invoices",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/invoices-top.webp"
+  },
+  {
+    "page": "team",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/team",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/team-top.webp"
+  },
+  {
+    "page": "kiosk",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/kiosk",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/kiosk-top.webp"
+  },
+  {
+    "page": "reports",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/reports",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/reports-top.webp"
+  },
+  {
+    "page": "reports",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/reports",
+    "themeViewport": "desktop-dark",
+    "section": "bottom",
+    "file": "desktop-dark/reports-bottom.webp"
+  },
+  {
+    "page": "roles",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/roles",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/roles-top.webp"
+  },
+  {
+    "page": "roles",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/roles",
+    "themeViewport": "desktop-dark",
+    "section": "bottom",
+    "file": "desktop-dark/roles-bottom.webp"
+  },
+  {
+    "page": "import",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/import",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/import-top.webp"
+  },
+  {
+    "page": "audit",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/audit",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/audit-top.webp"
+  },
+  {
+    "page": "audit",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/audit",
+    "themeViewport": "desktop-dark",
+    "section": "bottom",
+    "file": "desktop-dark/audit-bottom.webp"
+  },
+  {
+    "page": "security",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/security",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/security-top.webp"
+  },
+  {
+    "page": "webhooks",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/webhooks",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/webhooks-top.webp"
+  },
+  {
+    "page": "webhooks",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/webhooks",
+    "themeViewport": "desktop-dark",
+    "section": "bottom",
+    "file": "desktop-dark/webhooks-bottom.webp"
+  },
+  {
+    "page": "sso",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/sso",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/sso-top.webp"
+  },
+  {
+    "page": "sso",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/sso",
+    "themeViewport": "desktop-dark",
+    "section": "bottom",
+    "file": "desktop-dark/sso-bottom.webp"
+  },
+  {
+    "page": "saml",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/saml",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/saml-top.webp"
+  },
+  {
+    "page": "saml",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/saml",
+    "themeViewport": "desktop-dark",
+    "section": "bottom",
+    "file": "desktop-dark/saml-bottom.webp"
+  },
+  {
+    "page": "scim",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/scim",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/scim-top.webp"
+  },
+  {
+    "page": "project-detail",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/projects/prj_01a0dd9c-a432-7500-aaef-9ecb59e053ad",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/project-detail-top.webp"
+  },
+  {
+    "page": "sign-in",
+    "route": "/sign-in",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/sign-in-top.webp"
+  },
+  {
+    "page": "sign-up",
+    "route": "/sign-up",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/sign-up-top.webp"
+  },
+  {
+    "page": "workspaces",
+    "route": "/workspaces",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/workspaces-top.webp"
+  },
+  {
+    "page": "workspace-new",
+    "route": "/workspaces/new",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/workspace-new-top.webp"
+  },
+  {
+    "page": "invitation",
+    "route": "/workspaces/invitations/accept",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/invitation-top.webp"
+  },
+  {
+    "page": "public-kiosk",
+    "route": "/kiosk/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/public-kiosk-top.webp"
+  },
+  {
+    "page": "time",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/time",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/time-top.webp"
+  },
+  {
+    "page": "time",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/time",
+    "themeViewport": "mobile-dark",
+    "section": "bottom",
+    "file": "mobile-dark/time-bottom.webp"
+  },
+  {
+    "page": "attendance",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/attendance",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/attendance-top.webp"
+  },
+  {
+    "page": "time-off",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/time-off",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/time-off-top.webp"
+  },
+  {
+    "page": "time-off",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/time-off",
+    "themeViewport": "mobile-dark",
+    "section": "middle",
+    "file": "mobile-dark/time-off-middle.webp"
+  },
+  {
+    "page": "time-off",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/time-off",
+    "themeViewport": "mobile-dark",
+    "section": "bottom",
+    "file": "mobile-dark/time-off-bottom.webp"
+  },
+  {
+    "page": "schedule",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/schedule",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/schedule-top.webp"
+  },
+  {
+    "page": "schedule",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/schedule",
+    "themeViewport": "mobile-dark",
+    "section": "bottom",
+    "file": "mobile-dark/schedule-bottom.webp"
+  },
+  {
+    "page": "approvals",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/approvals",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/approvals-top.webp"
+  },
+  {
+    "page": "projects",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/projects",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/projects-top.webp"
+  },
+  {
+    "page": "clients",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/clients",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/clients-top.webp"
+  },
+  {
+    "page": "tags",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/tags",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/tags-top.webp"
+  },
+  {
+    "page": "rates",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/rates",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/rates-top.webp"
+  },
+  {
+    "page": "expenses",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/expenses",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/expenses-top.webp"
+  },
+  {
+    "page": "invoices",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/invoices",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/invoices-top.webp"
+  },
+  {
+    "page": "team",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/team",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/team-top.webp"
+  },
+  {
+    "page": "team",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/team",
+    "themeViewport": "mobile-dark",
+    "section": "bottom",
+    "file": "mobile-dark/team-bottom.webp"
+  },
+  {
+    "page": "kiosk",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/kiosk",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/kiosk-top.webp"
+  },
+  {
+    "page": "kiosk",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/kiosk",
+    "themeViewport": "mobile-dark",
+    "section": "bottom",
+    "file": "mobile-dark/kiosk-bottom.webp"
+  },
+  {
+    "page": "reports",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/reports",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/reports-top.webp"
+  },
+  {
+    "page": "reports",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/reports",
+    "themeViewport": "mobile-dark",
+    "section": "middle",
+    "file": "mobile-dark/reports-middle.webp"
+  },
+  {
+    "page": "reports",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/reports",
+    "themeViewport": "mobile-dark",
+    "section": "bottom",
+    "file": "mobile-dark/reports-bottom.webp"
+  },
+  {
+    "page": "roles",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/roles",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/roles-top.webp"
+  },
+  {
+    "page": "roles",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/roles",
+    "themeViewport": "mobile-dark",
+    "section": "middle",
+    "file": "mobile-dark/roles-middle.webp"
+  },
+  {
+    "page": "roles",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/roles",
+    "themeViewport": "mobile-dark",
+    "section": "bottom",
+    "file": "mobile-dark/roles-bottom.webp"
+  },
+  {
+    "page": "import",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/import",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/import-top.webp"
+  },
+  {
+    "page": "import",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/import",
+    "themeViewport": "mobile-dark",
+    "section": "bottom",
+    "file": "mobile-dark/import-bottom.webp"
+  },
+  {
+    "page": "audit",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/audit",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/audit-top.webp"
+  },
+  {
+    "page": "audit",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/audit",
+    "themeViewport": "mobile-dark",
+    "section": "bottom",
+    "file": "mobile-dark/audit-bottom.webp"
+  },
+  {
+    "page": "security",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/security",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/security-top.webp"
+  },
+  {
+    "page": "security",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/security",
+    "themeViewport": "mobile-dark",
+    "section": "bottom",
+    "file": "mobile-dark/security-bottom.webp"
+  },
+  {
+    "page": "webhooks",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/webhooks",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/webhooks-top.webp"
+  },
+  {
+    "page": "webhooks",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/webhooks",
+    "themeViewport": "mobile-dark",
+    "section": "bottom",
+    "file": "mobile-dark/webhooks-bottom.webp"
+  },
+  {
+    "page": "sso",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/sso",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/sso-top.webp"
+  },
+  {
+    "page": "sso",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/sso",
+    "themeViewport": "mobile-dark",
+    "section": "bottom",
+    "file": "mobile-dark/sso-bottom.webp"
+  },
+  {
+    "page": "saml",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/saml",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/saml-top.webp"
+  },
+  {
+    "page": "saml",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/saml",
+    "themeViewport": "mobile-dark",
+    "section": "bottom",
+    "file": "mobile-dark/saml-bottom.webp"
+  },
+  {
+    "page": "scim",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/scim",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/scim-top.webp"
+  },
+  {
+    "page": "project-detail",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/projects/prj_01a0dd9c-a432-7500-aaef-9ecb59e053ad",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/project-detail-top.webp"
+  },
+  {
+    "page": "project-detail",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/projects/prj_01a0dd9c-a432-7500-aaef-9ecb59e053ad",
+    "themeViewport": "mobile-dark",
+    "section": "bottom",
+    "file": "mobile-dark/project-detail-bottom.webp"
+  },
+  {
+    "page": "landing",
+    "route": "/",
+    "themeViewport": "desktop-dark",
+    "section": "top",
+    "file": "desktop-dark/landing-top.webp"
+  },
+  {
+    "page": "landing",
+    "route": "/",
+    "themeViewport": "desktop-dark",
+    "section": "middle",
+    "file": "desktop-dark/landing-middle.webp"
+  },
+  {
+    "page": "landing",
+    "route": "/",
+    "themeViewport": "desktop-dark",
+    "section": "bottom",
+    "file": "desktop-dark/landing-bottom.webp"
+  },
+  {
+    "page": "landing",
+    "route": "/",
+    "themeViewport": "mobile-dark",
+    "section": "top",
+    "file": "mobile-dark/landing-top.webp"
+  },
+  {
+    "page": "landing",
+    "route": "/",
+    "themeViewport": "mobile-dark",
+    "section": "middle",
+    "file": "mobile-dark/landing-middle.webp"
+  },
+  {
+    "page": "landing",
+    "route": "/",
+    "themeViewport": "mobile-dark",
+    "section": "bottom",
+    "file": "mobile-dark/landing-bottom.webp"
+  },
+  {
+    "page": "landing",
+    "route": "/",
+    "themeViewport": "desktop-light",
+    "section": "top",
+    "file": "desktop-light/landing-top.webp"
+  },
+  {
+    "page": "landing",
+    "route": "/",
+    "themeViewport": "mobile-light",
+    "section": "top",
+    "file": "mobile-light/landing-top.webp"
+  },
+  {
+    "page": "time",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/time",
+    "themeViewport": "desktop-light",
+    "section": "top",
+    "file": "desktop-light/time-top.webp"
+  },
+  {
+    "page": "time",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/time",
+    "themeViewport": "mobile-light",
+    "section": "top",
+    "file": "mobile-light/time-top.webp"
+  },
+  {
+    "page": "reports",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/reports",
+    "themeViewport": "desktop-light",
+    "section": "top",
+    "file": "desktop-light/reports-top.webp"
+  },
+  {
+    "page": "reports",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/reports",
+    "themeViewport": "mobile-light",
+    "section": "top",
+    "file": "mobile-light/reports-top.webp"
+  },
+  {
+    "page": "team",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/team",
+    "themeViewport": "desktop-light",
+    "section": "top",
+    "file": "desktop-light/team-top.webp"
+  },
+  {
+    "page": "team",
+    "route": "/w/IaOqkq7jWTjtT7hZUrmEt86a7apSG6ZT/team",
+    "themeViewport": "mobile-light",
+    "section": "top",
+    "file": "mobile-light/team-top.webp"
+  }
+]

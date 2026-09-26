@@ -8,7 +8,7 @@ const identify = createAuthMiddleware(getAuth(), {
 });
 
 export default definePlugin((nitroApp) => {
-  nitroApp.hooks.hook('request', async (event) => {
+  nitroApp.hooks.hook('response', async (_response, event) => {
     const log = useLogger(event);
     const path = new URL(event.req.url).pathname;
     await identify(log, event.req.headers, path);

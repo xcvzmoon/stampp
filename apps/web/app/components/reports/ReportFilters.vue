@@ -20,8 +20,21 @@
   const billable = defineModel<string>('billable', { required: true });
   const groupBy = defineModel<string>('groupBy', { required: true });
 
+  const selectedProjectId = computed<string>({
+    get: () => projectId.value || 'all',
+    set: (value) => (projectId.value = value === 'all' ? '' : value),
+  });
+  const selectedClientId = computed<string>({
+    get: () => clientId.value || 'all',
+    set: (value) => (clientId.value = value === 'all' ? '' : value),
+  });
+  const selectedBillable = computed<string>({
+    get: () => billable.value || 'all',
+    set: (value) => (billable.value = value === 'all' ? '' : value),
+  });
+
   const billableOptions = [
-    { label: 'All time', value: '' },
+    { label: 'All time', value: 'all' },
     { label: 'Billable only', value: 'true' },
     { label: 'Non-billable only', value: 'false' },
   ];
@@ -57,14 +70,14 @@
         </UFormField>
         <UFormField label="Project">
           <USelect
-            v-model="projectId"
+            v-model="selectedProjectId"
             :items="projectOptions"
             class="w-full"
           />
         </UFormField>
         <UFormField label="Client">
           <USelect
-            v-model="clientId"
+            v-model="selectedClientId"
             :items="clientOptions"
             class="w-full"
           />
@@ -78,7 +91,7 @@
         </UFormField>
         <UFormField label="Billing">
           <USelect
-            v-model="billable"
+            v-model="selectedBillable"
             :items="billableOptions"
             class="w-full"
           />

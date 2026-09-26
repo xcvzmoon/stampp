@@ -15,6 +15,8 @@
     memberListSchema,
   } from '@stampp/shared';
   import * as v from 'valibot';
+  import WorkspaceEmptyState from '~/components/workspace/WorkspaceEmptyState.vue';
+  import WorkspaceLoadingState from '~/components/workspace/WorkspaceLoadingState.vue';
   import { formatRateAmount, majorToMinor } from '~/utils/rates';
 
   definePageMeta({ layout: 'workspace' });
@@ -289,13 +291,12 @@
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="workspace-page space-y-6">
     <header class="flex flex-wrap items-start justify-between gap-4">
       <div class="space-y-1">
-        <h1 class="text-2xl font-semibold text-highlighted">Rates</h1>
+        <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Rates</h1>
         <p class="text-sm text-muted">
-          Billable and labor cost rates with historical versions. New versions never rewrite past
-          money.
+          Set billing and labor costs over time. New rates leave earlier entries unchanged.
         </p>
       </div>
       <UButton
@@ -440,19 +441,17 @@
       </form>
     </UCard>
 
-    <p
+    <WorkspaceLoadingState
       v-if="loading"
-      class="text-sm text-muted"
-    >
-      Loading rates…
-    </p>
+      label="Loading rates"
+    />
 
-    <p
+    <WorkspaceEmptyState
       v-else-if="rates.length === 0 && !errorMessage && !createOpen"
-      class="text-sm text-muted"
-    >
-      No rates yet. Set workspace, member, project, or task rates for billable and cost reporting.
-    </p>
+      title="No rates yet"
+      description="Add a rate for a workspace, member, project, or task."
+      icon="i-lucide-badge-dollar-sign"
+    />
 
     <ul
       v-else

@@ -3,6 +3,8 @@
   import { importJobListResultSchema, importPreviewSchema } from '@stampp/shared';
   import * as v from 'valibot';
 
+  definePageMeta({ layout: 'workspace' });
+
   const route = useRoute();
   const workspaceId = computed(() => String(route.params.workspaceId));
   const { apiFetch, apiSend } = useApi();
@@ -61,12 +63,11 @@
 </script>
 
 <template>
-  <UContainer class="space-y-6 py-8">
+  <div class="workspace-page space-y-6">
     <header class="space-y-2">
-      <h1 class="text-2xl font-semibold text-highlighted">Import</h1>
+      <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Import</h1>
       <p class="text-sm text-muted">
-        Import time from CSV (Clockify, Toggl, and Harvest use the same generic columns). Preview
-        first, then start a job.
+        Bring time entries from a CSV file. Preview the rows before importing.
       </p>
     </header>
 
@@ -177,5 +178,5 @@
         </li>
       </ul>
     </UCard>
-  </UContainer>
+  </div>
 </template>

@@ -61,7 +61,7 @@
         <div class="space-y-3">
           <h2 class="text-lg font-medium text-highlighted">Create your first workspace</h2>
           <p class="text-sm text-muted">
-            A workspace is the tenancy root for projects, clients, and time entries.
+            Bring your projects, clients, and time entries together in one place.
           </p>
           <UButton to="/workspaces/new"> Create workspace </UButton>
         </div>

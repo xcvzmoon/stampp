@@ -2,6 +2,8 @@
   import type { AuditEventDto, AuditRetentionDto } from '@stampp/shared';
   import { auditEventListResultSchema, auditRetentionDtoSchema } from '@stampp/shared';
 
+  definePageMeta({ layout: 'workspace' });
+
   const route = useRoute();
   const workspaceId = computed(() => String(route.params.workspaceId));
   const { apiFetch, apiSend } = useApi();
@@ -67,9 +69,9 @@
 </script>
 
 <template>
-  <UContainer class="space-y-6 py-8">
+  <div class="workspace-page space-y-6">
     <header class="space-y-2">
-      <h1 class="text-2xl font-semibold text-highlighted">Audit log</h1>
+      <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Audit log</h1>
       <p class="text-sm text-muted">
         Browse workspace audit events, export CSV, and set how long events are kept.
       </p>
@@ -150,12 +152,6 @@
         >
           Save and purge expired
         </UButton>
-        <p
-          v-if="retention"
-          class="text-xs text-muted"
-        >
-          Updated {{ retention.updatedAt }}
-        </p>
       </form>
     </UCard>
 
@@ -185,5 +181,5 @@
         </li>
       </ul>
     </UCard>
-  </UContainer>
+  </div>
 </template>

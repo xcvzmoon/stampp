@@ -175,9 +175,9 @@
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="workspace-page space-y-6">
     <header class="space-y-1">
-      <h1 class="text-2xl font-semibold text-highlighted">Security</h1>
+      <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Security</h1>
       <p class="text-sm text-muted">
         Manage two-factor authentication and personal access tokens for this workspace.
       </p>

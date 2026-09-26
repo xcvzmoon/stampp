@@ -42,9 +42,22 @@
 </script>
 
 <template>
-  <main class="mx-auto flex min-h-svh w-full max-w-md flex-col justify-center gap-6 px-4 py-12">
+  <main
+    class="auth-page mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-7 px-4 py-12 sm:px-6"
+  >
+    <ULink
+      to="/"
+      class="flex w-fit items-center gap-2.5 text-highlighted"
+    >
+      <span
+        class="brand-mark"
+        aria-hidden="true"
+        >S</span
+      >
+      <span class="text-base font-semibold tracking-tight">Stampp</span>
+    </ULink>
     <header class="space-y-2 text-center">
-      <h1 class="text-2xl font-semibold text-highlighted">Create workspace</h1>
+      <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Create workspace</h1>
       <p class="text-sm text-muted">
         Name it after your company or team. You can invite members later.
       </p>

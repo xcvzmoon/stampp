@@ -210,6 +210,7 @@ export default defineConfig({
   },
   test: {
     clearMocks: false,
+    isolate: false,
     passWithNoTests: true,
   },
   run: {

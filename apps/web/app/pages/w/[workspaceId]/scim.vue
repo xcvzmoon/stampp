@@ -2,6 +2,8 @@
   import type { ScimTokenDto } from '@stampp/shared';
   import { scimTokenCreatedSchema, scimTokenListResultSchema } from '@stampp/shared';
 
+  definePageMeta({ layout: 'workspace' });
+
   const route = useRoute();
   const workspaceId = computed(() => String(route.params.workspaceId));
   const { apiFetch, apiSend } = useApi();
@@ -57,12 +59,11 @@
 </script>
 
 <template>
-  <UContainer class="space-y-6 py-8">
+  <div class="workspace-page space-y-6">
     <header class="space-y-2">
-      <h1 class="text-2xl font-semibold text-highlighted">SCIM</h1>
+      <h1 class="text-3xl font-semibold tracking-tight text-highlighted">SCIM</h1>
       <p class="text-sm text-muted">
-        SCIM 2.0 provisioning endpoint at <code>/scim/v2</code>. Point your IdP at this workspace
-        with a SCIM token. Users map to workspace members; Groups map to the workspace roster.
+        Provision workspace members from your identity provider using a SCIM token.
       </p>
     </header>
 
@@ -140,5 +141,5 @@
         </li>
       </ul>
     </UCard>
-  </UContainer>
+  </div>
 </template>

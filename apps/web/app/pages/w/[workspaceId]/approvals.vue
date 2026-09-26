@@ -15,6 +15,7 @@
     memberListSchema,
   } from '@stampp/shared';
   import * as v from 'valibot';
+  import WorkspaceLoadingState from '~/components/workspace/WorkspaceLoadingState.vue';
 
   definePageMeta({ layout: 'workspace' });
 
@@ -183,13 +184,12 @@
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="workspace-page space-y-6">
     <header class="flex flex-wrap items-start justify-between gap-4">
       <div class="space-y-1">
-        <h1 class="text-2xl font-semibold text-highlighted">Approvals</h1>
+        <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Approvals</h1>
         <p class="text-sm text-muted">
-          Multi-stage chains for timesheets and time off. Pending steps wait on the current
-          approver; the final step completes the linked request.
+          Review timesheets and time off requests, and set the order for team approvals.
         </p>
       </div>
       <UButton @click="createOpen = !createOpen">
@@ -291,12 +291,10 @@
 
     <section class="space-y-3">
       <h2 class="text-lg font-medium text-highlighted">Configured chains</h2>
-      <p
+      <WorkspaceLoadingState
         v-if="loading"
-        class="text-sm text-muted"
-      >
-        Loading chains…
-      </p>
+        label="Loading approval chains"
+      />
       <p
         v-else-if="!chains.length"
         class="text-sm text-muted"

@@ -105,45 +105,65 @@
 
 <template>
   <div class="border-b border-default bg-elevated/40">
-    <div class="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
-      <UInput
-        v-model="description"
-        class="min-w-56 flex-1"
-        :disabled="Boolean(timer)"
-        placeholder="What are you working on?"
-        aria-label="Timer description"
-      />
-      <USelectMenu
-        v-model="selectedTagIds"
-        class="min-w-40"
-        :items="tagItems"
-        value-key="id"
-        multiple
-        :disabled="Boolean(timer) || availableTags.length === 0"
-        placeholder="Tags"
-        aria-label="Timer tags"
-      />
-      <span class="min-w-20 text-right font-mono text-sm font-semibold text-highlighted">
+    <div class="flex w-full flex-col gap-3 px-4 py-3 sm:px-6 lg:flex-row lg:items-end lg:gap-4">
+      <div class="flex items-center justify-between gap-4 lg:mr-2 lg:pb-2">
+        <span class="text-sm font-semibold text-highlighted">Timer</span>
+        <span
+          class="font-mono text-sm font-semibold text-highlighted tabular-nums lg:hidden"
+          role="timer"
+        >
+          {{ elapsed }}
+        </span>
+      </div>
+      <div class="grid min-w-0 flex-1 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(10rem,14rem)]">
+        <label class="grid min-w-0 gap-1 text-xs font-medium text-muted">
+          What are you working on?
+          <UInput
+            v-model="description"
+            class="w-full"
+            :disabled="Boolean(timer)"
+            placeholder="Add a description"
+          />
+        </label>
+        <label class="grid min-w-0 gap-1 text-xs font-medium text-muted">
+          Tags
+          <USelectMenu
+            v-model="selectedTagIds"
+            class="w-full"
+            :items="tagItems"
+            value-key="id"
+            multiple
+            :disabled="Boolean(timer) || availableTags.length === 0"
+            placeholder="Optional"
+          />
+        </label>
+      </div>
+      <span
+        class="hidden min-w-20 pb-2 text-right font-mono text-sm font-semibold text-highlighted tabular-nums lg:block"
+        role="timer"
+      >
         {{ elapsed }}
       </span>
       <UButton
         v-if="timer"
         color="error"
         :loading="loading"
+        class="justify-center"
         @click="stop"
       >
-        Stop
+        Stop timer
       </UButton>
       <UButton
         v-else
         :loading="loading"
+        class="justify-center"
         @click="start"
       >
         Start timer
       </UButton>
       <div
         v-if="timer?.tags.length"
-        class="flex flex-wrap items-center gap-1"
+        class="flex flex-wrap items-center gap-1 lg:hidden"
       >
         <UBadge
           v-for="tag in timer.tags"
@@ -157,6 +177,7 @@
       </div>
       <p
         v-if="errorMessage"
+        role="alert"
         class="w-full text-sm text-error"
       >
         {{ errorMessage }}

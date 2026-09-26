@@ -27,5 +27,5 @@ defineRouteMeta({
 
 export default defineHandler(async (event) => {
   const ctx = await requireWorkspace(event, 'time:read:own');
-  return getRunningTimer(ctx);
+  return Response.json(await getRunningTimer(ctx));
 });
