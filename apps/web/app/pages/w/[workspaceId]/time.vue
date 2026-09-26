@@ -14,6 +14,7 @@
     timesheetDtoSchema,
     weeklyTimeSummarySchema,
   } from '@stampp/shared';
+  import WeeklyTimesheetGrid from '~/components/timesheet/WeeklyTimesheetGrid.vue';
   import {
     addCalendarDays,
     calendarDateInTimezone,
@@ -77,7 +78,7 @@
       day: 'numeric',
       year: 'numeric',
     });
-    return `${formatter.format(new Date(`${summary.value.weekStart}T12:00:00.000Z`))} – ${formatter.format(new Date(`${summary.value.weekEnd}T12:00:00.000Z`))}`;
+    return `${formatter.format(new Date(`${summary.value.weekStart}T12:00:00.000Z`))} - ${formatter.format(new Date(`${summary.value.weekEnd}T12:00:00.000Z`))}`;
   });
 
   const weekEntries = computed(() => {
@@ -332,11 +333,11 @@
 </script>
 
 <template>
-  <div class="space-y-6">
-    <header class="flex flex-wrap items-start justify-between gap-4">
-      <div class="space-y-1">
+  <div class="workspace-page space-y-7">
+    <header class="flex flex-wrap items-start justify-between gap-5">
+      <div class="max-w-xl space-y-2">
         <div class="flex flex-wrap items-center gap-2">
-          <h1 class="text-2xl font-semibold text-highlighted">Timesheet</h1>
+          <h1 class="text-3xl font-semibold tracking-tight text-highlighted">Timesheet</h1>
           <UBadge
             :color="statusColor"
             variant="subtle"
@@ -346,8 +347,7 @@
           </UBadge>
         </div>
         <p class="text-sm text-muted">
-          Enter time in each project and day, then press Enter or leave the cell. Submit the week
-          when it is ready for manager approval.
+          Enter hours by project and day. Submit the week when it is ready for review.
         </p>
       </div>
       <div class="flex flex-wrap gap-2">
@@ -382,7 +382,8 @@
       </div>
     </header>
 
-    <div class="flex flex-wrap items-center justify-between gap-3">
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-default pb-4">
+      <p class="font-medium text-highlighted">{{ weekLabel }}</p>
       <div class="flex items-center gap-2">
         <UButton
           aria-label="Previous week"
@@ -399,7 +400,6 @@
           Next week
         </UButton>
       </div>
-      <p class="font-medium text-highlighted">{{ weekLabel }}</p>
     </div>
 
     <UAlert
@@ -425,37 +425,53 @@
       "
     />
 
-    <p
+    <div
       v-if="loading"
-      class="text-sm text-muted"
+      role="status"
+      aria-label="Loading timesheet"
+      class="space-y-6"
     >
-      Loading timesheet…
-    </p>
+      <div class="grid grid-cols-3 gap-4">
+        <USkeleton
+          v-for="item in 3"
+          :key="item"
+          class="h-16 w-full"
+        />
+      </div>
+      <USkeleton class="h-64 w-full" />
+    </div>
 
     <template v-else-if="summary">
-      <div class="grid gap-3 sm:grid-cols-3">
-        <UCard>
-          <p class="text-xs font-medium tracking-wide text-muted uppercase">Logged</p>
-          <p class="mt-1 font-mono text-2xl font-semibold text-highlighted">
+      <dl
+        class="grid grid-cols-3 gap-4 py-2"
+        aria-label="Weekly totals"
+      >
+        <div>
+          <dt class="text-xs font-medium text-muted">Logged</dt>
+          <dd
+            class="mt-1 font-mono text-xl font-semibold text-highlighted tabular-nums sm:text-2xl"
+          >
             {{ formatMinutes(summary.totalMinutes) }}
-          </p>
-        </UCard>
-        <UCard>
-          <p class="text-xs font-medium tracking-wide text-muted uppercase">Expected</p>
-          <p class="mt-1 font-mono text-2xl font-semibold text-highlighted">
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-muted">Expected</dt>
+          <dd
+            class="mt-1 font-mono text-xl font-semibold text-highlighted tabular-nums sm:text-2xl"
+          >
             {{ formatMinutes(summary.expectedMinutes) }}
-          </p>
-        </UCard>
-        <UCard>
-          <p class="text-xs font-medium tracking-wide text-muted uppercase">Missing</p>
-          <p
-            class="mt-1 font-mono text-2xl font-semibold"
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-muted">Missing</dt>
+          <dd
+            class="mt-1 font-mono text-xl font-semibold tabular-nums sm:text-2xl"
             :class="summary.missingMinutes > 0 ? 'text-warning' : 'text-success'"
           >
             {{ formatMinutes(summary.missingMinutes) }}
-          </p>
-        </UCard>
-      </div>
+          </dd>
+        </div>
+      </dl>
 
       <WeeklyTimesheetGrid
         :summary="summary"
@@ -471,10 +487,7 @@
       >
         <div>
           <h2 class="text-sm font-semibold text-highlighted">Week entries</h2>
-          <p class="text-sm text-muted">
-            The grid stays the timesheet home. Duplicate a completed entry when you need the same
-            work again.
-          </p>
+          <p class="text-sm text-muted">Duplicate a completed entry when you repeat work.</p>
         </div>
         <div class="divide-y divide-default">
           <div
@@ -486,19 +499,15 @@
               <p class="truncate text-sm font-medium text-highlighted">
                 {{ entry.description || 'No description' }}
               </p>
-              <p class="text-xs text-muted">
-                {{ projectLabel(entry) }} · {{ entry.workDate }} ·
-                {{ formatMinutes(entryMinutes(entry)) }}
-                <template v-if="entry.tags.length">
-                  ·
-                  <span
-                    v-for="tag in entry.tags"
-                    :key="tag.id"
-                    class="mr-1"
-                  >
-                    {{ tag.name }}
-                  </span>
-                </template>
+              <p class="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted">
+                <span>{{ projectLabel(entry) }}</span>
+                <span>{{ entry.workDate }}</span>
+                <span>{{ formatMinutes(entryMinutes(entry)) }}</span>
+                <span
+                  v-for="tag in entry.tags"
+                  :key="tag.id"
+                  >{{ tag.name }}</span
+                >
               </p>
             </div>
             <UButton
